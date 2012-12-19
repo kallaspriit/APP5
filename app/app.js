@@ -1,4 +1,4 @@
-requirejs.config({
+require.config({
     baseUrl: 'app/src',
     paths: {
         lib: '../../lib',
@@ -14,15 +14,9 @@ requirejs.config({
 	}
 });
 
-require(['jquery', 'config/main', 'Debug', 'Navi'], function($, config, dbg, navi) {
-	dbg.console('test');
-	navi.open('index');
-
-	console.log('CONFIG', config);
-
-    $(function() {
-		console.log('PAGE READY');
-
-		$(document.body).css('background-color', '#F00');
-    });
-});
+require(
+	['Bootstrapper'],
+	function(bootstrapper) {
+		bootstrapper.bootstrap();
+	}
+);

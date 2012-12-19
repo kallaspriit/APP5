@@ -1,11 +1,27 @@
-define(['BaseEvent', 'Debug'], function(BaseEvent, dbg) {
-	var Navi = function() {
-		dbg.console('NAVI LOADED');
-	};
+define(
+['BaseEvent', 'Debug', 'Util'],
+function(BaseEvent, dbg, util) {
 
-	Navi.prototype.open = function(module) {
-		dbg.console('NAVI OPEN', module);
-	};
+var activeModule = null;
 
-	return new Navi();
+var Navi = function() {
+
+};
+
+Navi.prototype = new BaseEvent();
+
+Navi.prototype.init = function() {
+
+};
+
+Navi.prototype.open = function(module) {
+	activeModule = module;
+};
+
+Navi.prototype.getActiveModule = function() {
+	return activeModule;
+};
+
+return new Navi();
+
 });
