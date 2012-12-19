@@ -1,0 +1,1 @@
+({appDir:"../",dir:"../build",baseUrl:"app/src",paths:{lib:"../../lib",modules:"../modules",config:"../config",underscore:"../../lib/underscore/underscore",jquery:"empty:"},shim:{underscore:{exports:"_"}},modules:[{name:"../app"}]});

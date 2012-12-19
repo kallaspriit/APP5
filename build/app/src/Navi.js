@@ -1,0 +1,1 @@
+define(["BaseEvent","Debug"],function(e,t){var n=function(){t.console("NAVI LOADED")};return n.prototype.open=function(e){t.console("NAVI OPEN",e)},new n});

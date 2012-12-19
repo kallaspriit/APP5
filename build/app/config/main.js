@@ -1,0 +1,1 @@
+define(["config/base","underscore"],function(e,t){console.log("MAIN CONFIG EXEC",e);var n=t.clone(e);return n.test="b",n});
