@@ -1,15 +1,15 @@
 require.config({
-    baseUrl: 'app/src',
-    paths: {
-        lib: '../../lib',
+	baseUrl: 'app/src',
+	paths: {
+		lib: '../../lib',
 		modules: '../modules',
 		config: '../config',
 		underscore: '../../lib/underscore/underscore',
 		jquery: 'empty:'
-    },
+	},
 	shim: {
 		underscore: {
-		  exports: '_'
+			exports: '_'
 		}
 	}
 });
@@ -17,6 +17,7 @@ require.config({
 require(
 	['Bootstrapper'],
 	function(bootstrapper) {
+		"use strict";
 		bootstrapper.bootstrap();
 	}
 );

@@ -1,5 +1,8 @@
 define(function() {
-	return {
-		debug: true
-	};
+"use strict";
+
+return {
+	debug: true
+};
+
 });

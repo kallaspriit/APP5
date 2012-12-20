@@ -1,5 +1,6 @@
 define(
 function() {
+"use strict";
 
 /**
  * Event target base class used for custom events system.

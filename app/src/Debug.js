@@ -1,6 +1,8 @@
 define(
 ['BaseEvent', 'Util'],
 function(BaseEvent, util) {
+"use strict";
+
 /**
  * Debugging helper.
  *

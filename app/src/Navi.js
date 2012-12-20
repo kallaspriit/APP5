@@ -1,6 +1,7 @@
 define(
 ['BaseEvent', 'Debug', 'Util'],
 function(BaseEvent, dbg, util) {
+"use strict";
 
 var activeModule = null;
 

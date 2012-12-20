@@ -1,1 +1,1 @@
-define([],function(){return console.log("BASE CONFIG EXEC"),{debug:!0,test:"a"}});
+define([],function(){return{debug:!0}});

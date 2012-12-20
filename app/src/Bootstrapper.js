@@ -1,6 +1,7 @@
 define(
 ['UI', 'Navi'],
 function(ui, navi) {
+"use strict";
 
 var Bootstrapper = function() {
 

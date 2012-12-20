@@ -1,12 +1,13 @@
 define(
 ['jquery', 'BaseEvent', 'Debug', 'Navi'],
 function($, BaseEvent, dbg, navi) {
+"use strict";
 
 var UI = function() {
 
 };
 
-UI.prototype = new BaseEvent;
+UI.prototype = new BaseEvent();
 
 UI.prototype.init = function() {
 	var self = this;

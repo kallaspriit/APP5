@@ -1,1 +1,1 @@
-define(["BaseEvent","Debug"],function(e,t){var n=function(){t.console("NAVI LOADED")};return n.prototype.open=function(e){t.console("NAVI OPEN",e)},new n});
+define(["BaseEvent","Debug","Util"],function(e,t,n){var r=null,i=function(){};return i.prototype=new e,i.prototype.init=function(){},i.prototype.open=function(e){r=e},i.prototype.getActiveModule=function(){return r},new i});

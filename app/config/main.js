@@ -1,8 +1,13 @@
-define(['config/base', 'underscore'], function(base, _) {
-	var options = _.clone(base);
+define(
+['config/base', 'underscore'],
+function(base, _) {
+"use strict";
 
-	// override any developer-specific options
-	options.test = 'test';
+var options = _.clone(base);
 
-	return options;
+// override any developer-specific options
+options.test = 'test';
+
+return options;
+
 });

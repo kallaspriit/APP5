@@ -1,15 +1,20 @@
-<project name="APP5" basedir="." default="build_all">
+<project name="APP5" basedir="." default="all">
 
-<!-- Define the task -->
-<taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" 
-    classpath="${basedir}/tools/ant-jshint-0.3.3-deps.jar" />
+	<taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" classpath="${basedir}/tools/ant-jshint-0.3.3-deps.jar" />
 
-<target name="runJsHint">
+	<target name="jshint">
+		<jshint dir="${basedir}" options="evil=true,forin=true,devel=false,jquery=true,browser=true,devel=true" globals="require:true,define:true">
+			<include name="app/**/*.js"/>
+			
+		</jshint>
+	</target>
 
-  <!-- Lint the code -->
-  <jshint dir="${basedir}/app" includes="**/*.js" />
+	<target name="build">
+		<exec executable="node.exe" failonerror="true">
+			<arg line="tools/r.js -o tools/app.build.js"/>
+		</exec>
+	</target>
 
-</target>
+	<target name="all" depends="jshint,build"></target>
 
-<target name="build_all" depends="runJsHint">
-</target>
+</project>
