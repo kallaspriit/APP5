@@ -4,7 +4,7 @@ require.config({
 		lib: '../lib',
 		modules: '../modules',
 		config: '../config',
-		underscore: '../../lib/underscore/underscore',
+		underscore: '../lib/underscore/underscore',
 		jquery: 'empty:'
 	},
 	shim: {

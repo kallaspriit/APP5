@@ -1,13 +1,13 @@
 define(
-['jquery', 'BaseEvent', 'Debug', 'Navi'],
-function($, BaseEvent, dbg, navi) {
+['jquery', 'Bindable', 'Debug', 'Navi'],
+function($, Bindable, dbg, navi) {
 "use strict";
 
 var UI = function() {
 
 };
 
-UI.prototype = new BaseEvent();
+UI.prototype = new Bindable();
 
 UI.prototype.init = function() {
 	var self = this;
@@ -17,6 +17,8 @@ UI.prototype.init = function() {
 	$(document).ready(function() {
 		self.onDocumentReady();
 	});
+
+    return this;
 };
 
 UI.prototype.initDebugListeners = function() {

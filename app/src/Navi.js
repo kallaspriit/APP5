@@ -1,6 +1,6 @@
 define(
-['BaseEvent', 'Debug', 'Util'],
-function(BaseEvent, dbg, util) {
+['Bindable', 'Debug', 'Util'],
+function(Bindable, dbg, util) {
 "use strict";
 
 var activeModule = null;
@@ -9,10 +9,10 @@ var Navi = function() {
 
 };
 
-Navi.prototype = new BaseEvent();
+Navi.prototype = new Bindable();
 
 Navi.prototype.init = function() {
-
+    return this;
 };
 
 Navi.prototype.open = function(module) {

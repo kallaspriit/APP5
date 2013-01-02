@@ -8,10 +8,12 @@ var Bootstrapper = function() {
 };
 
 Bootstrapper.prototype.bootstrap = function() {
-	dbg.init();
-	resourceManager.init();
-	ui.init();
-	navi.init();
+    window.app = {
+        dbg: dbg.init(),
+        resourceManager: resourceManager.init(),
+        ui: ui.init(),
+        navi: navi.init()
+    };
 };
 
 return new Bootstrapper();

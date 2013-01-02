@@ -1,10 +1,12 @@
 {
-    "name": "The Foo API",
-    "description": "The Foo API: a library for doing X, Y, and Z",
-    "version": "1.2.1",
-    "url": "http://example.com/",
+    "name": "APP5",
+    "description": "APP5 HTML5 Framework Reference Documentation",
+    "version": "0.1",
+    "url": "http://kallaspriit.github.com/app5",
+	"logo": "../../assets/logo-doc.png",
     "options": {
         "outdir": "docs",
-		"linkNatives": "true"
+		"linkNatives": "true",
+		"exclude": "lib"
     }
 }

@@ -1,6 +1,6 @@
 define(
-['BaseEvent', 'Util'],
-function(BaseEvent, util) {
+['Bindable'],
+function(Bindable) {
 "use strict";
 
 /**
@@ -17,20 +17,16 @@ function(BaseEvent, util) {
  *	message - alert message
  *
  * @class Debug
- * @contructor
+ * @extends Bindable
+ * @constructor
  */
 var Debug = function() {
-	this.messages = [];
-	this.boxes = {};
-	this.boxCount = 0;
-	this.boxLifetime = 1.0;
 	this.queue = {
 		error: [],
 		screen: [],
 		console: [],
 		alert: []
 	};
-	this.loggedErrors = [];
 
 	var self = this,
 		existingAlertFunction = window.alert;
@@ -42,13 +38,18 @@ var Debug = function() {
 	};
 };
 
-/**
- * Extend the BaseEvent for custom event handling.
- */
-Debug.prototype = new BaseEvent();
+// Extend the Bindable for custom event handling.
+Debug.prototype = new Bindable();
 
 /**
  * Debugger event types.
+ *
+ * @event
+ * @param {Object} Event
+ * @param {String} Event.ERROR Error event
+ * @param {String} Event.CONSOLE Log to console
+ * @param {String} Event.SCREEN Display on screen
+ * @param {String} Event.ALERT Display alert to user
  */
 Debug.prototype.Event = {
 	ERROR: 'error',
@@ -63,7 +64,7 @@ Debug.prototype.Event = {
  * @method init
  */
 Debug.prototype.init = function() {
-
+    return this;
 };
 
 /**
@@ -71,13 +72,15 @@ Debug.prototype.init = function() {
 *
 * The message is passed on to any listeners of given type.
 *
-* @param {string} message Message
+* @method error
+* @param {String} message Message
+* @chainable
 */
 Debug.prototype.error = function(message) {
 	this.queue.error.push(message);
 
 	if (this.numEventListeners(this.Event.ERROR) === 0) {
-		return;
+		return this;
 	}
 
 	while (this.queue.error.length > 0) {
@@ -86,18 +89,23 @@ Debug.prototype.error = function(message) {
 			message: this.queue.error.shift()
 		});
 	}
+
+	return this;
 };
 
 /**
  * Triggers a screen log message.
  *
  * The message is passed on to any listeners of given type.
+ *
+ * @method screen
+ * @chainable
  */
 Debug.prototype.screen = function() {
 	this.queue.screen.push(arguments);
 
 	if (this.numEventListeners(this.Event.SCREEN) === 0) {
-		return;
+		return this;
 	}
 
 	while (this.queue.screen.length > 0) {
@@ -106,6 +114,31 @@ Debug.prototype.screen = function() {
 			args: this.queue.screen.shift()
 		});
 	}
+
+	return this;
+};
+
+/**
+ * Logs data to console if available.
+ *
+ * @method console
+ * @chainable
+ */
+Debug.prototype.console = function() {
+	this.queue.console.push(arguments);
+
+	if (this.numEventListeners(this.Event.CONSOLE) === 0) {
+		return this;
+	}
+
+	while (this.queue.console.length > 0) {
+		this.fire({
+			type: this.Event.CONSOLE,
+			args: this.queue.console.shift()
+		});
+	}
+
+	return this;
 };
 
 /**
@@ -115,13 +148,15 @@ Debug.prototype.screen = function() {
  *
  * The message is passed on to any listeners of given type.
  *
- * @param {string} message Message
+ * @method alert
+ * @param {String} message Message
+ * @chainable
  */
 Debug.prototype.alert = function(message) {
 	this.queue.alert.push(message);
 
 	if (this.numEventListeners(this.Event.ALERT) === 0) {
-		return;
+		return this;
 	}
 
 	var propagate = true,
@@ -139,24 +174,6 @@ Debug.prototype.alert = function(message) {
 	}
 
 	return propagate;
-};
-
-/**
- * Logs data to console if available.
- */
-Debug.prototype.console = function() {
-	this.queue.console.push(arguments);
-
-	if (this.numEventListeners(this.Event.CONSOLE) === 0) {
-		return;
-	}
-
-	while (this.queue.console.length > 0) {
-		this.fire({
-			type: this.Event.CONSOLE,
-			args: this.queue.console.shift()
-		});
-	}
 };
 
 return new Debug();

@@ -5,7 +5,7 @@
 	<target name="jshint">
 		<jshint dir="${basedir}" options="evil=true,forin=true,devel=false,jquery=true,browser=true,devel=true" globals="require:true,define:true">
 			<include name="app/**/*.js"/>
-			
+			<exclude name="app/lib/**"/>
 		</jshint>
 	</target>
 
@@ -15,6 +15,13 @@
 		</exec>
 	</target>
 
-	<target name="all" depends="jshint,build"></target>
+	<property name="yuidoc-path" location="tools\yuidoc\yuidoc.cmd"/>
+	<target name="doc">
+		<exec executable="${yuidoc-path}" failonerror="true">
+			<arg line="-N app"/>
+		</exec>
+	</target>
+
+	<target name="all" depends="jshint,build,doc"></target>
 
 </project>
