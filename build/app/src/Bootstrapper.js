@@ -1,1 +1,0 @@
-define(["UI","Navi"],function(e,t){var n=function(){};return n.prototype.bootstrap=function(){e.init(),t.init()},new n});

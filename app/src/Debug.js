@@ -4,18 +4,10 @@ function(BaseEvent, util) {
 "use strict";
 
 /**
- * Debugging helper.
- *
- * Can fire the following events:
- * > ERROR - fired when a user error occurs
- *	message - error message
- * > SCREEN - fired when a screen debug message is added
- *	message - error message
- * > CONSOLE - fired when user send something to display in console
- *	args - console arguments
- * > ALERT - fired when alert is triggered
- *	message - alert message
- */
+    Creates a new Person.
+    @constructor
+	@class Test..
+*/
 var Debug = function() {
 	this.messages = [];
 	this.boxes = {};
@@ -52,6 +44,13 @@ Debug.prototype.Event = {
 	CONSOLE: 'console',
 	SCREEN: 'screen',
 	ALERT: 'alert'
+};
+
+/**
+ * Initializes the debugger.
+ */
+Debug.prototype.init = function() {
+
 };
 
 /**
