@@ -1,7 +1,7 @@
 require.config({
-	baseUrl: 'app/src',
+	baseUrl: 'src',
 	paths: {
-		lib: '../../lib',
+		lib: '../lib',
 		modules: '../modules',
 		config: '../config',
 		underscore: '../../lib/underscore/underscore',

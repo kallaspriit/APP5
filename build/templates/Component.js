@@ -1,1 +1,0 @@
-define(["BaseEvent"],function(e){var t="value",n=function(){return t.toUpperCase()},r=function(){};return r.prototype=new e,r.prototype.Event={TEST:"test"},r.prototype.init=function(){this.fire({type:this.Event.TEST,data:n()})},new r});

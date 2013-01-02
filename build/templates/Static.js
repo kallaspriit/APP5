@@ -1,1 +1,0 @@
-define([],function(){return{upper:function(e){return e.toUpperCase()}}});

@@ -1,1 +1,0 @@
-define(["BaseEvent"],function(e){var t=function(){};return t.prototype=new e,t.prototype.Event={},t.prototype.init=function(){},new t});
