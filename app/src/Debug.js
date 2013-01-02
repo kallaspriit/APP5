@@ -15,6 +15,9 @@ function(BaseEvent, util) {
  *	args - console arguments
  * > ALERT - fired when alert is triggered
  *	message - alert message
+ *
+ * @class Debug
+ * @contructor
  */
 var Debug = function() {
 	this.messages = [];
@@ -56,6 +59,8 @@ Debug.prototype.Event = {
 
 /**
  * Initializes the debugger.
+ *
+ * @method init
  */
 Debug.prototype.init = function() {
 
