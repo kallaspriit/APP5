@@ -4,10 +4,18 @@ function(BaseEvent, util) {
 "use strict";
 
 /**
-    Creates a new Person.
-    @constructor
-	@class Test..
-*/
+ * Debugging helper.
+ *
+ * Can fire the following events:
+ * > ERROR - fired when a user error occurs
+ *	message - error message
+ * > SCREEN - fired when a screen debug message is added
+ *	message - error message
+ * > CONSOLE - fired when user send something to display in console
+ *	args - console arguments
+ * > ALERT - fired when alert is triggered
+ *	message - alert message
+ */
 var Debug = function() {
 	this.messages = [];
 	this.boxes = {};

@@ -1,0 +1,1 @@
+define(["BaseEvent","Debug","Util"],function(e,t,n){var r=null,i=function(){};return i.prototype=new e,i.prototype.init=function(){},i.prototype.open=function(e){r=e},i.prototype.getActiveModule=function(){return r},new i});

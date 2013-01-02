@@ -1,0 +1,1 @@
+define(["Debug","ResourceManager","UI","Navi"],function(e,t,n,r){var i=function(){};return i.prototype.bootstrap=function(){e.init(),t.init(),n.init(),r.init()},new i});

@@ -1,0 +1,1 @@
+define(["config/base","underscore"],function(e,t){var n=t.clone(e);return n.test="test",n});
