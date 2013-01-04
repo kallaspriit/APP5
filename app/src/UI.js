@@ -1,36 +1,82 @@
 define(
 ['jquery', 'Bindable', 'Debug', 'Navi'],
 function($, Bindable, dbg, navi) {
-"use strict";
+	"use strict";
 
-var UI = function() {
+	/**
+	 * Manages the user interface.
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> READY - fired when ui is ready
+	 *
+	 * @class UI
+	 * @extends Bindable
+	 * @constructor
+	 */
+	var UI = function() {
 
-};
+	};
 
-UI.prototype = new Bindable();
+	UI.prototype = new Bindable();
 
-UI.prototype.init = function() {
-	var self = this;
+	/**
+	 * Debugger event types.
+	 *
+	 * @event
+	 * @param {Object} Event
+	 * @param {String} Event.READY UI is ready
+	 */
+	UI.prototype.Event = {
+		READY: 'ready'
+	};
 
-	this.initDebugListeners();
+	/**
+	 * Initializes the debugger.
+	 *
+	 * @method init
+	 * @return {UI} Self
+	 */
+	UI.prototype.init = function() {
+		var self = this;
 
-	$(document).ready(function() {
-		self.onDocumentReady();
-	});
+		this._initDebugListeners();
 
-    return this;
-};
+		$(document).ready(function() {
+			self._onDocumentReady();
+		});
 
-UI.prototype.initDebugListeners = function() {
-	dbg.bind(dbg.Event.CONSOLE, function(e) {
-		console.log('CONSOLE', e);
-	});
-};
+		return this;
+	};
 
-UI.prototype.onDocumentReady = function() {
-	$(document.body).css('background-color', '#F00');
-};
+	/**
+	 * Initializes the debug listeners.
+	 *
+	 * @method _initDebugListeners
+	 * @return {Debug} Self
+	 * @private
+	 */
+	UI.prototype._initDebugListeners = function() {
+		dbg.bind(dbg.Event.CONSOLE, function(e) {
+			console.log('CONSOLE', e);
+		});
 
-return new UI();
+		return this;
+	};
 
+	/**
+	 * Called on document ready.
+	 *
+	 * @method _onDocumentReady
+	 * @private
+	 */
+	UI.prototype._onDocumentReady = function() {
+		this.fire({
+			type: this.Event.READY
+		});
+
+		$(document.body).css('background-color', '#0F0');
+	};
+
+	return new UI();
 });

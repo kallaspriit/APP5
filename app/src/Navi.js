@@ -1,28 +1,53 @@
 define(
 ['Bindable', 'Debug', 'Util'],
 function(Bindable, dbg, util) {
-"use strict";
+	"use strict";
 
-var activeModule = null;
+	/**
+	 * Provides functionality to navigate between module actions.
+	 *
+	 * @class Navi
+	 * @extends Bindable
+	 * @constructor
+	 */
+	var Navi = function() {
+		this._activeModule = null;
+	};
 
-var Navi = function() {
+	Navi.prototype = new Bindable();
 
-};
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {Navi} Self
+	 */
+	Navi.prototype.init = function() {
+		return this;
+	};
 
-Navi.prototype = new Bindable();
+	/**
+	 * Navigates to a module action.
+	 *
+	 * @method open
+	 * @param {String} module Module to open
+	 * @return {Navi} Self
+	 */
+	Navi.prototype.open = function(module) {
+		this._activeModule = module;
 
-Navi.prototype.init = function() {
-    return this;
-};
+		return this;
+	};
 
-Navi.prototype.open = function(module) {
-	activeModule = module;
-};
+	/**
+	 * Returns currently active module name.
+	 *
+	 * @method getActiveModuleName
+	 * @return {String}
+	 */
+	Navi.prototype.getActiveModuleName = function() {
+		return this._activeModule;
+	};
 
-Navi.prototype.getActiveModule = function() {
-	return activeModule;
-};
-
-return new Navi();
-
+	return new Navi();
 });

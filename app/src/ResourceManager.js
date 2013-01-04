@@ -1,22 +1,47 @@
 define(
 ['Bindable'],
-function(Bindable) {
-"use strict";
+function (Bindable) {
+	"use strict";
 
-var ResourceManager = function() {
+	/**
+	 * Manages application resources.
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> MODULE_LOADED - fired when application module is loaded
+	 *		name - name of the module
+	 *		obj - module object
+	 *
+	 * @class ResourceManager
+	 * @extends Bindable
+	 * @constructor
+	 */
+	var ResourceManager = function () {
 
-};
+	};
 
-ResourceManager.prototype = new Bindable();
+	ResourceManager.prototype = new Bindable();
 
-ResourceManager.prototype.Event = {
-	
-};
+	/**
+	 * Debugger event types.
+	 *
+	 * @event
+	 * @param {Object} Event
+	 * @param {String} Event.MODULE_LOADED Application module was loaded
+	 */
+	ResourceManager.prototype.Event = {
+		MODULE_LOADED: 'module-loaded'
+	};
 
-ResourceManager.prototype.init = function() {
-    return this;
-};
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {ResourceManager} Self
+	 */
+	ResourceManager.prototype.init = function () {
+		return this;
+	};
 
-return new ResourceManager();
-
+	return new ResourceManager();
 });
