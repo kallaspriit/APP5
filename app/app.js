@@ -21,7 +21,7 @@ require.config({
 require(
 	['Bootstrapper'],
 	function(bootstrapper) {
-		"use strict";
+		'use strict';
 
         bootstrapper.bootstrap();
 	}

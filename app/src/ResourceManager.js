@@ -1,7 +1,7 @@
 define(
 ['Bindable'],
 function (Bindable) {
-	"use strict";
+	'use strict';
 
 	/**
 	 * Manages application resources.
@@ -15,6 +15,7 @@ function (Bindable) {
 	 * @class ResourceManager
 	 * @extends Bindable
 	 * @constructor
+	 * @module Core
 	 */
 	var ResourceManager = function () {
 

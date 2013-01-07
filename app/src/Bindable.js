@@ -1,12 +1,13 @@
 define(
 function() {
-	"use strict";
+	'use strict';
 
 	/**
 	 * Event target base class used for custom events system.
 	 *
 	 * @class Bindable
 	 * @constructor
+	 * @module Core
 	 */
 	var Bindable = function() {
 		this._listeners = {};
@@ -111,7 +112,7 @@ function() {
 	/**
 	 * Returns the number of event listeners of given type.
 	 *
-	 * @method numEventListeners
+	 * @method numListeners
 	 * @param {String} type Type of listener to add
 	 * @return {Number}
 	 */

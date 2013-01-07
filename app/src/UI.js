@@ -1,7 +1,7 @@
 define(
-['jquery', 'Bindable', 'Debug', 'Navi'],
-function($, Bindable, dbg, navi) {
-	"use strict";
+['jquery', 'Bindable', 'Debug'],
+function($, Bindable, dbg) {
+	'use strict';
 
 	/**
 	 * Manages the user interface.
@@ -13,6 +13,7 @@ function($, Bindable, dbg, navi) {
 	 * @class UI
 	 * @extends Bindable
 	 * @constructor
+	 * @module Core
 	 */
 	var UI = function() {
 

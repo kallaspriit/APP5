@@ -1,7 +1,7 @@
 define(
 ['Bindable'],
 function (Bindable) {
-	"use strict";
+	'use strict';
 
 	/**
 	 * Provides application debugging capabilities.
@@ -10,8 +10,8 @@ function (Bindable) {
 	 *
 	 *	> ERROR - fired when a user error occurs
 	 *		message - error message
-	 *	> SCREEN - fired when a screen debug message is added
-	 *		message - error message
+	 *	> LOG - fired when a log message is added
+	 *		message - log message
 	 *	> CONSOLE - fired when user send something to display in console
 	 *		args - console arguments
 	 *	> ALERT - fired when alert is triggered
@@ -20,11 +20,18 @@ function (Bindable) {
 	 * @class Debug
 	 * @extends Bindable
 	 * @constructor
+	 * @module Core
 	 */
 	var Debug = function () {
 		this._queue = {
 			error: [],
-			screen: [],
+			log: [],
+			console: [],
+			alert: []
+		};
+		this._archive = {
+			error: [],
+			log: [],
 			console: [],
 			alert: []
 		};
@@ -48,13 +55,13 @@ function (Bindable) {
 	 * @param {Object} Event
 	 * @param {String} Event.ERROR Error event
 	 * @param {String} Event.CONSOLE Log to console
-	 * @param {String} Event.SCREEN Display on screen
+	 * @param {String} Event.LOG Log message
 	 * @param {String} Event.ALERT Display alert to user
 	 */
 	Debug.prototype.Event = {
 		ERROR: 'error',
 		CONSOLE: 'console',
-		SCREEN: 'screen',
+		LOG: 'log',
 		ALERT: 'alert'
 	};
 
@@ -80,40 +87,48 @@ function (Bindable) {
 	Debug.prototype.error = function (message) {
 		this._queue.error.push(message);
 
-		if (this.numEventListeners(this.Event.ERROR) === 0) {
+		if (this.numListeners(this.Event.ERROR) === 0) {
 			return this;
 		}
 
 		while (this._queue.error.length > 0) {
+			var msg = this._queue.error.shift();
+
 			this.fire({
 				type: this.Event.ERROR,
-				message: this._queue.error.shift()
+				message: msg
 			});
+
+			this._archive.error.push(msg);
 		}
 
 		return this;
 	};
 
 	/**
-	 * Triggers a screen log message.
+	 * Logs a message.
 	 *
 	 * The message is passed on to any listeners of given type.
 	 *
-	 * @method screen
+	 * @method log
 	 * @chainable
 	 */
-	Debug.prototype.screen = function () {
-		this._queue.screen.push(arguments);
+	Debug.prototype.log = function () {
+		this._queue.log.push(arguments);
 
-		if (this.numEventListeners(this.Event.SCREEN) === 0) {
+		if (this.numListeners(this.Event.LOG) === 0) {
 			return this;
 		}
 
-		while (this._queue.screen.length > 0) {
+		while (this._queue.log.length > 0) {
+			var args = this._queue.log.shift();
+
 			this.fire({
-				type: this.Event.SCREEN,
-				args: this._queue.screen.shift()
+				type: this.Event.LOG,
+				args: args
 			});
+
+			this._archive.log.push(args);
 		}
 
 		return this;
@@ -128,15 +143,19 @@ function (Bindable) {
 	Debug.prototype.console = function () {
 		this._queue.console.push(arguments);
 
-		if (this.numEventListeners(this.Event.CONSOLE) === 0) {
+		if (this.numListeners(this.Event.CONSOLE) === 0) {
 			return this;
 		}
 
 		while (this._queue.console.length > 0) {
+			var args = this._queue.log.shift();
+
 			this.fire({
 				type: this.Event.CONSOLE,
 				args: this._queue.console.shift()
 			});
+
+			this._archive.console.push(args);
 		}
 
 		return this;
@@ -156,7 +175,7 @@ function (Bindable) {
 	Debug.prototype.alert = function (message) {
 		this._queue.alert.push(message);
 
-		if (this.numEventListeners(this.Event.ALERT) === 0) {
+		if (this.numListeners(this.Event.ALERT) === 0) {
 			return this;
 		}
 
@@ -164,14 +183,18 @@ function (Bindable) {
 			result;
 
 		while (this._queue.alert.length > 0) {
+			var msg = this._queue.alert.shift();
+
 			result = this.fire({
 				type: this.Event.ALERT,
-				message: this._queue.alert.shift()
+				message: msg
 			});
 
 			if (result === false) {
 				propagate = false;
 			}
+
+			this._archive.alert.push(msg);
 		}
 
 		return propagate;
