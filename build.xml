@@ -17,6 +17,7 @@
 
 	<property name="yuidoc-path" location="tools\yuidoc\yuidoc.cmd"/>
 	<target name="doc">
+		<delete dir="${basedir}/docs"/>
 		<exec executable="${yuidoc-path}" failonerror="true">
 			<arg line="-N app"/>
 		</exec>

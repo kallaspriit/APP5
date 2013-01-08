@@ -47,7 +47,7 @@ function(_) {
 		},
 
 		/**
-		 * Clones given object
+		 * Clones given object.
 		 *
 		 * @method clone
 		 * @param {Object} obj Object to clone
@@ -55,6 +55,20 @@ function(_) {
 		 */
 		clone: function(obj) {
 			return _.clone(obj);
+		},
+
+		/**
+		 * Extends given object.
+		 *
+		 * @method extend
+		 * @param {Object} destination Object to extend
+		 * @param {Object} sources* Any number of sources to extend with
+		 * @return {Object}
+		 */
+		extend: function(destination, sources) {
+			this.noop(destination, sources);
+
+			return _.extend.apply(_, _.toArray(arguments));
 		},
 
 		/**
@@ -67,14 +81,14 @@ function(_) {
 		str: function(arg) {
 			if (arg === null) {
 				return 'null';
-			} else if (this.type(arg) === 'string') {
+			} else if (this.typeOf(arg) === 'string') {
 				return arg;
 			} else {
 				return JSON.stringify(arg);
 			}
 		},
 
-		type: (function toType(global) {
+		typeOf: (function toType(global) {
 			return function(obj) {
 				if (typeof(obj) === 'undefined') {
 					return 'undefined';
@@ -195,6 +209,49 @@ function(_) {
 			} else {
 				return param;
 			}
+		},
+
+	/**
+	 * Converts from controller-name to ControllerName style.
+	 *
+	 * @method convertEntityName
+	 * @param {String} name Name to convert
+	 * @return {String}
+	 */
+	convertEntityName: function(name) {
+		var dashPos;
+
+		while ((dashPos = name.indexOf('-')) != -1) {
+			name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
 		}
+
+		return name.substr(0, 1).toUpperCase() + name.substr(1);
+	},
+
+	/**
+	 * Converts from action-name to actionName style.
+	 *
+	 * @method convertCallableName
+	 * @param {String} name Name to convert
+	 * @return {String}
+	 */
+	convertCallableName: function(name) {
+		var dashPos;
+
+		while ((dashPos = name.indexOf('-')) != -1) {
+			name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
+		}
+
+		return name;
+	},
+
+		/**
+		 * Does absolutely nothing.
+		 *
+		 * Can be useful for hiding unused parameters etc.
+		 *
+		 * @method noop
+		 */
+		noop: function() {}
 	};
 });

@@ -49,7 +49,7 @@ function (Bindable) {
 	Debug.prototype = new Bindable();
 
 	/**
-	 * Debugger event types.
+	 * Event types.
 	 *
 	 * @event
 	 * @param {Object} Event

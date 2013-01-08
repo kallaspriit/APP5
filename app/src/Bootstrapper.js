@@ -1,5 +1,6 @@
 define(
 ['Debug', 'config/main', 'ResourceManager', 'UI', 'Navi', 'Util', 'angular'],
+
 function (dbg, config, resourceManager, ui, navi, util, angular) {
 	'use strict';
 
@@ -20,53 +21,54 @@ function (dbg, config, resourceManager, ui, navi, util, angular) {
 	 * @method bootstrap
 	 */
 	Bootstrapper.prototype.bootstrap = function () {
+		var self = this;
+
 		this._app = {
 			dbg: dbg.init(),
 			resourceManager: resourceManager.init(),
 			ui: ui.init(),
 			navi: navi.init(),
 			util: util,
-			controllers: {
-				TestController: function ($scope) {
-					$scope.title = 'Testing AngularJS!';
-					$scope.phones = [
-						{'name': 'Nexus S',
-							'snippet': 'Fast just got faster with Nexus S.',
-							'age': 0},
-						{'name': 'Motorola XOOM™ with Wi-Fi',
-							'snippet': 'The Next, Next Generation tablet.',
-							'age': 1},
-						{'name': 'MOTOROLA XOOM™',
-							'snippet': 'The Next, Next Generation tablet.',
-							'age': 2}
-					];
-					$scope.order = 'age';
-				}
-			}
+			modules: {}
 		};
 
-		// @TODO Needed for minification, any way around?
-		this._app.controllers.TestController.$inject = ['$scope'];
-
-		// register the core application components in global scope for debugging
+		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
 			window.app = this._app;
-		} else {
-			// we still need global controllers for angular
-			window.app = {
-				controllers: this._app.controllers
-			};
 		}
 
-		// navigate to the index action
-		navi.open(
-			config.index.module,
-			config.index.action,
-			config.index.parameters
-		);
+		angular.module('app', []).
+			config(function($provide) {
+				// register module resources
+
+				for (var key in self._app) {
+					$provide.value(key, self._app[key]);
+				}
+
+				/*$provide.value('dbg', self._app.dbg);
+				$provide.value('resourceManager', self._app.resourceManager);
+				$provide.value('ui', self._app.ui);
+				$provide.value('navi', self._app.navi);
+				$provide.value('util', self._app.util);
+				$provide.value('modules', self._app.modules);*/
+			});
+
+
 
 		angular.element(document).ready(function() {
-			angular.bootstrap(document);
+			// navigate to the index action
+			navi.open(
+				config.index.module,
+				config.index.action,
+				config.index.parameters,
+				function() {
+					console.log('index action loaded');
+				}
+			);
+
+			/*var $injector = angular.bootstrap(document, ['app']);
+
+			console.log('bootstrap injector', $injector);*/
 		});
 	};
 

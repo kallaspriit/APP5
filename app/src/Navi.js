@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Debug', 'Util'],
-function(Bindable, dbg, util) {
+['Bindable', 'Debug', 'Util', 'ResourceManager', 'angular'],
+function(Bindable, dbg, util, resourceManager, angular) {
 	'use strict';
 
 	/**
@@ -34,15 +34,42 @@ function(Bindable, dbg, util) {
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters=null] Action parameters
+	 * @param {Function} [readyCallback=null] Optional callback to call when ready
 	 * @return {Navi} Self
 	 */
-	Navi.prototype.open = function(module, action, parameters) {
+	Navi.prototype.open = function(module, action, parameters, readyCallback) {
 		action = action || 'index';
-		parameters = parameters || null;
-
-		this._activeModule = module;
+		parameters = parameters || [];
 
 		dbg.log('! Opening module' + module + '::' + action + ' ' + util.str(parameters));
+
+		var className = util.convertEntityName(module) + 'Module',
+			actionName = util.convertCallableName(action) + 'Action';
+
+		window.app = window.app || {};
+		window.app.modules = window.app.modules || {};
+
+		resourceManager.loadModule(module, function(moduleObj) {
+			resourceManager.loadView(module, action, function(viewContent) {
+				console.log('navi loaded', moduleObj, viewContent);
+
+				window.app.modules[className] = moduleObj;
+
+				var contentWrap = $('#main-content');
+
+				contentWrap
+					.html(viewContent)
+					.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
+
+				angular.bootstrap(contentWrap, ['app']);
+
+				if (util.typeOf(readyCallback) === 'function') {
+					readyCallback(module, action, parameters, moduleObj);
+				}
+			});
+		});
+
+		this._activeModule = module;
 
 		return this;
 	};

@@ -1,32 +1,11 @@
 <!DOCTYPE html>
-<html ng-controller="app.controllers.TestController">
+<html>
 	<head>
-        <title ng-bind-template="Angular test: {{query}}">Angular test</title>
-		<title></title>
+        <title>APP5</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	</head>
 	<body>
-		<h1>{{title}}</h1>
-        <p>Search: <input ng-model="query"></p>
-        <p>Sort by:
-        <select ng-model="order">
-            <option value="name">Alphabetical</option>
-            <option value="age">Newest</option>
-        </select></p>
-        <ul>
-            <li ng-repeat="phone in phones | filter:query | orderBy:order">
-                {{phone.name}}
-                <p>{{phone.snippet}}</p>
-            </li>
-        </ul>
-        <p>Query: {{query}}</p>
-        <p>Total number of phones: {{phones.length}}</p>
-
-        <table>
-            <tr><th>row number</th></tr>
-            <tr ng-repeat="i in [0, 1, 2, 3, 4, 5, 6, 7]"><td>{{i}}</td></tr>
-        </table>
-
+		<div id="main-content"></div>
         <script data-main="app.js" src="lib/requirejs/require-jquery.js"></script>
 	</body>
 </html>
