@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util', 'jquery'],
-function (Bindable, util, $) {
+['jquery', 'Bindable', 'Util'],
+function ($, Bindable, util) {
 	'use strict';
 
 	/**
@@ -135,7 +135,7 @@ function (Bindable, util, $) {
 	 * @param {String} [dataType] Response data type, defaults to JSON
 	 * @return {jQuery.Deferred} jQuery deferred
 	 */
-	ResourceManager.prototype.get = function(
+	ResourceManager.prototype.post = function(
 		url,
 		data,
 		callback,
@@ -182,12 +182,22 @@ function (Bindable, util, $) {
 	 * @param {String} module Name of the module
 	 * @param {String} action Name of the module action
 	 * @param {Function} callback Callback to call with loaded
+	 * @return {jQuery.Deferred} jQuery deferred
 	 */
 	ResourceManager.prototype.loadView = function (module, action, callback) {
-		var filename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
+		var self = this,
+			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
 
-		this.get(filename)
+		if (util.typeOf(this._views[filename]) === 'string') {
+			if (util.typeOf(callback) === 'function') {
+				callback(this._views[filename]);
+			}
+		}
+
+		return this.get(filename)
 			.success(function(html) {
+				self._views[filename] = html;
+
 				if (util.typeOf(callback) === 'function') {
 					callback(html);
 				}
@@ -195,6 +205,23 @@ function (Bindable, util, $) {
 				throw new Error('Loading view ' + module + '::' + action + ' from ' + filename + ' failed');
 			});
 	};
+
+	/**
+	 * Loads a css file.
+	 *
+	 * @param {String} filename File to load
+	 * @return {ResourceManager} Self
+	 */
+	ResourceManager.prototype.loadCss = function(filename) {
+		$('<link>')
+			.attr({
+				rel: 'stylesheet',
+				type: 'text/css',
+				href: filename
+			}).appendTo('head');
+
+		return this;
+	}
 
 	return new ResourceManager();
 });

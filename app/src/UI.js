@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bindable', 'Debug'],
-function($, Bindable, dbg) {
+['jquery', 'config/main', 'Bindable', 'Debug', 'DebugRenderer'],
+function($, config, Bindable, dbg, debugRenderer) {
 	'use strict';
 
 	/**
@@ -22,7 +22,7 @@ function($, Bindable, dbg) {
 	UI.prototype = new Bindable();
 
 	/**
-	 * Debugger event types.
+	 * Event types.
 	 *
 	 * @event
 	 * @param {Object} Event
@@ -41,25 +41,8 @@ function($, Bindable, dbg) {
 	UI.prototype.init = function() {
 		var self = this;
 
-		this._initDebugListeners();
-
 		$(document).ready(function() {
 			self._onDocumentReady();
-		});
-
-		return this;
-	};
-
-	/**
-	 * Initializes the debug listeners.
-	 *
-	 * @method _initDebugListeners
-	 * @return {Debug} Self
-	 * @private
-	 */
-	UI.prototype._initDebugListeners = function() {
-		dbg.bind(dbg.Event.CONSOLE, function(e) {
-			console.log('CONSOLE', e);
 		});
 
 		return this;
@@ -72,11 +55,13 @@ function($, Bindable, dbg) {
 	 * @private
 	 */
 	UI.prototype._onDocumentReady = function() {
+		if (config.debug) {
+			debugRenderer.init();
+		}
+
 		this.fire({
 			type: this.Event.READY
 		});
-
-		$(document.body).css('background-color', '#0F0');
 	};
 
 	return new UI();

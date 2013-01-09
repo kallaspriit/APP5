@@ -1,6 +1,6 @@
 define(
-['Bindable'],
-function (Bindable) {
+['Bindable', 'Util'],
+function (Bindable, util) {
 	'use strict';
 
 	/**
@@ -81,25 +81,27 @@ function (Bindable) {
 	 * The message is passed on to any listeners of given type.
 	 *
 	 * @method error
-	 * @param {String} message Message
 	 * @chainable
 	 */
-	Debug.prototype.error = function (message) {
-		this._queue.error.push(message);
+	Debug.prototype.error = function () {
+		var source = this._getSource();
+
+		this._queue.error.push(arguments);
 
 		if (this.numListeners(this.Event.ERROR) === 0) {
 			return this;
 		}
 
 		while (this._queue.error.length > 0) {
-			var msg = this._queue.error.shift();
+			var args = this._queue.error.shift();
 
 			this.fire({
 				type: this.Event.ERROR,
-				message: msg
+				args: args,
+				source: source
 			});
 
-			this._archive.error.push(msg);
+			this._archive.error.push(args);
 		}
 
 		return this;
@@ -114,6 +116,8 @@ function (Bindable) {
 	 * @chainable
 	 */
 	Debug.prototype.log = function () {
+		var source = this._getSource();
+
 		this._queue.log.push(arguments);
 
 		if (this.numListeners(this.Event.LOG) === 0) {
@@ -125,7 +129,8 @@ function (Bindable) {
 
 			this.fire({
 				type: this.Event.LOG,
-				args: args
+				args: args,
+				source: source
 			});
 
 			this._archive.log.push(args);
@@ -141,6 +146,8 @@ function (Bindable) {
 	 * @chainable
 	 */
 	Debug.prototype.console = function () {
+		var source = this._getSource();
+
 		this._queue.console.push(arguments);
 
 		if (this.numListeners(this.Event.CONSOLE) === 0) {
@@ -152,7 +159,8 @@ function (Bindable) {
 
 			this.fire({
 				type: this.Event.CONSOLE,
-				args: this._queue.console.shift()
+				args: this._queue.console.shift(),
+				source: source
 			});
 
 			this._archive.console.push(args);
@@ -169,11 +177,10 @@ function (Bindable) {
 	 * The message is passed on to any listeners of given type.
 	 *
 	 * @method alert
-	 * @param {String} message Message
 	 * @chainable
 	 */
-	Debug.prototype.alert = function (message) {
-		this._queue.alert.push(message);
+	Debug.prototype.alert = function () {
+		this._queue.alert.push(arguments);
 
 		if (this.numListeners(this.Event.ALERT) === 0) {
 			return this;
@@ -183,21 +190,45 @@ function (Bindable) {
 			result;
 
 		while (this._queue.alert.length > 0) {
-			var msg = this._queue.alert.shift();
+			var args = this._queue.alert.shift();
 
 			result = this.fire({
 				type: this.Event.ALERT,
-				message: msg
+				args: args
 			});
 
 			if (result === false) {
 				propagate = false;
 			}
 
-			this._archive.alert.push(msg);
+			this._archive.alert.push(args);
 		}
 
 		return propagate;
+	};
+
+	/**
+	 * Returns debug message source info.
+	 *
+	 * @return {Object} Including method, filename, line, column
+	 * @private
+	 */
+	Debug.prototype._getSource = function() {
+		var stackLine = (new Error).stack.split("\n")[3],
+			regex = /at (.+) \((.+):(\d+):(\d+)\)/;
+
+		if (util.typeOf(stackLine) !== 'string' || !regex.test(stackLine)) {
+			return null;
+		}
+
+		var	matches = regex.exec(stackLine);
+
+		return {
+			method: matches[1],
+			filename: matches[2],
+			line: parseInt(matches[3]),
+			column: parseInt(matches[4])
+		};
 	};
 
 	return new Debug();

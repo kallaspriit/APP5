@@ -6,6 +6,7 @@ require.config({
 		config: '../config',
 		angular: '../lib/angular/angular',
 		underscore: '../lib/underscore/underscore',
+		moment: '../lib/moment/moment',
 		jquery: 'empty:'
 	},
 	shim: {
@@ -14,7 +15,10 @@ require.config({
 		},
         angular: {
             exports: 'angular'
-        }
+        },
+		moment: {
+			exports: 'moment'
+		}
 	}
 });
 

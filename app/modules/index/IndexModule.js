@@ -6,7 +6,7 @@ define(function() {
 	 *
 	 * @class IndexModule
 	 * @constructor
-	 * @module Index
+	 * @module Modules
 	 */
 	return {
 
@@ -22,7 +22,7 @@ define(function() {
 		indexAction: function($scope, dbg, util, navi) {
 			this.$inject = ['$scope', 'dbg', 'util', 'navi'];
 
-			console.log('IndexModule contructor', util.date());
+			dbg.console('IndexModule contructor', util.date());
 
 			$scope.title = 'Testing AngularJS!';
 			$scope.phones = [
@@ -42,7 +42,9 @@ define(function() {
 				navi.open('index', 'test');
 			};
 
-			dbg.log('! test');
+			dbg.log('! test', window.app);
+			dbg.log('+ another', ['a', 'b'], {c: 'd', e: 'f'}, 52, true);
+			dbg.log('- error', ['a', 'b'], {c: 'd', e: 'f'}, 52, true);
 		},
 
 		/**
@@ -50,11 +52,16 @@ define(function() {
 		 *
 		 * @method testAction
 		 * @param {$scope} $scope Angular scope
+		 * @param {Navi} navi Navigation
 		 */
-		testAction: function($scope) {
-			this.$inject = ['$scope'];
+		testAction: function($scope, navi) {
+			this.$inject = ['$scope', 'navi'];
 
 			$scope.name = 'APP5';
+
+			$scope.back = function() {
+				navi.back();
+			};
 		}
 	};
 });

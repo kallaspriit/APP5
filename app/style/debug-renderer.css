@@ -1,0 +1,62 @@
+#debug-renderer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 14px;
+	background-color: rgba(255, 255, 255, 0.75);
+	/*border-left: 2px solid #CCC;*/
+	padding: 1px 0 0 1px;
+	font-family: Consolas;
+	-webkit-transition: width 300ms ease-in;
+	-moz-transition: width 300ms ease-in;
+	-o-transition: width 300ms ease-in;
+	transition: width 300ms ease-in;
+}
+#debug-renderer:hover, #debug-renderer.visible {
+	width: 600px;
+}
+#debug-renderer DIV {
+	position: relative;
+	line-height: 14px;
+	height: 14px;
+	overflow: hidden;
+	font-size: 11px;
+	color: #333;
+	padding: 0 0 0 14px;
+	background-position: 1px 1px;
+	background-repeat: no-repeat;
+}
+#debug-renderer DIV:nth-child(even) {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+#debug-renderer DIV SPAN {
+	position: absolute;
+	right: 0;
+	top: 0;
+	line-height: 14px;
+	height: 14px;
+	font-size: 11px;
+	color: #FFF;
+	padding: 0 2px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+#debug-renderer DIV:hover {
+	height: auto;
+}
+#debug-renderer DIV:hover SPAN {
+	display: block;
+}
+#debug-renderer .info {
+	background-image: url(../images/debug-renderer/info-bg.png);
+}
+#debug-renderer .alert {
+	background-image: url(../images/debug-renderer/alert-bg.png);
+}
+#debug-renderer .error {
+	background-image: url(../images/debug-renderer/error-bg.png);
+}
+#debug-renderer .success {
+	background-image: url(../images/debug-renderer/success-bg.png);
+}

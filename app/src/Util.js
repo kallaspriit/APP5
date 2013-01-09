@@ -211,39 +211,56 @@ function(_) {
 			}
 		},
 
-	/**
-	 * Converts from controller-name to ControllerName style.
-	 *
-	 * @method convertEntityName
-	 * @param {String} name Name to convert
-	 * @return {String}
-	 */
-	convertEntityName: function(name) {
-		var dashPos;
+		/**
+		 * Converts from controller-name to ControllerName style.
+		 *
+		 * @method convertEntityName
+		 * @param {String} name Name to convert
+		 * @return {String}
+		 */
+		convertEntityName: function(name) {
+			var dashPos;
 
-		while ((dashPos = name.indexOf('-')) != -1) {
-			name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
-		}
+			while ((dashPos = name.indexOf('-')) != -1) {
+				name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
+			}
 
-		return name.substr(0, 1).toUpperCase() + name.substr(1);
-	},
+			return name.substr(0, 1).toUpperCase() + name.substr(1);
+		},
 
-	/**
-	 * Converts from action-name to actionName style.
-	 *
-	 * @method convertCallableName
-	 * @param {String} name Name to convert
-	 * @return {String}
-	 */
-	convertCallableName: function(name) {
-		var dashPos;
+		/**
+		 * Converts from action-name to actionName style.
+		 *
+		 * @method convertCallableName
+		 * @param {String} name Name to convert
+		 * @return {String}
+		 */
+		convertCallableName: function(name) {
+			var dashPos;
 
-		while ((dashPos = name.indexOf('-')) != -1) {
-			name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
-		}
+			while ((dashPos = name.indexOf('-')) != -1) {
+				name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
+			}
 
-		return name;
-	},
+			return name;
+		},
+
+		/**
+		 * Formats path for shorter read.
+		 *
+		 * @param {String} path Path to format
+		 * @return {String}
+		 */
+		formatPath: function(path) {
+			var regex = /http:\/\/.+?\/(.+)/,
+				matches = regex.exec(path);
+
+			if (matches === null) {
+				return path;
+			}
+
+			return matches[1];
+		},
 
 		/**
 		 * Does absolutely nothing.
