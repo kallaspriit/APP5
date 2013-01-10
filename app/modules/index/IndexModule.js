@@ -57,6 +57,10 @@ define(function() {
 				dbg.log('! Another event', this);
 			}, 5000, true);
 
+			scheduler.setInterval(function() {
+				dbg.log('! Interval', this);
+			}, 1000);
+
 			util.noop(timeout, timeout2);
 
 			/*dbg.log('! test', window.app);

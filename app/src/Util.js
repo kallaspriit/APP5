@@ -313,7 +313,7 @@ function(_) {
 
 				collection.splice(index, 1);
 
-				return tru;
+				return true;
 			} else if (type === 'object') {
 				var key;
 
