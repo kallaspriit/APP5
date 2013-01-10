@@ -89,7 +89,7 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 
 				window.app.modules[className] = moduleObj;
 
-				var contentWrap = $('#main-content');
+				var contentWrap = $(config.viewSelector);
 
 				contentWrap
 					.html(viewContent)

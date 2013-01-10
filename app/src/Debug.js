@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util'],
-function (Bindable, util) {
+['Bindable', 'Util', 'underscore'],
+function(Bindable, util, _) {
 	'use strict';
 
 	/**
@@ -22,7 +22,7 @@ function (Bindable, util) {
 	 * @constructor
 	 * @module Core
 	 */
-	var Debug = function () {
+	var Debug = function() {
 		this._queue = {
 			error: [],
 			log: [],
@@ -37,12 +37,19 @@ function (Bindable, util) {
 		};
 
 		var self = this,
-			existingAlertFunction = window.alert;
+			existingAlertFunction = window.alert,
+			existingErrorFunction = window.onerror;
 
-		window.alert = function (message) {
+		window.alert = function(message) {
 			if (self.alert(message) !== false) {
 				existingAlertFunction(message);
 			}
+		};
+
+		window.onerror = function() {
+			// @TODO Implement this
+
+			existingErrorFunction.apply(existingErrorFunction, _.toArray(arguments));
 		};
 	};
 
@@ -71,7 +78,7 @@ function (Bindable, util) {
 	 * @method init
 	 * @return {Debug} Self
 	 */
-	Debug.prototype.init = function () {
+	Debug.prototype.init = function() {
 		return this;
 	};
 
@@ -83,7 +90,7 @@ function (Bindable, util) {
 	 * @method error
 	 * @chainable
 	 */
-	Debug.prototype.error = function () {
+	Debug.prototype.error = function() {
 		var source = this._getSource();
 
 		this._queue.error.push(arguments);
@@ -115,7 +122,7 @@ function (Bindable, util) {
 	 * @method log
 	 * @chainable
 	 */
-	Debug.prototype.log = function () {
+	Debug.prototype.log = function() {
 		var source = this._getSource();
 
 		this._queue.log.push(arguments);
@@ -145,7 +152,7 @@ function (Bindable, util) {
 	 * @method console
 	 * @chainable
 	 */
-	Debug.prototype.console = function () {
+	Debug.prototype.console = function() {
 		var source = this._getSource();
 
 		this._queue.console.push(arguments);
@@ -179,7 +186,9 @@ function (Bindable, util) {
 	 * @method alert
 	 * @chainable
 	 */
-	Debug.prototype.alert = function () {
+	Debug.prototype.alert = function() {
+		var source = this._getSource();
+
 		this._queue.alert.push(arguments);
 
 		if (this.numListeners(this.Event.ALERT) === 0) {
@@ -194,7 +203,8 @@ function (Bindable, util) {
 
 			result = this.fire({
 				type: this.Event.ALERT,
-				args: args
+				args: args,
+				source: source
 			});
 
 			if (result === false) {
@@ -210,11 +220,16 @@ function (Bindable, util) {
 	/**
 	 * Returns debug message source info.
 	 *
+	 * @method _getSource
+	 * @param {Number} [index=3] Stack trace index
 	 * @return {Object} Including method, filename, line, column
 	 * @private
 	 */
-	Debug.prototype._getSource = function() {
-		var stackLine = (new Error).stack.split("\n")[3],
+	Debug.prototype._getSource = function(index) {
+		index = index || 3;
+
+		var stack = (new Error()).stack,
+			stackLine = stack.split('\n')[index],
 			regex = /at (.+) \((.+):(\d+):(\d+)\)/;
 
 		if (util.typeOf(stackLine) !== 'string' || !regex.test(stackLine)) {
@@ -223,11 +238,15 @@ function (Bindable, util) {
 
 		var	matches = regex.exec(stackLine);
 
+		if (matches[2].substr(-8) == 'Debug.js' && index === 3) {
+			return this._getSource(5);
+		}
+
 		return {
 			method: matches[1],
 			filename: matches[2],
-			line: parseInt(matches[3]),
-			column: parseInt(matches[4])
+			line: parseInt(matches[3], 10),
+			column: parseInt(matches[4], 10)
 		};
 	};
 

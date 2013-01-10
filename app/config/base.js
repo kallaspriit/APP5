@@ -30,6 +30,14 @@ define(function() {
 			module: 'index',
 			action: 'index',
 			parameters: []
-		}
+		},
+
+		/**
+		 * Selector for the container where views are loaded into.
+		 *
+		 * @property viewSelector
+		 * @type String
+		 */
+		viewSelector: '#main-content'
 	};
 });

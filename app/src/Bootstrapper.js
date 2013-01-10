@@ -1,7 +1,7 @@
 define(
-['Debug', 'config/main', 'ResourceManager', 'UI', 'Navi', 'Util', 'angular'],
+['Debug', 'config/main', 'ResourceManager', 'UI', 'Navi', 'Scheduler', 'Util', 'angular'],
 
-function (dbg, config, resourceManager, ui, navi, util, angular) {
+function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 	'use strict';
 
 	/**
@@ -11,7 +11,7 @@ function (dbg, config, resourceManager, ui, navi, util, angular) {
 	 * @constructor
 	 * @module Core
 	 */
-	var Bootstrapper = function () {
+	var Bootstrapper = function() {
 		this._app = {};
 	};
 
@@ -20,7 +20,7 @@ function (dbg, config, resourceManager, ui, navi, util, angular) {
 	 *
 	 * @method bootstrap
 	 */
-	Bootstrapper.prototype.bootstrap = function () {
+	Bootstrapper.prototype.bootstrap = function() {
 		var self = this;
 
 		this._app = {
@@ -28,6 +28,7 @@ function (dbg, config, resourceManager, ui, navi, util, angular) {
 			resourceManager: resourceManager.init(),
 			ui: ui.init(),
 			navi: navi.init(),
+			scheduler: scheduler.init(),
 			util: util,
 			modules: {}
 		};

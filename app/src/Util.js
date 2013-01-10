@@ -74,9 +74,9 @@ function(_) {
 		/**
 		 * Converts any type of argument to a string
 		 *
-		 * @method toString
-		 * @param {*} arg
-		 * @return {*}
+		 * @method str
+		 * @param {*} arg Argument to convert
+		 * @return {String}
 		 */
 		str: function(arg) {
 			if (arg === null) {
@@ -88,14 +88,44 @@ function(_) {
 			}
 		},
 
+		/**
+		 * Converts any type of argument to a boolean.
+		 *
+		 * @method bool
+		 * @param {*} arg Argument to convert
+		 * @return {Boolean}
+		 */
+		bool: function(arg) {
+			return arg ? true : false;
+		},
+
+		/**
+		 * Returns the type of given argument, always lowercase.
+		 *
+		 * Possible return values:
+		 *
+		 *	- string
+		 *	- array
+		 *	- number
+		 *	- object
+		 *	- function
+		 *	- date
+		 *	- math
+		 *	- undefined
+		 *	- null
+		 *
+		 * @method typeOf
+		 * @param {*} arg Argument to get type of
+		 * @return {String}
+		 */
 		typeOf: (function toType(global) {
-			return function(obj) {
-				if (typeof(obj) === 'undefined') {
+			return function(arg) {
+				if (typeof(arg) === 'undefined') {
 					return 'undefined';
-				} else if (obj === global) {
+				} else if (arg === global) {
 					return 'global';
 				} else {
-					return ({}).toString.call(obj).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
+					return ({}).toString.call(arg).match(/\s([a-z|A-Z]+)/)[1].toLowerCase();
 				}
 			};
 		})(this),
@@ -248,6 +278,7 @@ function(_) {
 		/**
 		 * Formats path for shorter read.
 		 *
+		 * @method formatPath
 		 * @param {String} path Path to format
 		 * @return {String}
 		 */
@@ -260,6 +291,44 @@ function(_) {
 			}
 
 			return matches[1];
+		},
+
+		/**
+		 * Removes an item from collection.
+		 *
+		 * @method remove
+		 * @param {*} item Item to remove
+		 * @param {Array|Object} collection Collection to remove from
+		 * @return {Boolean}
+		 */
+		remove: function(item, collection) {
+			var type = this.typeOf(collection);
+
+			if (type === 'array') {
+				var index = collection.indexOf(item);
+
+				if (index === -1) {
+					return false;
+				}
+
+				collection.splice(index, 1);
+
+				return tru;
+			} else if (type === 'object') {
+				var key;
+
+				for (key in collection) {
+					if (collection[key] === item) {
+						delete collection[key];
+
+						return true;
+					}
+				}
+
+				return false;
+			} else {
+				throw new Error('Unable to remove item, invalid collection');
+			}
 		},
 
 		/**
