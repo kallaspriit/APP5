@@ -198,18 +198,6 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 			modal = $('#debug-renderer-error');
 		}
 
-		/*if (dtv.translator.has(title)) {
-			title = dtv.translator.translate(title);
-		}
-
-		if (dtv.translator.has(message)) {
-			message = dtv.translator.translate(message);
-		}
-
-		if (dtv.translator.has(location)) {
-			location = dtv.translator.translate(location);
-		}*/
-
 		modal.find('.debug-renderer-error-title').html(title);
 		modal.find('.debug-renderer-error-content').html(message);
 		modal.find('.debug-renderer-error-location').html(location);

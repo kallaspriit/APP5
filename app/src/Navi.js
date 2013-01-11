@@ -26,6 +26,8 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 */
 	var Navi = function() {
 		this._stack = [];
+		this._containers = ['content-a', 'content-b'];
+		this._containerIndex = 0;
 	};
 
 	Navi.prototype = new Bindable();
@@ -85,28 +87,16 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 
 		resourceManager.loadModule(module, function(moduleObj) {
 			resourceManager.loadView(module, action, function(viewContent) {
-				self._appendNavigation(module, action, parameters);
-
-				window.app.modules[className] = moduleObj;
-
-				var contentWrap = $(config.viewSelector);
-
-				contentWrap
-					.html(viewContent)
-					.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
-
-				angular.bootstrap(contentWrap, ['app']);
-
-				if (util.typeOf(doneCallback) === 'function') {
-					doneCallback(module, action, parameters, moduleObj);
-				}
-
-				self.fire({
-					type: self.Event.POST_NAVIGATE,
-					module: module,
-					action: action,
-					parameters: parameters
-				});
+				self._renderView(
+					module,
+					action,
+					className,
+					actionName,
+					parameters,
+					moduleObj,
+					viewContent,
+					doneCallback
+				);
 			});
 		});
 
@@ -164,35 +154,17 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	};
 
 	/**
-	 * Returns currently active action module name.
+	 * Returns previously active action info.
 	 *
-	 * @method getCurrentModule
-	 * @return {String|null}
+	 * @method getPrevious
+	 * @return {Object|null}
 	 */
-	Navi.prototype.getCurrentModule = function() {
-		var item = this.getCurrent();
-
-		if (item === null) {
+	Navi.prototype.getPrevious = function() {
+		if (this._stack.length < 2) {
 			return null;
 		}
 
-		return item.module;
-	};
-
-	/**
-	 * Returns currently active module action name.
-	 *
-	 * @method getCurrentAction
-	 * @return {String|null}
-	 */
-	Navi.prototype.getCurrentAction = function() {
-		var item = this.getCurrent();
-
-		if (item === null) {
-			return null;
-		}
-
-		return item.action;
+		return this._stack[this._stack.length - 2];
 	};
 
 	/**
@@ -206,6 +178,57 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		this.fire({
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
+		});
+	};
+
+	/**
+	 * Renders module action view.
+	 *
+	 * @param {String} module Name of the module
+	 * @param {String} action Name of the action
+	 * @param {String} className Class name of the module
+	 * @param {String} actionName Method name of the action
+	 * @param {Array} parameters Action parameters
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent View content to render
+	 * @param {Function} doneCallback Callback to call when done
+	 * @private
+	 */
+	Navi.prototype._renderView = function(
+		module,
+		action,
+		className,
+		actionName,
+		parameters,
+		moduleObj,
+		viewContent,
+		doneCallback
+	) {
+		this._appendNavigation(module, action, parameters, moduleObj);
+
+		window.app.modules[className] = moduleObj;
+
+		//var contentWrap = $(config.viewSelector);
+		var containerName = this._containers[this._containerIndex],
+			contentWrap = $('#' + containerName);
+
+		this._containerIndex = (this._containerIndex + 1) % 2;
+
+		contentWrap
+			.html(viewContent)
+			.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
+
+		angular.bootstrap(contentWrap, ['app']);
+
+		if (util.typeOf(doneCallback) === 'function') {
+			doneCallback(module, action, parameters, moduleObj);
+		}
+
+		this.fire({
+			type: this.Event.POST_NAVIGATE,
+			module: module,
+			action: action,
+			parameters: parameters
 		});
 	};
 
@@ -262,9 +285,10 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 * @param {String} module Name of the module to use
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
+	 * @param {Object} instance Instance of the module
 	 * @private
 	 */
-	Navi.prototype._appendNavigation = function(module, action, parameters) {
+	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {
 		var duplicate = false,
 			allowDuplicate = util.typeOf(parameters._allowDuplicate) === 'undefined'
 				? false
@@ -286,7 +310,8 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		this._stack.push({
 			module: module,
 			action: action,
-			parameters: parameters
+			parameters: parameters,
+			instance: instance
 		});
 
 		if (
