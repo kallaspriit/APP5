@@ -36,20 +36,20 @@ function(Bindable, util, _) {
 			alert: []
 		};
 
-		var self = this,
-			existingAlertFunction = window.alert,
-			existingErrorFunction = window.onerror;
+		var self = this;
+
+		this._nativeAlert = window.alert;
 
 		window.alert = function(message) {
-			if (self.alert(message) !== false) {
-				existingAlertFunction(message);
-			}
+			self.alert(message);
 		};
 
-		window.onerror = function() {
-			// @TODO Implement this
+		window.onerror = function(message, filename, line) {
+			if (self._onError(message, filename, line) === false) {
+				return false;
+			}
 
-			existingErrorFunction.apply(existingErrorFunction, _.toArray(arguments));
+			return true;
 		};
 	};
 
@@ -93,23 +93,8 @@ function(Bindable, util, _) {
 	Debug.prototype.error = function() {
 		var source = this._getSource();
 
-		this._queue.error.push(arguments);
-
-		if (this.numListeners(this.Event.ERROR) === 0) {
-			return this;
-		}
-
-		while (this._queue.error.length > 0) {
-			var args = this._queue.error.shift();
-
-			this.fire({
-				type: this.Event.ERROR,
-				args: args,
-				source: source
-			});
-
-			this._archive.error.push(args);
-		}
+		this._queue.error.push([_.toArray(arguments), source]);
+		this._flush();
 
 		return this;
 	};
@@ -125,23 +110,8 @@ function(Bindable, util, _) {
 	Debug.prototype.log = function() {
 		var source = this._getSource();
 
-		this._queue.log.push(arguments);
-
-		if (this.numListeners(this.Event.LOG) === 0) {
-			return this;
-		}
-
-		while (this._queue.log.length > 0) {
-			var args = this._queue.log.shift();
-
-			this.fire({
-				type: this.Event.LOG,
-				args: args,
-				source: source
-			});
-
-			this._archive.log.push(args);
-		}
+		this._queue.log.push([_.toArray(arguments), source]);
+		this._flush();
 
 		return this;
 	};
@@ -155,23 +125,8 @@ function(Bindable, util, _) {
 	Debug.prototype.console = function() {
 		var source = this._getSource();
 
-		this._queue.console.push(arguments);
-
-		if (this.numListeners(this.Event.CONSOLE) === 0) {
-			return this;
-		}
-
-		while (this._queue.console.length > 0) {
-			var args = this._queue.log.shift();
-
-			this.fire({
-				type: this.Event.CONSOLE,
-				args: this._queue.console.shift(),
-				source: source
-			});
-
-			this._archive.console.push(args);
-		}
+		this._queue.console.push([_.toArray(arguments), source]);
+		this._flush();
 
 		return this;
 	};
@@ -189,32 +144,115 @@ function(Bindable, util, _) {
 	Debug.prototype.alert = function() {
 		var source = this._getSource();
 
-		this._queue.alert.push(arguments);
+		this._queue.alert.push([_.toArray(arguments), source]);
+		this._flush();
 
-		if (this.numListeners(this.Event.ALERT) === 0) {
-			return this;
-		}
+		return this;
+	};
 
-		var propagate = true,
-			result;
+	/**
+	 * Called when a new listener is binded.
+	 *
+	 * Flushes debug events.
+	 *
+	 * @method _onBind
+	 * @param {String} type Type of listener added
+	 * @param {Function} listener The added listener function
+	 * @protected
+	 */
+	Debug.prototype._onBind = function(/*type, listener*/) {
+		this._flush();
+	};
 
-		while (this._queue.alert.length > 0) {
-			var args = this._queue.alert.shift();
+	/**
+	 * Flushes all events to listeners.
+	 *
+	 * @method _flush
+	 * @private
+	 */
+	Debug.prototype._flush = function() {
+		var info,
+			args,
+			source;
 
-			result = this.fire({
-				type: this.Event.ALERT,
-				args: args,
-				source: source
-			});
+		if (this.numListeners(this.Event.ERROR) > 0) {
+			while (this._queue.error.length > 0) {
+				info = this._queue.error.shift();
+				args = info[0];
+				source = info[1];
 
-			if (result === false) {
-				propagate = false;
+				this.fire({
+					type: this.Event.ERROR,
+					args: args,
+					source: source
+				});
+
+				this._archive.error.push(args);
 			}
-
-			this._archive.alert.push(args);
 		}
 
-		return propagate;
+		if (this.numListeners(this.Event.LOG) > 0) {
+			while (this._queue.log.length > 0) {
+				info = this._queue.log.shift();
+				args = info[0];
+				source = info[1];
+
+				this.fire({
+					type: this.Event.LOG,
+					args: args,
+					source: source
+				});
+
+				this._archive.log.push(args);
+			}
+		}
+
+		if (this.numListeners(this.Event.CONSOLE) > 0) {
+			while (this._queue.console.length > 0) {
+				info = this._queue.console.shift();
+				args = info[0];
+				source = info[1];
+
+				this.fire({
+					type: this.Event.CONSOLE,
+					args: args,
+					source: source
+				});
+
+				this._archive.console.push(args);
+			}
+		}
+
+		if (this.numListeners(this.Event.ALERT) > 0) {
+			while (this._queue.alert.length > 0) {
+				info = this._queue.alert.shift();
+				args = info[0];
+				source = info[1];
+
+				this.fire({
+					type: this.Event.ALERT,
+					args: args,
+					source: source
+				});
+
+				this._archive.alert.push(args);
+			}
+		}
+	};
+
+	/**
+	 * Called on JavaScript error.
+	 *
+	 * @method _onError
+	 * @param {String} message Error message
+	 * @param {String} filename Error source file
+	 * @param {Number} line Line number
+	 * @private
+	 */
+	Debug.prototype._onError = function(message, filename, line) {
+		window.console.log('error', arguments);
+
+		this.error(message, filename, line);
 	};
 
 	/**
@@ -228,26 +266,17 @@ function(Bindable, util, _) {
 	Debug.prototype._getSource = function(index) {
 		index = index || 3;
 
-		var stack = (new Error()).stack,
-			stackLine = stack.split('\n')[index],
-			regex = /at (.+) \((.+):(\d+):(\d+)\)/;
+		var stack = (new Error()).stack.split('\n'),
+			stackLine = stack[index],
+			matches = util.parseStackLine(stackLine);
 
-		if (util.typeOf(stackLine) !== 'string' || !regex.test(stackLine)) {
+		if (matches === null) {
 			return null;
-		}
-
-		var	matches = regex.exec(stackLine);
-
-		if (matches[2].substr(-8) == 'Debug.js' && index === 3) {
+		} else if (matches.filename.substr(-8) == 'Debug.js' && index === 3) {
 			return this._getSource(5);
+		} else {
+			return matches;
 		}
-
-		return {
-			method: matches[1],
-			filename: matches[2],
-			line: parseInt(matches[3], 10),
-			column: parseInt(matches[4], 10)
-		};
 	};
 
 	return new Debug();

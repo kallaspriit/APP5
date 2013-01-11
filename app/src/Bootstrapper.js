@@ -38,12 +38,20 @@ function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 			window.app = this._app;
 		}
 
-		angular.module('app', []).
-			config(function($provide) {
+		angular.module('app', [])
+			.config(function($provide) {
 				// register module resources
 				for (var key in self._app) {
 					$provide.value(key, self._app[key]);
 				}
+
+				$provide.factory('$exceptionHandler', function() {
+					return function(exception) {
+						dbg.error(exception);
+
+						return false;
+					};
+				});
 			});
 
 		angular.element(document).ready(function() {

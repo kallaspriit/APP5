@@ -42,8 +42,22 @@ function() {
 			this._listeners[type[i]].push(listener);
 		}
 
+		this._onBind(type, listener);
+
 		return listener;
 	};
+
+	/**
+	 * Called when a new listener is binded.
+	 *
+	 * This does noting by default but can be overriden in child class to do something when a listener is added.
+	 *
+	 * @method _onBind
+	 * @param {String} type Type of listener added
+	 * @param {Function} listener The added listener function
+	 * @protected
+	 */
+	Bindable.prototype._onBind = function(/*type, listener*/) {};
 
 	/**
 	 * Removes listener of given type.

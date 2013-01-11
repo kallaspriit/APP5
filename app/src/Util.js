@@ -331,6 +331,22 @@ function(_) {
 			}
 		},
 
+		parseStackLine: function(line) {
+			var regex = /at (.+) \((.+):(\d+):(\d+)\)/,
+				matches = regex.exec(line);
+
+			if (matches === null) {
+				return null;
+			}
+
+			return {
+				method: matches[1],
+				filename: matches[2],
+				line: parseInt(matches[3], 10),
+				column: parseInt(matches[4], 10)
+			};
+		},
+
 		/**
 		 * Does absolutely nothing.
 		 *

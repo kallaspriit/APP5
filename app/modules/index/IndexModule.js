@@ -63,6 +63,10 @@ define(function() {
 
 			util.noop(timeout, timeout2);
 
+			//dbg.error('Test error', 'another');
+
+			//errorTest();
+
 			/*dbg.log('! test', window.app);
 			dbg.log('+ another', ['a', 'b'], {c: 'd', e: 'f'}, 52, true);
 			dbg.log('- error', ['a', 'b'], {c: 'd', e: 'f'}, 52, true);
