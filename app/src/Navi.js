@@ -114,18 +114,16 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		var currentItem = this.getCurrent(),
 			previousItem = this.getPrevious();
 
-console.log('back current', currentItem, 'previous', previousItem);
-
 		if (currentItem !== null) {
 			if (previousItem !== null && previousItem.module !== currentItem.module) {
 				if (util.isFunction(currentItem.instance.onExit)) {
 					currentItem.instance.onExit.apply(currentItem.instance, [previousItem.module]);
 				}
 			} else {
-				if (util.isFunction(currentItem.instance.onChangeAction)) {
-					currentItem.instance.onChangeAction.apply(
+				if (util.isFunction(currentItem.instance.onWakeup)) {
+					currentItem.instance.onWakeup.apply(
 						currentItem.instance,
-						[currentItem.action, previousItem.action]
+						[previousItem.action]
 					);
 				}
 			}
@@ -263,18 +261,38 @@ console.log('back current', currentItem, 'previous', previousItem);
 		doneCallback
 	) {
 		var currentItem = this.getCurrent(),
-			//previousItem = this.getPrevious(),
-			//existingItem = this.getExistingItem(module, action),
-			newItem = this._appendNavigation(module, action, parameters, moduleObj),
+			existingItem = this.getExistingItem(module, action),
+			i;
+
+		if (existingItem !== null) {
+			for (i = this._stack.length - 1; i >= 0; i--) {
+				if (this._stack[i].module === module && this._stack[i].action === action) {
+					break;
+				}
+
+				if (module !== this._stack[i].module) {
+					if (util.isFunction(this._stack[i].instance.onExit)) {
+						this._stack[i].instance.onExit.apply(this._stack[i].instance, [module]);
+					}
+				}
+
+				this._stack[i].container.remove();
+				this._stack.pop();
+			}
+
+			existingItem.container.addClass('active');
+
+			if (util.isFunction(existingItem.instance.onWakeup)) {
+				existingItem.instance.onWakeup.apply(existingItem.instance, [action]);
+			}
+
+			return;
+		}
+
+		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
 			outerWrap = $(config.viewSelector),
 			wrapId = 'content-' + newItem.id,
 			contentWrap;
-
-		/*if (existingItem !== null) {
-			// @TODO Close everything on top of existing
-
-
-		}*/
 
 		if (currentItem !== null && util.isFunction(currentItem.instance.onSleep)) {
 			currentItem.instance.onSleep.apply(currentItem.instance, [currentItem.action]);
@@ -300,11 +318,12 @@ console.log('back current', currentItem, 'previous', previousItem);
 			.html(viewContent)
 			.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
 
+		newItem.container = contentWrap;
+
 		window.app.module.value('parameters', parameters);
+		//window.app.module.
 
-		var injector = angular.bootstrap(contentWrap, ['app']);
-
-		newItem.injector = injector;
+		newItem.injector = angular.bootstrap(contentWrap, ['app']);
 
 		outerWrap.find('.active').removeClass('active');
 		contentWrap.addClass('active');
@@ -401,7 +420,8 @@ console.log('back current', currentItem, 'previous', previousItem);
 			action: action,
 			parameters: parameters,
 			instance: instance,
-			level: this._stack.length
+			level: this._stack.length,
+			container: null
 		});
 
 		if ((util.isUndefined(parameters._allowLoops) || parameters._allowLoops !== true) && !allowDuplicate) {

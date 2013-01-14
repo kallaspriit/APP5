@@ -39,6 +39,7 @@ define(function() {
 		 * @param {Util} util Utilities
 		 * @param {Navi} navi Navigator
 		 * @param {Scheduler} scheduler Scheduler
+		 * @param {Object} parameters Action parameters
 		 */
 		indexAction: function($scope, dbg, util, navi, scheduler, parameters) {
 console.log('PARAMETERS', parameters);
@@ -84,6 +85,10 @@ console.log('PARAMETERS', parameters);
 
 			util.noop(timeout, timeout2);
 
+			$scope.$on('test', function(e) {
+				dbg.console('LISTENED EVENT', e);
+			});
+
 			//dbg.error('Test error', 'another');
 
 			//errorTest();
@@ -114,6 +119,10 @@ console.log('PARAMETERS', parameters);
 
 			$scope.back = function() {
 				navi.back();
+			};
+
+			$scope.indexTest = function() {
+				navi.open('index', 'index', ['foo', 'bar']);
 			};
 		}
 	};
