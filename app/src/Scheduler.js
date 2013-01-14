@@ -63,7 +63,7 @@ function(Bindable, util, navi) {
 			this._id = window.setInterval(function() {
 				self._counter++;
 
-				if (util.typeOf(callback) === 'function') {
+				if (util.isFunction(callback)) {
 					callback.apply(self, parameters);
 				}
 			}, milliseconds);
@@ -71,7 +71,7 @@ function(Bindable, util, navi) {
 			this._id = window.setTimeout(function() {
 				self._alive = false;
 
-				if (util.typeOf(callback) === 'function') {
+				if (util.isFunction(callback)) {
 					callback.apply(self, parameters);
 				}
 			}, milliseconds);
@@ -147,7 +147,7 @@ function(Bindable, util, navi) {
 	 * @return {Scheduler.Timeout}
 	 */
 	Scheduler.prototype.setTimeout = function(component, callback, milliseconds, persistent, parameters) {
-		if (util.typeOf(component) === 'function') {
+		if (util.isFunction(component)) {
 			component = 'general';
 			callback = arguments[0];
 			milliseconds = arguments[1];
@@ -155,13 +155,13 @@ function(Bindable, util, navi) {
 			parameters = arguments[3];
 		}
 
-		persistent = util.typeOf(persistent) === 'undefined' ? false : util.bool(persistent);
+		persistent = util.isUndefined(persistent) ? false : util.bool(persistent);
 		parameters = parameters || [];
 
 		var isInterval = arguments.length === 6 && arguments[5] === true,
 			timeout = new Scheduler.Timeout(component, callback, milliseconds, persistent, parameters, isInterval);
 
-		if (util.typeOf(this._timeouts[component]) === 'undefined') {
+		if (util.isUndefined(this._timeouts[component])) {
 			this._timeouts[component] = [];
 		}
 
@@ -199,7 +199,7 @@ function(Bindable, util, navi) {
 	 */
 	Scheduler.prototype.clearTimeouts = function(type, includingPersistent) {
 		type = type || null;
-		includingPersistent = util.typeOf(includingPersistent) === 'undefined' ? true : util.bool(includingPersistent);
+		includingPersistent = util.isUndefined(includingPersistent) ? true : util.bool(includingPersistent);
 
 		var isInterval = arguments.length === 3 && arguments[2] === true,
 			component,

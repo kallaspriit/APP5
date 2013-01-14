@@ -26,8 +26,7 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 */
 	var Navi = function() {
 		this._stack = [];
-		this._containers = ['content-a', 'content-b'];
-		this._containerIndex = 0;
+		this._naviCounter = 0;
 	};
 
 	Navi.prototype = new Bindable();
@@ -87,7 +86,9 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 
 		resourceManager.loadModule(module, function(moduleObj) {
 			resourceManager.loadView(module, action, function(viewContent) {
-				self._renderView(
+				window.app.modules[className] = moduleObj;
+				
+				self._showView(
 					module,
 					action,
 					className,
@@ -108,14 +109,38 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 *
 	 * @method back
 	 * @param {Object} [additionalParameters] Extends the default parameters
-	 * @param {Number} [steps = 1] How many steps to jump back
 	 */
-	Navi.prototype.back = function(additionalParameters, steps) {
-		steps = steps || 1;
+	Navi.prototype.back = function(additionalParameters) {
+		var currentItem = this.getCurrent(),
+			previousItem = this.getPrevious();
 
-		var item = this._popLastAction(steps);
+console.log('back current', currentItem, 'previous', previousItem);
 
-		if (item === null) {
+		if (currentItem !== null) {
+			if (previousItem !== null && previousItem.module !== currentItem.module) {
+				if (util.isFunction(currentItem.instance.onExit)) {
+					currentItem.instance.onExit.apply(currentItem.instance, [previousItem.module]);
+				}
+			} else {
+				if (util.isFunction(currentItem.instance.onChangeAction)) {
+					currentItem.instance.onChangeAction.apply(
+						currentItem.instance,
+						[currentItem.action, previousItem.action]
+					);
+				}
+			}
+
+			var currentItemWrapId = 'content-' + currentItem.id,
+				currentItemContentWrap = $('#' + currentItemWrapId);
+
+			if (currentItemContentWrap.length > 0) {
+				currentItemContentWrap.remove();
+			}
+
+			this._stack.pop();
+		}
+
+		if (previousItem === null) {
 			this.open(
 				config.index.module,
 				config.index.action,
@@ -125,18 +150,27 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 			return;
 		}
 
-		var parameters = item.parameters;
-
 		if (
 			additionalParameters !== null
-			&& util.typeOf(additionalParameters) === 'object'
+			&& util.isObject(additionalParameters)
 		) {
-			parameters = util.extend(parameters, additionalParameters);
+			previousItem.parameters = util.extend(previousItem.parameters, additionalParameters);
 		}
 
-		parameters._back = true;
+		previousItem.parameters._back = true;
 
-		this.open(item.module, item.action, parameters);
+		if (util.isFunction(previousItem.onWakeup)) {
+			previousItem.onWakeup.apply(previousItem.instance, [previousItem.action]);
+		}
+
+		var wrapId = 'content-' + previousItem.id,
+			contentWrap = $('#' + wrapId);
+
+		if (contentWrap.length > 0) {
+			contentWrap.addClass('active');
+		}
+
+		//this.open(previousItem.module, previousItem.action, parameters);
 	};
 
 	/**
@@ -181,6 +215,30 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		});
 	};
 
+
+	/**
+	 * Returns already open matching navi item if available.
+	 *
+	 * @method getExistingItem
+	 * @param {String} module Module name
+	 * @param {String} action Action name
+	 * @return {Object|null} Navi info or null if not exists
+	 */
+	Navi.prototype.getExistingItem = function(module, action) {
+		var i,
+			item;
+
+		for (i = 0; i < this._stack.length; i++) {
+			item = this._stack[i];
+
+			if (item.module === module && item.action === action) {
+				return item;
+			}
+		}
+
+		return null;
+	};
+
 	/**
 	 * Renders module action view.
 	 *
@@ -194,7 +252,7 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 * @param {Function} doneCallback Callback to call when done
 	 * @private
 	 */
-	Navi.prototype._renderView = function(
+	Navi.prototype._showView = function(
 		module,
 		action,
 		className,
@@ -204,13 +262,37 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		viewContent,
 		doneCallback
 	) {
-		this._appendNavigation(module, action, parameters, moduleObj);
+		var currentItem = this.getCurrent(),
+			//previousItem = this.getPrevious(),
+			//existingItem = this.getExistingItem(module, action),
+			newItem = this._appendNavigation(module, action, parameters, moduleObj),
+			outerWrap = $(config.viewSelector),
+			wrapId = 'content-' + newItem.id,
+			contentWrap;
 
-		window.app.modules[className] = moduleObj;
+		/*if (existingItem !== null) {
+			// @TODO Close everything on top of existing
 
-		//var contentWrap = $(config.viewSelector);
-		var containerName = this._containers[this._containerIndex],
-			contentWrap = $('#' + containerName);
+
+		}*/
+
+		if (currentItem !== null && util.isFunction(currentItem.instance.onSleep)) {
+			currentItem.instance.onSleep.apply(currentItem.instance, [currentItem.action]);
+		}
+
+		if (currentItem === null || currentItem.module !== module) {
+			if (util.isFunction(newItem.instance.onEnter)) {
+				newItem.instance.onEnter.apply(newItem.instance, [currentItem !== null ? currentItem.module : null]);
+			}
+		} else {
+			if (util.isFunction(newItem.instance.onChangeAction)) {
+				newItem.instance.onChangeAction.apply(newItem.instance, [currentItem.action, action]);
+			}
+		}
+
+		outerWrap.append('<div id="' + wrapId + '" class="content"></div>');
+
+		contentWrap = $('#' + wrapId);
 
 		this._containerIndex = (this._containerIndex + 1) % 2;
 
@@ -218,9 +300,16 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 			.html(viewContent)
 			.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
 
-		angular.bootstrap(contentWrap, ['app']);
+		window.app.module.value('parameters', parameters);
 
-		if (util.typeOf(doneCallback) === 'function') {
+		var injector = angular.bootstrap(contentWrap, ['app']);
+
+		newItem.injector = injector;
+
+		outerWrap.find('.active').removeClass('active');
+		contentWrap.addClass('active');
+
+		if (util.isFunction(doneCallback)) {
 			doneCallback(module, action, parameters, moduleObj);
 		}
 
@@ -286,13 +375,12 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
 	 * @param {Object} instance Instance of the module
+	 * @return {Number} Content id
 	 * @private
 	 */
 	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {
 		var duplicate = false,
-			allowDuplicate = util.typeOf(parameters._allowDuplicate) === 'undefined'
-				? false
-				: parameters._allowDuplicate,
+			allowDuplicate = util.isUndefined(parameters._allowDuplicate) ? false : parameters._allowDuplicate,
 			last;
 
 		if (!allowDuplicate && this._stack.length > 0) {
@@ -308,19 +396,15 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		}
 
 		this._stack.push({
+			id: this._naviCounter++,
 			module: module,
 			action: action,
 			parameters: parameters,
-			instance: instance
+			instance: instance,
+			level: this._stack.length
 		});
 
-		if (
-			(
-				util.typeOf(parameters._allowLoops) === 'undefined'
-				|| parameters._allowLoops !== true
-			)
-			&& !allowDuplicate
-		) {
+		if ((util.isUndefined(parameters._allowLoops) || parameters._allowLoops !== true) && !allowDuplicate) {
 			var lastItem = this._stack[this._stack.length - 1],
 				lastModule = lastItem.module,
 				lastAction = lastItem.action,
@@ -347,6 +431,8 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
+
+		return this._stack[this._stack.length - 1];
 	};
 
 	return new Navi();

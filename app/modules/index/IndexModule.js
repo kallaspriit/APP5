@@ -10,6 +10,26 @@ define(function() {
 	 */
 	return {
 
+		onEnter: function(previousModule) {
+			console.log('ENTER INDEX FROM', previousModule);
+		},
+
+		onChangeAction: function(lastAction, newAction) {
+			console.log('CHANGE ACTION FROM', lastAction, 'TO', newAction);
+		},
+
+		onExit: function(newModule) {
+			console.log('EXIT INDEX TO', newModule);
+		},
+
+		onWakeup: function(action) {
+			console.log('WAKEUP TO', action);
+		},
+
+		onSleep: function(action) {
+			console.log('SLEEP', action);
+		},
+
 		/**
 		 * Index action.
 		 *
@@ -20,10 +40,11 @@ define(function() {
 		 * @param {Navi} navi Navigator
 		 * @param {Scheduler} scheduler Scheduler
 		 */
-		indexAction: function($scope, dbg, util, navi, scheduler) {
+		indexAction: function($scope, dbg, util, navi, scheduler, parameters) {
+console.log('PARAMETERS', parameters);
 			//this.$inject = ['$scope', 'dbg', 'util', 'navi', 'scheduler'];
 
-			dbg.console('IndexModule contructor', util.date());
+			//dbg.console('IndexModule contructor', util.date());
 
 			$scope.title = 'Testing AngularJS!';
 			$scope.phones = [

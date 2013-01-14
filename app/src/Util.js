@@ -131,6 +131,106 @@ function(_) {
 		})(this),
 
 		/**
+		 * Returns whether given argument is a function.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isFunction: function(arg) {
+			return this.typeOf(arg) === 'function';
+		},
+
+		/**
+		 * Returns whether given argument is a string.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isString: function(arg) {
+			return this.typeOf(arg) === 'string';
+		},
+
+		/**
+		 * Returns whether given argument is a boolean.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isBoolean: function(arg) {
+			return this.typeOf(arg) === 'boolean';
+		},
+
+		/**
+		 * Returns whether given argument is a number.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isNumber: function(arg) {
+			return this.typeOf(arg) === 'number';
+		},
+
+		/**
+		 * Returns whether given argument is an array.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isArray: function(arg) {
+			return this.typeOf(arg) === 'array';
+		},
+
+		/**
+		 * Returns whether given argument is an array.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isObject: function(arg) {
+			return this.typeOf(arg) === 'object';
+		},
+
+		/**
+		 * Returns whether given argument is null.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isNull: function(arg) {
+			return this.typeOf(arg) === 'null';
+		},
+
+		/**
+		 * Returns whether given argument is date.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isDate: function(arg) {
+			return this.typeOf(arg) === 'date';
+		},
+
+		/**
+		 * Returns whether given argument is an error object.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isError: function(arg) {
+			return this.typeOf(arg) === 'error';
+		},
+
+		/**
+		 * Returns whether given argument is undefined.
+		 *
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isUndefined: function(arg) {
+			return this.typeOf(arg) === 'undefined';
+		},
+
+		/**
 		 * Parses URL parameters from given path.
 		 *
 		 * @method parseUrlParameters

@@ -38,6 +38,6 @@ define(function() {
 		 * @property viewSelector
 		 * @type String
 		 */
-		viewSelector: '#main-content'
+		viewSelector: '#contents'
 	};
 });

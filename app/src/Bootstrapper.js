@@ -30,16 +30,14 @@ function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 			navi: navi.init(),
 			scheduler: scheduler.init(),
 			util: util,
+			module: null,
+			injector: null,
 			modules: {}
 		};
 
-		// register the core application components in global scope for debugging, never rely on this
-		if (config.debug) {
-			window.app = this._app;
-		}
+		this._app.module = angular.module('app', []);
 
-		angular.module('app', [])
-			.config(function($provide) {
+		this._app.module.config(function($provide) {
 				// register module resources
 				for (var key in self._app) {
 					$provide.value(key, self._app[key]);
@@ -53,6 +51,13 @@ function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 					};
 				});
 			});
+
+		this._app.injector = angular.injector(['ng', 'app']);
+
+		// register the core application components in global scope for debugging, never rely on this
+		//if (config.debug) {
+			window.app = this._app;
+		//}
 
 		angular.element(document).ready(function() {
 			// navigate to the index action

@@ -11,11 +11,20 @@ BODY {
 	font-family: Arial;
 	background: url(../images/body-bg.jpg) no-repeat center center;
 }
-/*#main-content {
+#contents {
+	position: relative;
 	margin: 0;
 	padding: 20px;
-}*/
-#content-a, #content-b {
+}
+.content {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	background-color: rgba(255, 0, 0, 0.5);
+}
+
+/*#content-a, #content-b {
 	position: absolute;
 	top: 0;
 	width: 50%;
@@ -29,4 +38,4 @@ BODY {
 #content-b {
 	left: 50%;
 	background-color: rgba(0, 0, 255, 0.25);
-}
+}*/

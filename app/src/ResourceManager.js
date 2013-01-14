@@ -101,11 +101,11 @@ function($, Bindable, util) {
 			},*/
 			cache: false
 		}).success(function(data) {
-			if (util.typeOf(callback) === 'function') {
+			if (util.isFunction(callback)) {
 				callback(data);
 			}
 		}).fail(function() {
-			if (util.typeOf(callback) === 'function') {
+			if (util.isFunction(callback)) {
 				callback(null);
 			}
 		});
@@ -161,8 +161,8 @@ function($, Bindable, util) {
 		var self = this,
 			className = util.convertEntityName(name) + 'Module';
 
-		if (util.typeOf(this._modules[name]) === 'object') {
-			if (util.typeOf(callback) === 'function') {
+		if (util.isObject(this._modules[name])) {
+			if (util.isFunction(callback)) {
 				callback(this._modules[name]);
 			}
 
@@ -187,13 +187,13 @@ function($, Bindable, util) {
 				module: module
 			});
 
-			if (util.typeOf(module) !== 'object') {
+			if (!util.isObject(module)) {
 				throw new Error('Invalid module "' + name + '" requested');
 			}
 
 			self._modules[name] = module;
 
-			if (util.typeOf(callback) === 'function') {
+			if (util.isFunction(callback)) {
 				callback(module);
 			}
 		});
@@ -214,8 +214,8 @@ function($, Bindable, util) {
 		var self = this,
 			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
 
-		if (util.typeOf(this._views[filename]) === 'string') {
-			if (util.typeOf(callback) === 'function') {
+		if (util.isString(this._views[filename])) {
+			if (util.isFunction(callback)) {
 				callback(this._views[filename]);
 			}
 
@@ -236,7 +236,7 @@ function($, Bindable, util) {
 
 				self._views[filename] = html;
 
-				if (util.typeOf(callback) === 'function') {
+				if (util.isFunction(callback)) {
 					callback(html);
 				}
 			}).error(function() {

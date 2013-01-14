@@ -47,7 +47,7 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 				args = [moment(time).format('hh:mm:ss')],
 				i;
 
-			if (util.typeOf(e.source) === 'object') {
+			if (util.isObject(e.source)) {
 				args.push(util.formatPath(e.source.filename) + ':' + e.source.line);
 			}
 
@@ -106,11 +106,11 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 				filename = 'unknown',
 				line = '?';
 
-			if (e.args.length === 3 && util.typeOf(e.args[2]) === 'number') {
+			if (e.args.length === 3 && util.isNumber(e.args[2])) {
 				message = e.args[0];
 				filename = e.args[1];
 				line = e.args[2];
-			} else if (e.args.length === 1 && util.typeOf(e.args[0]) === 'error') {
+			} else if (e.args.length === 1 && util.isError(e.args[0])) {
 				message = e.args[0].message;
 				stack = _.filter(_.map(e.args[0].stack.split('\n'), function(line) {
 					return util.parseStackLine(line);
@@ -170,7 +170,7 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 			stackTrace = '',
 			i;
 
-		if (util.typeOf(stack) === 'array' && stack.length > 0) {
+		if (util.isArray(stack) && stack.length > 0) {
 			for (i = 0; i < stack.length; i++) {
 				if (i > 0) {
 					stackTrace += '<br>';
@@ -243,7 +243,7 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 		var wrap = $('#debug-renderer'),
 			sourceContent;
 
-		if (util.typeOf(source) === 'object') {
+		if (util.isObject(source)) {
 			sourceContent = util.formatPath(source.filename) + ':' + source.line;
 		} else {
 			sourceContent = '<em>unknown</em>';
@@ -272,7 +272,7 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 		for (var i = 0; i < properties.length; i++) {
 			token = properties[i];
 
-			if (i === 0 && util.typeOf(token) === 'string' && /[\-+!] /.test(token)) {
+			if (i === 0 && util.isString(token) && /[\-+!] /.test(token)) {
 				token = token.substr(2);
 			}
 
