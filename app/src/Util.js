@@ -72,6 +72,18 @@ function(_) {
 		},
 
 		/**
+		 * Returns whether given collection contains an element.
+		 *
+		 * @method contains
+		 * @param {Object} collection Collection to check
+		 * @param {*} element Element to check for
+		 * @return {Boolean}
+		 */
+		contains: function(collection, element) {
+			return _.contains(collection, element);
+		},
+
+		/**
 		 * Converts any type of argument to a string
 		 *
 		 * @method str

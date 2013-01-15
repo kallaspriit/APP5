@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Debug', 'Util', 'ResourceManager', 'config/main', 'angular'],
-function(Bindable, dbg, util, resourceManager, config, angular) {
+['Bindable', 'Debug', 'Util', 'ResourceManager', 'Keyboard', 'config/main', 'angular'],
+function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	'use strict';
 
 	/**
@@ -27,6 +27,7 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	var Navi = function() {
 		this._stack = [];
 		this._naviCounter = 0;
+		this._module = null;
 	};
 
 	Navi.prototype = new Bindable();
@@ -53,6 +54,25 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 	 * @return {Navi} Self
 	 */
 	Navi.prototype.init = function() {
+		var self = this;
+
+		keyboard.bind(keyboard.Event.KEY_DOWN, function(e) {
+			self._onKeyEvent(e.info);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Sets the angular app module to use.
+	 *
+	 * @method setModule
+	 * @param {angular.Module} module Module to use
+	 * @return {Navi} Self
+	 */
+	Navi.prototype.setModule = function(module) {
+		this._module = module;
+
 		return this;
 	};
 
@@ -74,9 +94,6 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action';
 
-		window.app = window.app || {};
-		window.app.modules = window.app.modules || {};
-
 		this.fire({
 			type: this.Event.PRE_NAVIGATE,
 			module: module,
@@ -86,7 +103,9 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 
 		resourceManager.loadModule(module, function(moduleObj) {
 			resourceManager.loadView(module, action, function(viewContent) {
-				window.app.modules[className] = moduleObj;
+				if (config.debug) {
+					window.app.modules[className] = moduleObj;
+				}
 				
 				self._showView(
 					module,
@@ -316,14 +335,19 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 
 		contentWrap
 			.html(viewContent)
-			.attr('ng-controller', 'app.modules.' + className + '.' + actionName);
+			.attr('ng-controller', className + '.' + actionName);
 
 		newItem.container = contentWrap;
 
-		window.app.module.value('parameters', parameters);
-		//window.app.module.
+		this._module.value('parameters', parameters);
+		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
 
 		newItem.injector = angular.bootstrap(contentWrap, ['app']);
+		newItem.fire = function(type, parameters) {
+			this.injector.get('$rootScope').$broadcast(type, parameters);
+		};
+
+		newItem.fire('test', {a: 'b', c: 'd'});
 
 		outerWrap.find('.active').removeClass('active');
 		contentWrap.addClass('active');
@@ -453,6 +477,25 @@ function(Bindable, dbg, util, resourceManager, config, angular) {
 		});
 
 		return this._stack[this._stack.length - 1];
+	};
+
+	/**
+	 * Triggered on key events.
+	 *
+	 * Passes the key event on to currently active module action controller.
+	 *
+	 * @method _onKeyEvent
+	 * @param {Keyboard.KeyEvent} event Key event
+	 * @private
+	 */
+	Navi.prototype._onKeyEvent = function(event) {
+		var currentItem = this.getCurrent();
+
+		if (currentItem === null) {
+			return;
+		}
+
+		currentItem.fire(event.type, event);
 	};
 
 	return new Navi();

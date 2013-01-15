@@ -42,7 +42,7 @@ define(function() {
 		 * @param {Object} parameters Action parameters
 		 */
 		indexAction: function($scope, dbg, util, navi, scheduler, parameters) {
-console.log('PARAMETERS', parameters);
+			console.log('PARAMETERS', parameters);
 			//this.$inject = ['$scope', 'dbg', 'util', 'navi', 'scheduler'];
 
 			//dbg.console('IndexModule contructor', util.date());
@@ -85,8 +85,12 @@ console.log('PARAMETERS', parameters);
 
 			util.noop(timeout, timeout2);
 
-			$scope.$on('test', function(e) {
-				dbg.console('LISTENED EVENT', e);
+			$scope.$on('test', function(e, args) {
+				dbg.console('LISTENED EVENT', e, args);
+			});
+
+			$scope.$on('keydown', function(e, keyEvent) {
+				dbg.console('MODULE KEY DOWN', keyEvent.name);
 			});
 
 			//dbg.error('Test error', 'another');
@@ -101,7 +105,7 @@ console.log('PARAMETERS', parameters);
 			dbg.alert('Another alert');*/
 
 			/*window.setInterval(function() {
-				dbg.log('! Date', util.date());
+			dbg.log('! Date', util.date());
 			}, 100);*/
 		},
 

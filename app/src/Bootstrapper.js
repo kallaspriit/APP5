@@ -1,7 +1,6 @@
 define(
-['Debug', 'config/main', 'ResourceManager', 'UI', 'Navi', 'Scheduler', 'Util', 'angular'],
-
-function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
+['Debug', 'config/main', 'ResourceManager', 'Keyboard', 'UI', 'Navi', 'Scheduler', 'Util', 'angular'],
+function(dbg, config, resourceManager, keyboard, ui, navi, scheduler, util, angular) {
 	'use strict';
 
 	/**
@@ -26,6 +25,7 @@ function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 		this._app = {
 			dbg: dbg.init(),
 			resourceManager: resourceManager.init(),
+			keyboard: keyboard.init(),
 			ui: ui.init(),
 			navi: navi.init(),
 			scheduler: scheduler.init(),
@@ -53,11 +53,13 @@ function(dbg, config, resourceManager, ui, navi, scheduler, util, angular) {
 			});
 
 		this._app.injector = angular.injector(['ng', 'app']);
+		this._app.root = this._app.injector.get('$rootScope');
+		this._app.navi.setModule(this._app.module);
 
 		// register the core application components in global scope for debugging, never rely on this
-		//if (config.debug) {
+		if (config.debug) {
 			window.app = this._app;
-		//}
+		}
 
 		angular.element(document).ready(function() {
 			// navigate to the index action
