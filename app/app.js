@@ -1,3 +1,9 @@
+/**
+ * TODO Mouse event
+ * TODO View transition animations
+ * TODO i18n
+ */
+
 require.config({
 	baseUrl: 'src',
 	paths: {

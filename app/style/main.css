@@ -22,20 +22,8 @@ BODY {
 	top: 0;
 	width: 100%;
 	background-color: rgba(255, 0, 0, 0.5);
+	display: none;
 }
-
-/*#content-a, #content-b {
-	position: absolute;
-	top: 0;
-	width: 50%;
-	min-height: 100%;
-	box-sizing: border-box;
-	padding: 20px;
+.content.active {
+	display: block;
 }
-#content-a {
-	background-color: rgba(255, 0, 0, 0.25);
-}
-#content-b {
-	left: 50%;
-	background-color: rgba(0, 0, 255, 0.25);
-}*/

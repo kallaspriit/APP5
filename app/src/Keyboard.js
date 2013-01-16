@@ -8,9 +8,9 @@ function(Bindable, util, $) {
 	 *
 	 * Can fire the following events:
 	 *
-	 *	> KEY_DOWN - fired when key is pressed down
+	 *	> KEYDOWN - fired when key is pressed down
 	 *		info - Keyboard.KeyEvent event
-	 *	> KEY_UP - fired when key is released
+	 *	> KEYUP - fired when key is released
 	 *		info - Keyboard.KeyEvent event
 	 *
 	 * @class Keyboard
@@ -33,8 +33,8 @@ function(Bindable, util, $) {
 	 * @param {String} Event.KEY_UP Triggered on key up
 	 */
 	Keyboard.prototype.Event = {
-		KEY_DOWN: 'key-down',
-		KEY_UP: 'key-up'
+		KEYDOWN: 'keydown',
+		KEYUP: 'keyup'
 	};
 
 	/**
@@ -372,13 +372,13 @@ function(Bindable, util, $) {
 				this._keyDown.push(event.keyCode);
 			}
 
-			eventType = this.Event.KEY_DOWN;
+			eventType = this.Event.KEYDOWN;
 		} else if (event.type === 'keyup') {
 			if (util.contains(this._keyDown, event.keyCode)) {
 				util.remove(event.keyCode, this._keyDown);
 			}
 
-			eventType = this.Event.KEY_UP;
+			eventType = this.Event.KEYUP;
 		} else {
 			throw new Error('Unexpected key event type "' + event.type + '"');
 		}

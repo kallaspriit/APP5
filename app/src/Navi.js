@@ -40,11 +40,17 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	 * @param {String} Event.PRE_NAVIGATE Triggered just before navigation
 	 * @param {String} Event.POST_NAVIGATE Triggered just after navigation
 	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
+	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
+	 * @param {String} Event.WAKEUP Called on scope when action is awaken
+	 * @param {String} Event.EXIT Called on scope when action is killed
 	 */
 	Navi.prototype.Event = {
 		PRE_NAVIGATE: 'pre-navigate',
 		POST_NAVIGATE: 'post-navigate',
-		STACK_CHANGED: 'stack-changed'
+		STACK_CHANGED: 'stack-changed',
+		SLEEP: 'sleep',
+		WAKEUP: 'wakeup',
+		EXIT: 'exit'
 	};
 
 	/**
@@ -56,7 +62,11 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	Navi.prototype.init = function() {
 		var self = this;
 
-		keyboard.bind(keyboard.Event.KEY_DOWN, function(e) {
+		keyboard.bind(keyboard.Event.KEYDOWN, function(e) {
+			self._onKeyEvent(e.info);
+		});
+
+		keyboard.bind(keyboard.Event.KEYUP, function(e) {
 			self._onKeyEvent(e.info);
 		});
 
@@ -133,29 +143,21 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 		var currentItem = this.getCurrent(),
 			previousItem = this.getPrevious();
 
-		if (currentItem !== null) {
-			if (previousItem !== null && previousItem.module !== currentItem.module) {
-				if (util.isFunction(currentItem.instance.onExit)) {
-					currentItem.instance.onExit.apply(currentItem.instance, [previousItem.module]);
-				}
-			} else {
-				if (util.isFunction(currentItem.instance.onWakeup)) {
-					currentItem.instance.onWakeup.apply(
-						currentItem.instance,
-						[previousItem.action]
-					);
-				}
-			}
-
-			var currentItemWrapId = 'content-' + currentItem.id,
-				currentItemContentWrap = $('#' + currentItemWrapId);
-
-			if (currentItemContentWrap.length > 0) {
-				currentItemContentWrap.remove();
-			}
-
-			this._stack.pop();
+		if (currentItem === null) {
+			return;
 		}
+
+		//this._transitionBack(currentItem, previousItem);
+
+		// TODO Close animation
+		var currentItemWrapId = 'content-' + currentItem.id,
+			currentItemContentWrap = $('#' + currentItemWrapId);
+
+		if (currentItemContentWrap.length > 0) {
+			currentItemContentWrap.remove();
+		}
+
+		currentItem.fire(this.Event.EXIT);
 
 		if (previousItem === null) {
 			this.open(
@@ -167,17 +169,12 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			return;
 		}
 
-		if (
-			additionalParameters !== null
-			&& util.isObject(additionalParameters)
-		) {
+		this._stack.pop();
+
+		previousItem.fire(this.Event.WAKEUP);
+
+		if (additionalParameters !== null && util.isObject(additionalParameters)) {
 			previousItem.parameters = util.extend(previousItem.parameters, additionalParameters);
-		}
-
-		previousItem.parameters._back = true;
-
-		if (util.isFunction(previousItem.onWakeup)) {
-			previousItem.onWakeup.apply(previousItem.instance, [previousItem.action]);
 		}
 
 		var wrapId = 'content-' + previousItem.id,
@@ -186,9 +183,15 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 		if (contentWrap.length > 0) {
 			contentWrap.addClass('active');
 		}
-
-		//this.open(previousItem.module, previousItem.action, parameters);
 	};
+
+	/*Navi.prototype._transitionTo = function(from, to) {
+
+	};
+
+	Navi.prototype._transitionBack = function(from, to) {
+
+	};*/
 
 	/**
 	 * Returns currently active action info.
@@ -281,31 +284,22 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	) {
 		var currentItem = this.getCurrent(),
 			existingItem = this.getExistingItem(module, action),
-			i;
+			back = false,
+			stackItem;
 
 		if (existingItem !== null) {
-			for (i = this._stack.length - 1; i >= 0; i--) {
-				if (this._stack[i].module === module && this._stack[i].action === action) {
+			while (this._stack.length > 0) {
+				stackItem = this._stack.pop();
+
+				stackItem.fire(this.Event.EXIT);
+				stackItem.container.remove(); // TODO Animate view switch
+
+				if (stackItem.module === module && stackItem.action === action) {
 					break;
 				}
-
-				if (module !== this._stack[i].module) {
-					if (util.isFunction(this._stack[i].instance.onExit)) {
-						this._stack[i].instance.onExit.apply(this._stack[i].instance, [module]);
-					}
-				}
-
-				this._stack[i].container.remove();
-				this._stack.pop();
 			}
 
-			existingItem.container.addClass('active');
-
-			if (util.isFunction(existingItem.instance.onWakeup)) {
-				existingItem.instance.onWakeup.apply(existingItem.instance, [action]);
-			}
-
-			return;
+			back = true;
 		}
 
 		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
@@ -313,18 +307,8 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			wrapId = 'content-' + newItem.id,
 			contentWrap;
 
-		if (currentItem !== null && util.isFunction(currentItem.instance.onSleep)) {
-			currentItem.instance.onSleep.apply(currentItem.instance, [currentItem.action]);
-		}
-
-		if (currentItem === null || currentItem.module !== module) {
-			if (util.isFunction(newItem.instance.onEnter)) {
-				newItem.instance.onEnter.apply(newItem.instance, [currentItem !== null ? currentItem.module : null]);
-			}
-		} else {
-			if (util.isFunction(newItem.instance.onChangeAction)) {
-				newItem.instance.onChangeAction.apply(newItem.instance, [currentItem.action, action]);
-			}
+		if (currentItem !== null && back !== true) {
+			currentItem.fire(this.Event.SLEEP);
 		}
 
 		outerWrap.append('<div id="' + wrapId + '" class="content"></div>');
@@ -346,8 +330,6 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 		newItem.fire = function(type, parameters) {
 			this.injector.get('$rootScope').$broadcast(type, parameters);
 		};
-
-		newItem.fire('test', {a: 'b', c: 'd'});
 
 		outerWrap.find('.active').removeClass('active');
 		contentWrap.addClass('active');

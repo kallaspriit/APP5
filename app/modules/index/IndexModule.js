@@ -10,7 +10,7 @@ define(function() {
 	 */
 	return {
 
-		onEnter: function(previousModule) {
+		/*onEnter: function(previousModule) {
 			console.log('ENTER INDEX FROM', previousModule);
 		},
 
@@ -28,7 +28,7 @@ define(function() {
 
 		onSleep: function(action) {
 			console.log('SLEEP', action);
-		},
+		},*/
 
 		/**
 		 * Index action.
@@ -39,9 +39,10 @@ define(function() {
 		 * @param {Util} util Utilities
 		 * @param {Navi} navi Navigator
 		 * @param {Scheduler} scheduler Scheduler
+		 * @param {Keyboard} keyboard Scheduler
 		 * @param {Object} parameters Action parameters
 		 */
-		indexAction: function($scope, dbg, util, navi, scheduler, parameters) {
+		indexAction: function($scope, dbg, util, navi, scheduler, keyboard, parameters) {
 			console.log('PARAMETERS', parameters);
 			//this.$inject = ['$scope', 'dbg', 'util', 'navi', 'scheduler'];
 
@@ -85,12 +86,24 @@ define(function() {
 
 			util.noop(timeout, timeout2);
 
-			$scope.$on('test', function(e, args) {
-				dbg.console('LISTENED EVENT', e, args);
+			$scope.$on(navi.Event.EXIT, function(e, args) {
+				dbg.console('index::index EXIT', e, args);
 			});
 
-			$scope.$on('keydown', function(e, keyEvent) {
+			$scope.$on(navi.Event.SLEEP, function(e, args) {
+				dbg.console('index::index SLEEP', e, args);
+			});
+
+			$scope.$on(navi.Event.WAKEUP, function(e, args) {
+				dbg.console('index::index WAKEUP', e, args);
+			});
+
+			$scope.$on(keyboard.Event.KEYDOWN, function(e, keyEvent) {
 				dbg.console('MODULE KEY DOWN', keyEvent.name);
+			});
+
+			$scope.$on(keyboard.Event.KEYUP, function(e, keyEvent) {
+				dbg.console('MODULE KEY UP', keyEvent.name);
 			});
 
 			//dbg.error('Test error', 'another');
@@ -115,8 +128,9 @@ define(function() {
 		 * @method testAction
 		 * @param {$scope} $scope Angular scope
 		 * @param {Navi} navi Navigation
+		 * @param {Debug} dbg Debugger
 		 */
-		testAction: function($scope, navi) {
+		testAction: function($scope, navi, dbg) {
 			//this.$inject = ['$scope', 'navi'];
 
 			$scope.name = 'APP5';
@@ -128,6 +142,18 @@ define(function() {
 			$scope.indexTest = function() {
 				navi.open('index', 'index', ['foo', 'bar']);
 			};
+
+			$scope.$on(navi.Event.EXIT, function(e, args) {
+				dbg.console('index::test EXIT', e, args);
+			});
+
+			$scope.$on(navi.Event.SLEEP, function(e, args) {
+				dbg.console('index::test SLEEP', e, args);
+			});
+
+			$scope.$on(navi.Event.WAKEUP, function(e, args) {
+				dbg.console('index::test WAKEUP', e, args);
+			});
 		}
 	};
 });
