@@ -266,16 +266,21 @@ function(Bindable, util, _) {
 	Debug.prototype._getSource = function(index) {
 		index = index || 3;
 
-		var stack = (new Error()).stack.split('\n'),
-			stackLine = stack[index],
-			matches = util.parseStackLine(stackLine);
+		// TODO Safari doesn't support the new Error() approach
+		try {
+			var stack = (new Error()).stack.split('\n'),
+				stackLine = stack[index],
+				matches = util.parseStackLine(stackLine);
 
-		if (matches === null) {
+			if (matches === null) {
+				return null;
+			} else if (matches.filename.substr(-8) == 'Debug.js' && index === 3) {
+				return this._getSource(5);
+			} else {
+				return matches;
+			}
+		} catch (e) {
 			return null;
-		} else if (matches.filename.substr(-8) == 'Debug.js' && index === 3) {
-			return this._getSource(5);
-		} else {
-			return matches;
 		}
 	};
 

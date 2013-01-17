@@ -49,6 +49,7 @@ function(
 		var self = this;
 
 		this._app = {
+			config: config,
 			dbg: dbg.init(),
 			resourceManager: resourceManager.init(),
 			keyboard: keyboard.init(),
