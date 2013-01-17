@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Debug', 'Util', 'ResourceManager', 'Keyboard', 'config/main', 'angular'],
-function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
+['Bindable', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'config/main', 'angular'],
+function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 	'use strict';
 
 	/**
@@ -137,29 +137,17 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	 * Navigates back to previous action.
 	 *
 	 * @method back
-	 * @param {Object} [additionalParameters] Extends the default parameters
 	 */
-	Navi.prototype.back = function(additionalParameters) {
-		var currentItem = this.getCurrent(),
+	Navi.prototype.back = function() {
+		var self = this,
+			currentItem = this.getCurrent(),
 			previousItem = this.getPrevious();
 
-		if (currentItem === null) {
+		if (currentItem === null || previousItem === null) {
 			return;
 		}
 
-		//this._transitionBack(currentItem, previousItem);
-
-		// TODO Close animation
-		var currentItemWrapId = 'content-' + currentItem.id,
-			currentItemContentWrap = $('#' + currentItemWrapId);
-
-		if (currentItemContentWrap.length > 0) {
-			currentItemContentWrap.remove();
-		}
-
-		currentItem.fire(this.Event.EXIT);
-
-		if (previousItem === null) {
+		/*if (previousItem === null) {
 			this.open(
 				config.index.module,
 				config.index.action,
@@ -167,31 +155,23 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			);
 
 			return;
-		}
+		}*/
 
 		this._stack.pop();
 
 		previousItem.fire(this.Event.WAKEUP);
 
-		if (additionalParameters !== null && util.isObject(additionalParameters)) {
-			previousItem.parameters = util.extend(previousItem.parameters, additionalParameters);
-		}
+		var currentWrap = $('#content-' + currentItem.id),
+			newWrap = $('#content-' + previousItem.id);
 
-		var wrapId = 'content-' + previousItem.id,
-			contentWrap = $('#' + wrapId);
+		ui.transitionView(currentWrap, newWrap, true, function() {
+			currentItem.fire(self.Event.EXIT);
 
-		if (contentWrap.length > 0) {
-			contentWrap.addClass('active');
-		}
+			if (currentWrap.length > 0) {
+				currentWrap.remove();
+			}
+		});
 	};
-
-	/*Navi.prototype._transitionTo = function(from, to) {
-
-	};
-
-	Navi.prototype._transitionBack = function(from, to) {
-
-	};*/
 
 	/**
 	 * Returns currently active action info.
@@ -262,6 +242,7 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	/**
 	 * Renders module action view.
 	 *
+	 * @method _showView
 	 * @param {String} module Name of the module
 	 * @param {String} action Name of the action
 	 * @param {String} className Class name of the module
@@ -282,7 +263,8 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 		viewContent,
 		doneCallback
 	) {
-		var currentItem = this.getCurrent(),
+		var self = this,
+			currentItem = this.getCurrent(),
 			existingItem = this.getExistingItem(module, action),
 			back = false,
 			stackItem;
@@ -291,8 +273,12 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			while (this._stack.length > 0) {
 				stackItem = this._stack.pop();
 
+				if (stackItem === currentItem) {
+					continue;
+				}
+
 				stackItem.fire(this.Event.EXIT);
-				stackItem.container.remove(); // TODO Animate view switch
+				stackItem.container.remove();
 
 				if (stackItem.module === module && stackItem.action === action) {
 					break;
@@ -304,35 +290,34 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 
 		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
 			outerWrap = $(config.viewSelector),
-			wrapId = 'content-' + newItem.id,
-			contentWrap;
+			newWrapId = 'content-' + newItem.id,
+			currentWrap = outerWrap.find('.ui-page-active'),
+			newWrap;
+
+		outerWrap.append('<div id="' + newWrapId + '" class="ui-page"></div>');
+		newWrap = $('#' + newWrapId)
+			.html(viewContent)
+			.attr('ng-controller', className + '.' + actionName);
+
+		ui.transitionView(currentWrap, newWrap, back, function() {
+			if (back) {
+				currentItem.fire(self.Event.EXIT);
+				currentItem.container.remove();
+			}
+		});
+
+		this._module.value('parameters', parameters);
+		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
 
 		if (currentItem !== null && back !== true) {
 			currentItem.fire(this.Event.SLEEP);
 		}
 
-		outerWrap.append('<div id="' + wrapId + '" class="content"></div>');
-
-		contentWrap = $('#' + wrapId);
-
-		this._containerIndex = (this._containerIndex + 1) % 2;
-
-		contentWrap
-			.html(viewContent)
-			.attr('ng-controller', className + '.' + actionName);
-
-		newItem.container = contentWrap;
-
-		this._module.value('parameters', parameters);
-		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
-
-		newItem.injector = angular.bootstrap(contentWrap, ['app']);
+		newItem.container = newWrap;
+		newItem.injector = angular.bootstrap(newWrap, ['app']);
 		newItem.fire = function(type, parameters) {
 			this.injector.get('$rootScope').$broadcast(type, parameters);
 		};
-
-		outerWrap.find('.active').removeClass('active');
-		contentWrap.addClass('active');
 
 		if (util.isFunction(doneCallback)) {
 			doneCallback(module, action, parameters, moduleObj);
@@ -404,7 +389,7 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 	 * @private
 	 */
 	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {
-		var duplicate = false,
+		/*var duplicate = false,
 			allowDuplicate = util.isUndefined(parameters._allowDuplicate) ? false : parameters._allowDuplicate,
 			last;
 
@@ -418,7 +403,7 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 
 		if (duplicate) {
 			this._stack.pop();
-		}
+		}*/
 
 		this._stack.push({
 			id: this._naviCounter++,
@@ -430,7 +415,7 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			container: null
 		});
 
-		if ((util.isUndefined(parameters._allowLoops) || parameters._allowLoops !== true) && !allowDuplicate) {
+		/*if ((util.isUndefined(parameters._allowLoops) || parameters._allowLoops !== true) && !allowDuplicate) {
 			var lastItem = this._stack[this._stack.length - 1],
 				lastModule = lastItem.module,
 				lastAction = lastItem.action,
@@ -451,7 +436,7 @@ function(Bindable, dbg, util, resourceManager, keyboard, config, angular) {
 			}
 
 			this._stack = newStack;
-		}
+		}*/
 
 		this.fire({
 			type: this.Event.STACK_CHANGED,

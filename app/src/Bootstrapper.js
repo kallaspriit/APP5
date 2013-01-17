@@ -1,6 +1,6 @@
 define(
-['Debug', 'config/main', 'ResourceManager', 'Keyboard', 'UI', 'Navi', 'Scheduler', 'Util', 'angular'],
-function(dbg, config, resourceManager, keyboard, ui, navi, scheduler, util, angular) {
+['Debug', 'config/main', 'ResourceManager', 'Keyboard', 'UI', 'Translator', 'Navi', 'Scheduler', 'Util', 'translations', 'angular', 'jquery'],
+function(dbg, config, resourceManager, keyboard, ui, translator, navi, scheduler, util, translations, angular, $) {
 	'use strict';
 
 	/**
@@ -27,6 +27,7 @@ function(dbg, config, resourceManager, keyboard, ui, navi, scheduler, util, angu
 			resourceManager: resourceManager.init(),
 			keyboard: keyboard.init(),
 			ui: ui.init(),
+			translator: translator.init(translations, config.language),
 			navi: navi.init(),
 			scheduler: scheduler.init(),
 			util: util,
@@ -61,7 +62,7 @@ function(dbg, config, resourceManager, keyboard, ui, navi, scheduler, util, angu
 			window.app = this._app;
 		}
 
-		angular.element(document).ready(function() {
+		$(document).ready(function() {
 			// navigate to the index action
 			navi.open(
 				config.index.module,

@@ -86,6 +86,10 @@ define(function() {
 
 			util.noop(timeout, timeout2);
 
+			$scope.back = function() {
+				navi.back();
+			};
+
 			$scope.$on(navi.Event.EXIT, function(e, args) {
 				dbg.console('index::index EXIT', e, args);
 			});

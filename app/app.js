@@ -1,4 +1,4 @@
-/**
+/*
  * TODO Mouse event
  * TODO View transition animations
  * TODO i18n
@@ -10,6 +10,7 @@ require.config({
 		lib: '../lib',
 		modules: '../modules',
 		config: '../config',
+		translations: '../translations/translations',
 		angular: '../lib/angular/angular',
 		underscore: '../lib/underscore/underscore',
 		moment: '../lib/moment/moment',

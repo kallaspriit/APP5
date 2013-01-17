@@ -38,6 +38,29 @@ define(function() {
 		 * @property viewSelector
 		 * @type String
 		 */
-		viewSelector: '#contents'
+		viewSelector: '#pages',
+
+		/**
+		 * Page transition to use.
+		 *
+		 * One of:
+		 * - fade
+		 * - pop
+		 * - flip
+		 * - turn
+		 * - flow
+		 * - slide
+		 * - slideup
+		 * - slidedown
+		 */
+		pageTransition: 'slide',
+
+		/**
+		 * Default language.
+		 *
+		 * @property language
+		 * @type String
+		 */
+		language: 'en'
 	};
 });

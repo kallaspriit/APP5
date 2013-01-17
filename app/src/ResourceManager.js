@@ -249,17 +249,30 @@ function($, Bindable, util) {
 	 *
 	 * @method loadCss
 	 * @param {String} filename File to load
-	 * @return {ResourceManager} Self
+	 * @param {Function} [loadedCallback] Optional callback to call when CSS is loaded
+	 * @return {jQuery.Deferred} jQuery deferred
 	 */
-	ResourceManager.prototype.loadCss = function(filename) {
+	ResourceManager.prototype.loadCss = function(filename, loadedCallback) {
+		var id = 'css-' + util.uid(),
+			deferred = $.Deferred();
+
 		$('<link>')
 			.attr({
+				id: id,
 				rel: 'stylesheet',
 				type: 'text/css',
 				href: filename
 			}).appendTo('head');
 
-		return this;
+		$('#' + id).load(function() {
+			deferred.resolve();
+
+			if (util.isFunction(loadedCallback)) {
+				loadedCallback.call(loadedCallback);
+			}
+		});
+
+		return deferred;
 	};
 
 	return new ResourceManager();

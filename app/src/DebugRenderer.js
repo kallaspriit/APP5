@@ -1,6 +1,6 @@
 define(
-['jquery', 'Debug', 'ResourceManager', 'Util', 'Navi', 'moment', 'underscore'],
-function($, dbg, resourceManager, util, navi, moment, _) {
+['jquery', 'Debug', 'ResourceManager', 'Util', 'moment', 'underscore'],
+function($, dbg, resourceManager, util, moment, _) {
 	'use strict';
 
 	/**
@@ -21,18 +21,115 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 	 * @return {DebugRenderer} Self
 	 */
 	DebugRenderer.prototype.init = function() {
-		this._initCss();
-		this._initHtml();
-
 		var self = this;
 
-		navi.bind(navi.Event.PRE_NAVIGATE, function(e) {
-			dbg.log('! Navigating to ' + e.module + '::' + e.action, e.parameters);
+		this._initCss(function() {
+			self._initHtml();
+			self._initEvents();
 		});
 
-		/*navi.bind(navi.Event.POST_NAVIGATE, function(e) {
-			dbg.log('+ Navigated to ' + e.module + '::' + e.action);
-		});*/
+		return this;
+	};
+
+	/**
+	 * Displays error message on screen.
+	 *
+	 * @method showError
+	 * @param {String} title Modal title
+	 * @param {String} message Error message
+	 * @param {String} [location] Where the error occured
+	 * @param {Array} stack Stack trace
+	 */
+	DebugRenderer.prototype.showError = function(title, message, location, stack) {
+		title = title || 'System Error Occured';
+		message = message || 'A system error occured, sorry for the inconvenience.';
+		location = location || '';
+
+		message = '<p><strong>' + message + '</strong></p>';
+
+		var modal = $('#debug-renderer-error'),
+			stackTrace = '',
+			i;
+
+		if (util.isArray(stack) && stack.length > 0) {
+			for (i = 0; i < stack.length; i++) {
+				if (i > 0) {
+					stackTrace += '<br>';
+				}
+
+				stackTrace += '#' + (i + 1) + ' ' + stack[i].filename + ':' +
+					stack[i].line + ' - ' + stack[i].method;
+			}
+
+			message += '<p>' + stackTrace + '</p>';
+		}
+
+		if (modal.length === 0) {
+			$(document.body).append(
+				'<div id="debug-renderer-error">' +
+				'	<div class="debug-renderer-error-inner">' +
+				'		<h1 class="debug-renderer-error-title"></h1>' +
+				'		<div class="debug-renderer-error-location"></div>' +
+				'		<div class="debug-renderer-error-close">&times;</div>' +
+				'		<div class="debug-renderer-error-content"></div>' +
+				'	</div>' +
+				'</div>'
+			);
+
+			modal = $('#debug-renderer-error');
+		}
+
+		modal.find('.debug-renderer-error-title').html(title);
+		modal.find('.debug-renderer-error-content').html(message);
+		modal.find('.debug-renderer-error-location').html(location);
+		modal.find('.debug-renderer-error-close').click(function() {
+			modal.fadeOut(function() {
+				$(this).remove();
+			});
+		});
+
+		modal.fadeIn();
+	};
+
+	/**
+	 * Loads renderer css.
+	 *
+	 * @method _initCss
+	 * @private
+	 */
+	DebugRenderer.prototype._initCss = function(loadedCallback) {
+		resourceManager.loadCss('style/debug-renderer.css', loadedCallback);
+	};
+
+	/**
+	 * Generates required HTML.
+	 *
+	 * @method _initHtml
+	 * @private
+	 */
+	DebugRenderer.prototype._initHtml = function() {
+		$(document.body).append('<div id="debug-renderer"></div>');
+	};
+
+	/**
+	 * Starts listening for the debug events.
+	 *
+	 * @method _initEvents
+	 * @private
+	 */
+	DebugRenderer.prototype._initEvents = function() {
+		var self = this;
+
+		// not required at the top as this would create a dependency loop
+		require(['Navi'], function(navi) {
+			navi.bind(navi.Event.PRE_NAVIGATE, function(e) {
+				dbg.log('! Navigating to ' + e.module + '::' + e.action, e.parameters);
+			});
+
+			/*navi.bind(navi.Event.POST_NAVIGATE, function(e) {
+			 dbg.log('+ Navigated to ' + e.module + '::' + e.action);
+			 });*/
+		});
 
 		resourceManager.bind(resourceManager.Event.MODULE_LOADED, function(e) {
 			dbg.log('+ Loaded module ' + e.name);
@@ -146,88 +243,6 @@ function($, dbg, resourceManager, util, navi, moment, _) {
 				}
 			);
 		});
-
-		return this;
-	};
-
-	/**
-	 * Displays error message on screen.
-	 *
-	 * @method showError
-	 * @param {String} title Modal title
-	 * @param {String} message Error message
-	 * @param {String} [location] Where the error occured
-	 * @param {Array} stack Stack trace
-	 */
-	DebugRenderer.prototype.showError = function(title, message, location, stack) {
-		title = title || 'System Error Occured';
-		message = message || 'A system error occured, sorry for the inconvenience.';
-		location = location || '';
-
-		message = '<p><strong>' + message + '</strong></p>';
-
-		var modal = $('#debug-renderer-error'),
-			stackTrace = '',
-			i;
-
-		if (util.isArray(stack) && stack.length > 0) {
-			for (i = 0; i < stack.length; i++) {
-				if (i > 0) {
-					stackTrace += '<br>';
-				}
-
-				stackTrace += '#' + (i + 1) + ' ' + stack[i].filename + ':' +
-					stack[i].line + ' - ' + stack[i].method;
-			}
-
-			message += '<p>' + stackTrace + '</p>';
-		}
-
-		if (modal.length === 0) {
-			$(document.body).append(
-				'<div id="debug-renderer-error">' +
-				'	<div class="debug-renderer-error-inner">' +
-				'		<h1 class="debug-renderer-error-title"></h1>' +
-				'		<div class="debug-renderer-error-location"></div>' +
-				'		<div class="debug-renderer-error-close">&times;</div>' +
-				'		<div class="debug-renderer-error-content"></div>' +
-				'	</div>' +
-				'</div>'
-			);
-
-			modal = $('#debug-renderer-error');
-		}
-
-		modal.find('.debug-renderer-error-title').html(title);
-		modal.find('.debug-renderer-error-content').html(message);
-		modal.find('.debug-renderer-error-location').html(location);
-		modal.find('.debug-renderer-error-close').click(function() {
-			modal.fadeOut(function() {
-				$(this).remove();
-			});
-		});
-
-		modal.fadeIn();
-	};
-
-	/**
-	 * Loads renderer css.
-	 *
-	 * @method _initCss
-	 * @private
-	 */
-	DebugRenderer.prototype._initCss = function() {
-		resourceManager.loadCss('style/debug-renderer.css');
-	};
-
-	/**
-	 * Generates required HTML.
-	 *
-	 * @method _initHtml
-	 * @private
-	 */
-	DebugRenderer.prototype._initHtml = function() {
-		$(document.body).append('<div id="debug-renderer"></div>');
 	};
 
 	/**
