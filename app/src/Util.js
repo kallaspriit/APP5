@@ -477,49 +477,71 @@ function(_) {
 		 * @method sprintf
 		 */
 		sprintf: (function() {
-			function get_type(variable) {
+			function getType(variable) {
 				return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase();
 			}
-			function str_repeat(input, multiplier) {
-				for (var output = []; multiplier > 0; output[--multiplier] = input) {/* do nothing */}
+
+			function strRepeat(input, multiplier) {
+				var output = [],
+					i;
+
+				for (i = multiplier; multiplier > 0; multiplier--) {
+					output[multiplier] = input;
+				}
+
 				return output.join('');
 			}
 
-			var str_format = function() {
-				if (!str_format.cache.hasOwnProperty(arguments[0])) {
-					str_format.cache[arguments[0]] = str_format.parse(arguments[0]);
+			var strFormat = function() {
+				if (!strFormat.cache.hasOwnProperty(arguments[0])) {
+					strFormat.cache[arguments[0]] = strFormat.parse(arguments[0]);
 				}
-				return str_format.format.call(null, str_format.cache[arguments[0]], arguments);
+
+				return strFormat.format.call(null, strFormat.cache[arguments[0]], arguments);
 			};
 
-			str_format.format = function(parse_tree, argv) {
-				var cursor = 1, tree_length = parse_tree.length, node_type = '', arg, output = [], i, k, match, pad, pad_character, pad_length;
-				for (i = 0; i < tree_length; i++) {
-					node_type = get_type(parse_tree[i]);
-					if (node_type === 'string') {
-						output.push(parse_tree[i]);
+			strFormat.format = function(parseTree, argv) {
+				var cursor = 1,
+					treeLength = parseTree.length,
+					nodeType = '', arg,
+					output = [],
+					i,
+					k,
+					match,
+					pad,
+					padCharacter,
+					padLength;
+
+				for (i = 0; i < treeLength; i++) {
+					nodeType = getType(parseTree[i]);
+
+					if (nodeType === 'string') {
+						output.push(parseTree[i]);
 					}
-					else if (node_type === 'array') {
-						match = parse_tree[i]; // convenience purposes only
+
+					else if (nodeType === 'array') {
+						match = parseTree[i]; // convenience purposes only
+
 						if (match[2]) { // keyword argument
 							arg = argv[cursor];
+
 							for (k = 0; k < match[2].length; k++) {
 								if (!arg.hasOwnProperty(match[2][k])) {
-									throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
+									throw new Error('[sprintf] property "' + match[2][k] + '" does not exist');
 								}
+
 								arg = arg[match[2][k]];
 							}
-						}
-						else if (match[1]) { // positional argument (explicit)
+						} else if (match[1]) { // positional argument (explicit)
 							arg = argv[match[1]];
-						}
-						else { // positional argument (implicit)
+						} else { // positional argument (implicit)
 							arg = argv[cursor++];
 						}
 
-						if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
-							throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
+						if (/[^s]/.test(match[8]) && (getType(arg) !== 'number')) {
+							throw new Error('[sprintf] expecting number but found ' + getType(arg));
 						}
+
 						switch (match[8]) {
 							case 'b': arg = arg.toString(2); break;
 							case 'c': arg = String.fromCharCode(arg); break;
@@ -532,67 +554,79 @@ function(_) {
 							case 'x': arg = arg.toString(16); break;
 							case 'X': arg = arg.toString(16).toUpperCase(); break;
 						}
+
 						arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
-						pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
-						pad_length = match[6] - String(arg).length;
-						pad = match[6] ? str_repeat(pad_character, pad_length) : '';
+						padCharacter = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
+						padLength = match[6] - String(arg).length;
+						pad = match[6] ? strRepeat(padCharacter, padLength) : '';
 						output.push(match[5] ? arg + pad : pad + arg);
 					}
 				}
+
 				return output.join('');
 			};
 
-			str_format.cache = {};
+			strFormat.cache = {};
 
-			str_format.parse = function(fmt) {
-				var _fmt = fmt, match = [], parse_tree = [], arg_names = 0;
+			var regex = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/;
+
+			strFormat.parse = function(fmt) {
+				var _fmt = fmt,
+					match = [],
+					parseTree = [],
+					argNames = 0;
+
+				/*jshint bitwise: false*/
 				while (_fmt) {
 					if ((match = /^[^\x25]+/.exec(_fmt)) !== null) {
-						parse_tree.push(match[0]);
-					}
-					else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
-						parse_tree.push('%');
-					}
-					else if ((match = /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-fosuxX])/.exec(_fmt)) !== null) {
+						parseTree.push(match[0]);
+					} else if ((match = /^\x25{2}/.exec(_fmt)) !== null) {
+						parseTree.push('%');
+					} else if ((match = regex.exec(_fmt)) !== null) {
 						if (match[2]) {
-							arg_names |= 1;
-							var field_list = [], replacement_field = match[2], field_match = [];
-							if ((field_match = /^([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-								field_list.push(field_match[1]);
-								while ((replacement_field = replacement_field.substring(field_match[0].length)) !== '') {
-									if ((field_match = /^\.([a-z_][a-z_\d]*)/i.exec(replacement_field)) !== null) {
-										field_list.push(field_match[1]);
-									}
-									else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
-										field_list.push(field_match[1]);
-									}
-									else {
-										throw('[sprintf] huh?');
+							argNames |= 1;
+
+							var fieldList = [],
+								replacementField = match[2],
+								fieldMatch = [];
+
+							if ((fieldMatch = /^([a-z_][a-z_\d]*)/i.exec(replacementField)) !== null) {
+								fieldList.push(fieldMatch[1]);
+
+								while ((replacementField = replacementField.substring(fieldMatch[0].length)) !== '') {
+									if ((fieldMatch = /^\.([a-z_][a-z_\d]*)/i.exec(replacementField)) !== null) {
+										fieldList.push(fieldMatch[1]);
+									} else if ((fieldMatch = /^\[(\d+)\]/.exec(replacementField)) !== null) {
+										fieldList.push(fieldMatch[1]);
+									} else {
+										throw new Error('[sprintf] huh?');
 									}
 								}
+							} else {
+								throw new Error('[sprintf] huh?');
 							}
-							else {
-								throw('[sprintf] huh?');
-							}
-							match[2] = field_list;
+							match[2] = fieldList;
+						} else {
+							argNames |= 2;
 						}
-						else {
-							arg_names |= 2;
+
+						if (argNames === 3) {
+							throw new Error('[sprintf] mixing positional and named placeholders is not supported');
 						}
-						if (arg_names === 3) {
-							throw('[sprintf] mixing positional and named placeholders is not (yet) supported');
-						}
-						parse_tree.push(match);
+
+						parseTree.push(match);
+					} else {
+						throw new Error('[sprintf] huh?');
 					}
-					else {
-						throw('[sprintf] huh?');
-					}
+
 					_fmt = _fmt.substring(match[0].length);
 				}
-				return parse_tree;
+				/*jshint bitwise: true*/
+
+				return parseTree;
 			};
 
-			return str_format;
+			return strFormat;
 		})(),
 
 		/**
@@ -616,10 +650,13 @@ function(_) {
 		 * @return {String}
 		 */
 		uid: function () {
+			/*jshint bitwise: false*/
 			var S4 = function () {
 				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 			};
-			return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+			/*jshint bitwise: true*/
+			
+			return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
 		},
 
 		/**

@@ -127,8 +127,8 @@ function($, dbg, resourceManager, util, moment, _) {
 			});
 
 			/*navi.bind(navi.Event.POST_NAVIGATE, function(e) {
-			 dbg.log('+ Navigated to ' + e.module + '::' + e.action);
-			 });*/
+				dbg.log('+ Navigated to ' + e.module + '::' + e.action);
+			});*/
 		});
 
 		resourceManager.bind(resourceManager.Event.MODULE_LOADED, function(e) {

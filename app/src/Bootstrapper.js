@@ -1,6 +1,32 @@
 define(
-['Debug', 'config/main', 'ResourceManager', 'Keyboard', 'UI', 'Translator', 'Navi', 'Scheduler', 'Util', 'translations', 'angular', 'jquery'],
-function(dbg, config, resourceManager, keyboard, ui, translator, navi, scheduler, util, translations, angular, $) {
+[
+	'Debug',
+	'config/main',
+	'ResourceManager',
+	'Keyboard',
+	'UI',
+	'Translator',
+	'Navi',
+	'Scheduler',
+	'Util',
+	'translations',
+	'angular',
+	'jquery'
+],
+function(
+	dbg,
+	config,
+	resourceManager,
+	keyboard,
+	ui,
+	translator,
+	navi,
+	scheduler,
+	util,
+	translations,
+	angular,
+	$
+) {
 	'use strict';
 
 	/**
