@@ -66,6 +66,8 @@ define(function() {
 			];
 			$scope.order = 'age';
 
+			$scope.dateFormat = 'MM.dd.yyyy H:mm:ss';
+
 			$scope.navigationTest = function() {
 				navi.open('index', 'test');
 			};

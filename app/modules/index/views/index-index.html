@@ -14,6 +14,11 @@
 <p>Query: {{query}}</p>
 <p>Total number of phones: {{phones.length}}</p>
 
+<hr>
+
+<p>Date format: <input ng-model="dateFormat"></p>
+<p>Current time is: <span live-date="dateFormat"></span></p>
+
 <div class="block">
 	<a href="javascript:void(0)" ng-click="navigationTest()">Navigate to second page</a> | <a href="javascript:void(0)" ng-click="back()">Back</a>
 </div>

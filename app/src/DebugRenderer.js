@@ -45,7 +45,7 @@ function($, dbg, resourceManager, util, moment, _) {
 		message = message || 'A system error occured, sorry for the inconvenience.';
 		location = location || '';
 
-		message = '<p><strong>' + message + '</strong></p>';
+		message = '<p><strong>' + message.replace('<', '&lt;').replace('>', '&gt;') + '</strong></p>';
 
 		var modal = $('#debug-renderer-error'),
 			stackTrace = '',

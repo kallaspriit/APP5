@@ -6,6 +6,8 @@ function(Bindable, util, navi) {
 	/**
 	 * Provides functionality for scheduling timeout and interval events.
 	 *
+	 * // TODO Build this on deferred promises?
+	 *
 	 * @class Scheduler
 	 * @constructor
 	 * @module Core

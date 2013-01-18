@@ -9,6 +9,7 @@ define(
 	'Navi',
 	'Scheduler',
 	'Util',
+	'Directives',
 	'translations',
 	'angular',
 	'jquery'
@@ -23,6 +24,7 @@ function(
 	navi,
 	scheduler,
 	util,
+	directives,
 	translations,
 	angular,
 	$
@@ -79,6 +81,10 @@ function(
 					};
 				});
 			});
+
+		for (var directiveName in directives) {
+			this._app.module.directive(directiveName, directives[directiveName]);
+		}
 
 		this._app.injector = angular.injector(['ng', 'app']);
 		this._app.root = this._app.injector.get('$rootScope');
