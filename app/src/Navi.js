@@ -102,7 +102,9 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 
 		var self = this,
 			className = util.convertEntityName(module) + 'Module',
-			actionName = util.convertCallableName(action) + 'Action';
+			actionName = util.convertCallableName(action) + 'Action',
+			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			body = $(document.body);
 
 		this.fire({
 			type: this.Event.PRE_NAVIGATE,
@@ -111,7 +113,47 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 			parameters: parameters
 		});
 
-		resourceManager.loadModule(module, function(moduleObj) {
+		body.addClass('loading-view');
+
+		resourceManager.when(
+			resourceManager.loadModule(module),
+			resourceManager.loadView(module, action),
+			resourceManager.loadCss(moduleCssFilename)
+		).done(function(moduleObj, viewContent, link) {
+			dbg.log('+ Loaded module, view and css', moduleObj, viewContent, link);
+
+			if (config.debug) {
+				window.app.modules[className] = moduleObj;
+			}
+
+			self._showView(
+				module,
+				action,
+				className,
+				actionName,
+				parameters,
+				moduleObj,
+				viewContent,
+				doneCallback
+			);
+
+			if (util.isFunction(doneCallback)) {
+				doneCallback(module, action, parameters, moduleObj);
+			}
+
+			self.fire({
+				type: self.Event.POST_NAVIGATE,
+				module: module,
+				action: action,
+				parameters: parameters
+			});
+
+			body.removeClass('loading-view');
+		}).fail(function() {
+			dbg.error('Loading module "' + module + '" resources failed');
+		});
+
+		/*resourceManager.loadModule(module, function(moduleObj) {
 			resourceManager.loadView(module, action, function(viewContent) {
 				if (config.debug) {
 					window.app.modules[className] = moduleObj;
@@ -127,8 +169,21 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 					viewContent,
 					doneCallback
 				);
+
+				if (util.isFunction(doneCallback)) {
+					doneCallback(module, action, parameters, moduleObj);
+				}
+
+				self.fire({
+					type: self.Event.POST_NAVIGATE,
+					module: module,
+					action: action,
+					parameters: parameters
+				});
+
+				body.removeClass('loading-view');
 			});
-		});
+		});*/
 
 		return this;
 	};
@@ -294,7 +349,8 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 			currentWrap = outerWrap.find('.ui-page-active'),
 			newWrap;
 
-		outerWrap.append('<div id="' + newWrapId + '" class="ui-page"></div>');
+		outerWrap.append('<div id="' + newWrapId + '" class="ui-page ' + module + '-module ' + action + '-action"></div>');
+
 		newWrap = $('#' + newWrapId)
 			.html(viewContent)
 			.attr('ng-controller', className + '.' + actionName);
@@ -318,17 +374,6 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 		newItem.fire = function(type, parameters) {
 			this.injector.get('$rootScope').$broadcast(type, parameters);
 		};
-
-		if (util.isFunction(doneCallback)) {
-			doneCallback(module, action, parameters, moduleObj);
-		}
-
-		this.fire({
-			type: this.Event.POST_NAVIGATE,
-			module: module,
-			action: action,
-			parameters: parameters
-		});
 	};
 
 	/**
@@ -389,22 +434,6 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 	 * @private
 	 */
 	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {
-		/*var duplicate = false,
-			allowDuplicate = util.isUndefined(parameters._allowDuplicate) ? false : parameters._allowDuplicate,
-			last;
-
-		if (!allowDuplicate && this._stack.length > 0) {
-			last = this._stack[this._stack.length - 1];
-
-			if (last.module == module && last.action == action) {
-				duplicate = true;
-			}
-		}
-
-		if (duplicate) {
-			this._stack.pop();
-		}*/
-
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
@@ -414,29 +443,6 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 			level: this._stack.length,
 			container: null
 		});
-
-		/*if ((util.isUndefined(parameters._allowLoops) || parameters._allowLoops !== true) && !allowDuplicate) {
-			var lastItem = this._stack[this._stack.length - 1],
-				lastModule = lastItem.module,
-				lastAction = lastItem.action,
-				newStack = [],
-				i;
-
-			for (i = 0; i < this._stack.length; i++) {
-				newStack.push(this._stack[i]);
-
-				if (
-					this._stack[i].module == lastModule
-					&& this._stack[i].action == lastAction
-				) {
-					newStack[newStack.length - 1].parameters = parameters;
-
-					break;
-				}
-			}
-
-			this._stack = newStack;
-		}*/
 
 		this.fire({
 			type: this.Event.STACK_CHANGED,

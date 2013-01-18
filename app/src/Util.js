@@ -96,7 +96,11 @@ function(_) {
 			} else if (this.typeOf(arg) === 'string') {
 				return arg;
 			} else {
-				return JSON.stringify(arg);
+				try {
+					return JSON.stringify(arg);
+				} catch (e) {
+					return '[obj]';
+				}
 			}
 		},
 

@@ -216,6 +216,10 @@ function($, dbg, resourceManager, util, moment, _) {
 				});
 				filename = stack[0].filename;
 				line = stack[0].line;
+			} else if (e.args.length === 1 && util.isString(e.args[0])) {
+				message = e.args[0];
+				filename = e.source.filename;
+				line = e.source.line;
 			}
 
 			self.showError('System Error Occured', message, filename + ':' + line, stack);

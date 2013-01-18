@@ -52,6 +52,9 @@ define(function() {
 		 * - slide
 		 * - slideup
 		 * - slidedown
+		 *
+		 * @property pageTransition
+		 * @type String
 		 */
 		pageTransition: 'slide',
 

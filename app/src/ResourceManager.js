@@ -23,6 +23,7 @@ function($, Bindable, util) {
 	var ResourceManager = function() {
 		this._modules = {};
 		this._views = {};
+		this._loadedCssFiles = {};
 	};
 
 	ResourceManager.prototype = new Bindable();
@@ -155,18 +156,21 @@ function($, Bindable, util) {
 	 * @method loadModule
 	 * @param {String} name Full name of the module to load
 	 * @param {Function} callback Callback to call
-	 * @return {ResourceManager} Self
+	 * @return {jQuery.Deferred} Deferred
 	 */
 	ResourceManager.prototype.loadModule = function(name, callback) {
 		var self = this,
+			deferred = $.Deferred(),
 			className = util.convertEntityName(name) + 'Module';
 
 		if (util.isObject(this._modules[name])) {
+			deferred.resolve(this._modules[name]);
+
 			if (util.isFunction(callback)) {
 				callback(this._modules[name]);
 			}
 
-			return this;
+			return deferred;
 		}
 
 		require(['modules/' + name + '/' + className], function(module) {
@@ -193,12 +197,14 @@ function($, Bindable, util) {
 
 			self._modules[name] = module;
 
+			deferred.resolve(module);
+
 			if (util.isFunction(callback)) {
 				callback(module);
 			}
 		});
 
-		return this;
+		return deferred;
 	};
 
 	/**
@@ -212,21 +218,20 @@ function($, Bindable, util) {
 	 */
 	ResourceManager.prototype.loadView = function(module, action, callback) {
 		var self = this,
-			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
+			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
+			deferred = $.Deferred();
 
 		if (util.isString(this._views[filename])) {
 			if (util.isFunction(callback)) {
 				callback(this._views[filename]);
 			}
 
-			var deferred = $.Deferred();
-
-			deferred.resolve();
+			deferred.resolve(this._views[filename]);
 
 			return deferred;
 		}
 
-		return this.get(filename)
+		this.get(filename)
 			.success(function(html) {
 				self.fire({
 					type: self.Event.VIEW_LOADED,
@@ -236,22 +241,28 @@ function($, Bindable, util) {
 
 				self._views[filename] = html;
 
+				deferred.resolve(html);
+
 				if (util.isFunction(callback)) {
 					callback(html);
 				}
 			}).error(function() {
 				throw new Error('Loading view ' + module + '::' + action + ' from ' + filename + ' failed');
 			});
+
+		return deferred;
 	};
 
 	/**
 	 * Loads a css file.
 	 *
+	 * This only works in modern chrome..
+	 *
 	 * @method loadCss
 	 * @param {String} filename File to load
 	 * @param {Function} [loadedCallback] Optional callback to call when CSS is loaded
 	 * @return {jQuery.Deferred} jQuery deferred
-	 */
+	 *
 	ResourceManager.prototype.loadCss = function(filename, loadedCallback) {
 		var id = 'css-' + util.uid(),
 			deferred = $.Deferred();
@@ -273,6 +284,87 @@ function($, Bindable, util) {
 		});
 
 		return deferred;
+	};*/
+
+	/**
+	 * Loads a css file.
+	 *
+	 * @method loadCss
+	 * @param {String} filename File to load
+	 * @param {Function} [loadedCallback] Optional callback to call when CSS is loaded
+	 * @return {jQuery.Deferred} jQuery deferred
+	 */
+	ResourceManager.prototype.loadCss = function(filename, loadedCallback) {
+		var self = this,
+			deferred = $.Deferred();
+
+		if (!util.isUndefined(this._loadedCssFiles[filename])) {
+			deferred.resolve(this._loadedCssFiles[filename]);
+
+			return deferred;
+		}
+
+		var	head = document.getElementsByTagName('head')[0],
+			link = document.createElement('link'),
+			sheet,
+			cssRules,
+			checkInterval,
+			failTimeout;
+
+		link.setAttribute('href', filename);
+		link.setAttribute('rel', 'stylesheet');
+		link.setAttribute('type', 'text/css');
+
+		if ('sheet' in link) {
+			sheet = 'sheet';
+			cssRules = 'cssRules';
+		} else {
+			sheet = 'styleSheet';
+			cssRules = 'rules';
+		}
+
+		checkInterval = setInterval(function () {
+			try {
+				if (link[sheet] && link[sheet][cssRules].length) {
+					clearInterval(checkInterval);
+					clearTimeout(failTimeout);
+
+					self._loadedCssFiles[filename] = link;
+
+					deferred.resolve(link);
+
+					if (util.isFunction(loadedCallback)) {
+						loadedCallback.call(loadedCallback, true, link);
+					}
+				}
+			} catch (e) {}
+		}, 10);
+
+		failTimeout = setTimeout(function () {
+			clearInterval(checkInterval);
+			clearTimeout(failTimeout);
+
+			head.removeChild(link);
+
+			deferred.reject();
+
+			if (util.isFunction(loadedCallback)) {
+				loadedCallback.call(loadedCallback, false, link);
+			}
+		}, 10000);
+
+		head.appendChild(link);
+
+		return deferred;
+	};
+
+	/**
+	 * Proxy to jQuery::when.
+	 *
+	 * @return {jQuery.Deferred}
+	 */
+	ResourceManager.prototype.when = function() {
+		return $.when.apply(window, arguments);
 	};
 
 	return new ResourceManager();

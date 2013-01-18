@@ -1,0 +1,6 @@
+.index-module .block {
+	background-color: #FF0;
+}
+.index-module.test-action .block {
+	background-color: #0FF;
+}
