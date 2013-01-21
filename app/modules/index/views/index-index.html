@@ -1,5 +1,7 @@
 <h1>{{title}}</h1>
 <p>Search: <input ng-model="query"></p>
+<p>Name: <input ng-model="name"></p>
+<p>Age: <input ng-model="age"></p>
 <p>Sort by:
 	<select ng-model="order">
 		<option value="name">Alphabetical</option>
@@ -18,6 +20,10 @@
 
 <p>Date format: <input ng-model="dateFormat"></p>
 <p>Current time is: <span live-date="dateFormat"></span></p>
+<p translate>hello-world</p>
+<p translate="name">hello(name)</p>
+<p translate="name,age">hello(name,age)</p>
+<p translate="name, age">hello(name,age)</p>
 
 <div class="block">
 	<a href="javascript:void(0)" ng-click="navigationTest()">Navigate to second page</a> | <a href="javascript:void(0)" ng-click="back()">Back</a>

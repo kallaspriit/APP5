@@ -3,9 +3,41 @@ define(
 function(Bindable, util, _) {
 	'use strict';
 
+	/**
+	 * Provides i18n functionality.
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> LANGUAGE_CHANGED - fired when language is changed
+	 *		newLanguage - new language name
+	 *		previousLanguage - last language name
+	 *
+	 * @class Navi
+	 * @extends Bindable
+	 * @constructor
+	 * @module Core
+	 */
 	var Translator = function() {
 		this._language = null;
 		this._translations = {};
+	};
+
+	Translator.prototype = new Bindable();
+
+	/**
+	 * Event types.
+	 *
+	 * @event
+	 * @param {Object} Event
+	 * @param {String} Event.PRE_NAVIGATE Triggered just before navigation
+	 * @param {String} Event.POST_NAVIGATE Triggered just after navigation
+	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
+	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
+	 * @param {String} Event.WAKEUP Called on scope when action is awaken
+	 * @param {String} Event.EXIT Called on scope when action is killed
+	 */
+	Translator.prototype.Event = {
+		LANGUAGE_CHANGED: 'language-changed'
 	};
 
 	/**
@@ -62,7 +94,15 @@ function(Bindable, util, _) {
 	 * @return {Translator} Self
 	 */
 	Translator.prototype.setLanguage = function(language) {
+		var previousLanguage = this._language;
+
 		this._language = language;
+
+		this.fire({
+			type: this.Event.LANGUAGE_CHANGED,
+			newLanguage: language,
+			previousLanguage: previousLanguage
+		});
 
 		return this;
 	};

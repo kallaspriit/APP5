@@ -330,7 +330,7 @@ function(_) {
 		 * @return {*}
 		 */
 		normalizeType: function(param) {
-			var type = this.type(param);
+			var type = this.typeOf(param);
 
 			if (type === 'string') {
 				if (parseInt(param, 10) == param) {
@@ -651,6 +651,7 @@ function(_) {
 		/**
 		 * Returns unique id.
 		 *
+		 * @method uid
 		 * @return {String}
 		 */
 		uid: function () {

@@ -360,6 +360,10 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 				currentItem.fire(self.Event.EXIT);
 				currentItem.container.remove();
 			}
+
+			if (util.isFunction(doneCallback)) {
+				doneCallback();
+			}
 		});
 
 		this._module.value('parameters', parameters);

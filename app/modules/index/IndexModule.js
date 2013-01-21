@@ -64,9 +64,12 @@ define(function() {
 					'age': 2
 				}
 			];
-			$scope.order = 'age';
 
+			$scope.order = 'age';
 			$scope.dateFormat = 'MM.dd.yyyy H:mm:ss';
+
+			$scope.name = 'APP5';
+			$scope.age = 24;
 
 			$scope.navigationTest = function() {
 				navi.open('index', 'test');

@@ -12,7 +12,8 @@ define(
 	'Directives',
 	'translations',
 	'angular',
-	'jquery'
+	'jquery',
+	'underscore'
 ],
 function(
 	dbg,
@@ -27,7 +28,8 @@ function(
 	directives,
 	translations,
 	angular,
-	$
+	$,
+    _
 ) {
 	'use strict';
 
@@ -72,6 +74,10 @@ function(
 				for (var key in self._app) {
 					$provide.value(key, self._app[key]);
 				}
+
+				// provide underscore and jQuery too
+				$provide.value('_', _);
+				$provide.value('$', $);
 
 				$provide.factory('$exceptionHandler', function() {
 					return function(exception) {

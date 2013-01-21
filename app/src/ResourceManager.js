@@ -361,6 +361,7 @@ function($, Bindable, util) {
 	/**
 	 * Proxy to jQuery::when.
 	 *
+	 * @method when
 	 * @return {jQuery.Deferred}
 	 */
 	ResourceManager.prototype.when = function() {

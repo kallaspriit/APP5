@@ -51,6 +51,7 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 	/**
 	 * Transitions from one page to another.
 	 *
+	 * @method transitionView
 	 * @param {Object} currentWrap Current page wrap jQuery element
 	 * @param {Object} newWrap New page wrap jQuery element
 	 * @param {Boolean} [isReverse=false] Should reverse (back) animation be displayed
