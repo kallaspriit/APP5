@@ -346,10 +346,10 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
 			outerWrap = $(config.viewSelector),
 			newWrapId = 'content-' + newItem.id,
-			currentWrap = outerWrap.find('.ui-page-active'),
+			currentWrap = outerWrap.find('.page-active'),
 			newWrap;
 
-		outerWrap.append('<div id="' + newWrapId + '" class="ui-page ' + module + '-module ' + action + '-action"></div>');
+		outerWrap.append('<div id="' + newWrapId + '" class="page ' + module + '-module ' + action + '-action"></div>');
 
 		newWrap = $('#' + newWrapId)
 			.html(viewContent)

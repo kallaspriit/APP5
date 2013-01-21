@@ -170,7 +170,7 @@ function($, Bindable, util) {
 				callback(this._modules[name]);
 			}
 
-			return deferred;
+			return deferred.promise();
 		}
 
 		require(['modules/' + name + '/' + className], function(module) {
@@ -204,7 +204,7 @@ function($, Bindable, util) {
 			}
 		});
 
-		return deferred;
+		return deferred.promise();
 	};
 
 	/**
@@ -228,7 +228,7 @@ function($, Bindable, util) {
 
 			deferred.resolve(this._views[filename]);
 
-			return deferred;
+			return deferred.promise();
 		}
 
 		this.get(filename)
@@ -247,10 +247,10 @@ function($, Bindable, util) {
 					callback(html);
 				}
 			}).error(function() {
-				throw new Error('Loading view ' + module + '::' + action + ' from ' + filename + ' failed');
+				deferred.reject('Loading view for ' + module + '::' + action + ' failed');
 			});
 
-		return deferred;
+		return deferred.promise();
 	};
 
 	/**
@@ -301,7 +301,7 @@ function($, Bindable, util) {
 		if (!util.isUndefined(this._loadedCssFiles[filename])) {
 			deferred.resolve(this._loadedCssFiles[filename]);
 
-			return deferred;
+			return deferred.promise();
 		}
 
 		var	head = document.getElementsByTagName('head')[0],
@@ -346,7 +346,7 @@ function($, Bindable, util) {
 
 			head.removeChild(link);
 
-			deferred.reject();
+			deferred.reject('Loading css "' + filename + '" failed');
 
 			if (util.isFunction(loadedCallback)) {
 				loadedCallback.call(loadedCallback, false, link);
@@ -355,7 +355,7 @@ function($, Bindable, util) {
 
 		head.appendChild(link);
 
-		return deferred;
+		return deferred.promise();
 	};
 
 	/**

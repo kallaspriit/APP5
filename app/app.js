@@ -1,7 +1,9 @@
 /*
- * TODO Mouse event
- * TODO View transition animations
  * TODO i18n
+ * TODO Models support
+ * TODO Fix build system
+ * TODO Mouse event
+ * TODO Merge & compress CSS
  */
 
 require.config({

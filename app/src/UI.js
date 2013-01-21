@@ -65,7 +65,7 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 			isSimultaneous = util.contains(simultaneousTransitions, transitionType);
 
 		if (currentWrap.length > 0) {
-			body.addClass('ui-transitioning ui-transition-' + transitionType);
+			body.addClass('transitioning transition-' + transitionType);
 
 			if (isReverse) {
 				currentWrap.addClass('reverse');
@@ -75,14 +75,14 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 			currentWrap.addClass(transitionType + ' out');
 
 			if (isSimultaneous) {
-				newWrap.addClass('ui-page-active ' + transitionType + ' in');
+				newWrap.addClass('page-active ' + transitionType + ' in');
 			}
 
 			currentWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
-				currentWrap.removeClass(transitionType + ' out ui-page-active reverse');
+				currentWrap.removeClass(transitionType + ' out page-active reverse');
 
 				if (!isSimultaneous) {
-					newWrap.addClass('ui-page-active ' + transitionType + ' in');
+					newWrap.addClass('page-active ' + transitionType + ' in');
 				}
 
 				currentWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
@@ -90,7 +90,7 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 
 			newWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
 				newWrap.removeClass(transitionType + ' in reverse');
-				body.removeClass('ui-transitioning ui-transition-' + transitionType);
+				body.removeClass('transitioning transition-' + transitionType);
 				newWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
 
 				if (util.isFunction(completeCallback)) {
@@ -98,7 +98,7 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 				}
 			});
 		} else {
-			newWrap.addClass('ui-page-active');
+			newWrap.addClass('page-active');
 
 			if (util.isFunction(completeCallback)) {
 				completeCallback();
