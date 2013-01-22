@@ -1,4 +1,8 @@
 <h1>{{title}}</h1>
+<p>Language:
+	<select ng-model="language" ng-options="lang.id as lang.name for lang in languages"></select>
+	<div>{{language}}</div>
+</p>
 <p>Search: <input ng-model="query"></p>
 <p>Name: <input ng-model="name"></p>
 <p>Age: <input ng-model="age"></p>
@@ -6,7 +10,8 @@
 	<select ng-model="order">
 		<option value="name">Alphabetical</option>
 		<option value="age">Newest</option>
-	</select></p>
+	</select>
+</p>
 <ul>
 	<li ng-repeat="phone in phones | filter:query | orderBy:order">
 		{{phone.name}}
@@ -20,6 +25,7 @@
 
 <p>Date format: <input ng-model="dateFormat"></p>
 <p>Current time is: <span live-date="dateFormat"></span></p>
+
 <p translate>hello-world</p>
 <p translate="name">hello(name)</p>
 <p translate="name,age">hello(name,age)</p>

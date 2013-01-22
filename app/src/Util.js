@@ -667,7 +667,7 @@ function(_) {
 		/**
 		 * Does absolutely nothing.
 		 *
-		 * Can be useful for hiding unused parameters etc.
+		 * Can be useful for hiding unused parameters or || default callback etc.
 		 *
 		 * @method noop
 		 */

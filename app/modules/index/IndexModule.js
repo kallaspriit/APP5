@@ -39,10 +39,11 @@ define(function() {
 		 * @param {Util} util Utilities
 		 * @param {Navi} navi Navigator
 		 * @param {Scheduler} scheduler Scheduler
-		 * @param {Keyboard} keyboard Scheduler
+		 * @param {Keyboard} keyboard Keyboard
+		 * @param {Translator} translator Translator
 		 * @param {Object} parameters Action parameters
 		 */
-		indexAction: function($scope, dbg, util, navi, scheduler, keyboard, parameters) {
+		indexAction: function($scope, dbg, util, navi, scheduler, keyboard, translator, parameters) {
 			console.log('PARAMETERS', parameters);
 			//this.$inject = ['$scope', 'dbg', 'util', 'navi', 'scheduler'];
 
@@ -65,6 +66,13 @@ define(function() {
 				}
 			];
 
+			$scope.languages = translator.getLanguages(true);
+			$scope.language = translator.getLanguage();
+
+			$scope.$watch('language', function(newLanguage, previousLanguage) {
+				translator.setLanguage(newLanguage);
+			});
+
 			$scope.order = 'age';
 			$scope.dateFormat = 'MM.dd.yyyy H:mm:ss';
 
@@ -75,7 +83,7 @@ define(function() {
 				navi.open('index', 'test');
 			};
 
-			var timeout = scheduler.setTimeout('index', function() {
+			/*var timeout = scheduler.setTimeout('index', function() {
 				dbg.log('! Scheduled event!', this);
 			}, 3000);
 
@@ -89,7 +97,7 @@ define(function() {
 				dbg.log('! Interval', this);
 			}, 1000);
 
-			util.noop(timeout, timeout2);
+			util.noop(timeout, timeout2);*/
 
 			$scope.back = function() {
 				navi.back();

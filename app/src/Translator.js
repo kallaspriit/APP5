@@ -108,6 +108,51 @@ function(Bindable, util, _) {
 	};
 
 	/**
+	 * Returns active language.
+	 *
+	 * @method getLanguage
+	 * @return {String}
+	 */
+	Translator.prototype.getLanguage = function() {
+		return this._language;
+	};
+
+	/**
+	 * Returns available languages.
+	 *
+	 * If translated is set to true, creates an object and attempts to translate using language.KEY and resulting keys
+	 * id, name.
+	 *
+	 * @method getLanguages
+	 * @param {Boolean} [translated=false] Should the keys be translated
+	 * @return {Array}
+	 */
+	Translator.prototype.getLanguages = function(translated) {
+		translated = util.isBoolean(translated) ? translated : false;
+		
+		var languages = [],
+			key,
+			language;
+
+		for (key in this._translations) {
+			for (language in this._translations[key]) {
+				if (translated) {
+					languages.push({
+						id: language,
+						name: this.has('lang.' + language) ? this.translate('lang.' + language) : language
+					});
+				} else {
+					languages.push(language);
+				}
+			}
+
+			break;
+		}
+
+		return languages;
+	};
+
+	/**
 	 * Returns whether the translator has given translation.
 	 *
 	 * @method has

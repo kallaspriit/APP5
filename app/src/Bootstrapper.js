@@ -96,6 +96,9 @@ function(
 		this._app.root = this._app.injector.get('$rootScope');
 		this._app.navi.setModule(this._app.module);
 
+		this._app.root.languages = translator.getLanguages();
+		this._app.root.language = translator.getLanguage();
+
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
 			window.app = this._app;
