@@ -1,31 +1,45 @@
 define(
-['BaseEvent'],
-function(BaseEvent) {
-"use strict";
+['Bindable'],
+function(Bindable) {
+	'use strict';
 
-var privateMember = 'value';
+	/**
+	 * ???
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> ??? - fired...
+	 *		??? - ???
+	 *
+	 * @class ${NAME}
+	 * @extends Bindable
+	 * @constructor
+	 * @module Core
+	 */
+	var ${NAME} = function() {
 
-var privateMethod = function() {
-	return privateMember.toUpperCase();
-};
+	};
 
-var Component = function() {
+	${NAME}.prototype = new Bindable();
 
-};
+	/**
+	 * Event types.
+	 *
+	 * @event
+	 * @param {Object} Event
+	 * @param {String} Event.??? Triggered ???
+	 */
+	Navi.prototype.Event = {
+		???: '???'
+	};
 
-Component.prototype = new BaseEvent();
-
-Component.prototype.Event = {
-	TEST: 'test'
-};
-
-Component.prototype.init = function() {
-	this.fire({
-		type: this.Event.TEST,
-		data: privateMethod()
-	});
-};
-
-return new Component();
-
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {${NAME}} Self
+	 */
+	${NAME}.prototype.init = function() {
+		return this;
+	};
 });

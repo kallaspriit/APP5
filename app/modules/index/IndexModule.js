@@ -1,4 +1,6 @@
-define(function() {
+define(
+['models/PhoneBook'],
+function(phonebook) {
 	'use strict';
 
 	/**
@@ -65,6 +67,9 @@ define(function() {
 					'age': 2
 				}
 			];
+			$scope.phonebook = phonebook;
+			$scope.contactName = '';
+			$scope.contactNumber = '';
 
 			$scope.languages = translator.getLanguages(true);
 			$scope.language = translator.getLanguage();

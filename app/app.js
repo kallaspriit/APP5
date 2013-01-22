@@ -11,6 +11,7 @@ require.config({
 	paths: {
 		lib: '../lib',
 		modules: '../modules',
+		models: '../models',
 		config: '../config',
 		translations: '../translations/translations',
 		angular: '../lib/angular/angular',

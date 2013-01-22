@@ -64,6 +64,7 @@ function(
 			util: util,
 			module: null,
 			injector: null,
+			models: {},
 			modules: {}
 		};
 
