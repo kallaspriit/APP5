@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'config/main', 'angular'],
-function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
+['Bindable', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'Mouse', 'config/main', 'angular'],
+function(Bindable, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
 	'use strict';
 
 	/**
@@ -62,12 +62,12 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 	Navi.prototype.init = function() {
 		var self = this;
 
-		keyboard.bind(keyboard.Event.KEYDOWN, function(e) {
+		keyboard.bind([keyboard.Event.KEYDOWN, keyboard.Event.KEYUP], function(e) {
 			self._onKeyEvent(e.info);
 		});
 
-		keyboard.bind(keyboard.Event.KEYUP, function(e) {
-			self._onKeyEvent(e.info);
+		mouse.bind([mouse.Event.MOUSEDOWN, mouse.Event.MOUSEUP, mouse.Event.MOUSEMOVE], function(e) {
+			self._onMouseEvent(e.info);
 		});
 
 		return this;
@@ -466,6 +466,25 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, config, angular) {
 	 * @private
 	 */
 	Navi.prototype._onKeyEvent = function(event) {
+		var currentItem = this.getCurrent();
+
+		if (currentItem === null) {
+			return;
+		}
+
+		currentItem.fire(event.type, event);
+	};
+
+	/**
+	 * Triggered on mouse events.
+	 *
+	 * Passes the key event on to currently active module action controller.
+	 *
+	 * @method _onMouseEvent
+	 * @param {Mouse.MouseEvent} event Key event
+	 * @private
+	 */
+	Navi.prototype._onMouseEvent = function(event) {
 		var currentItem = this.getCurrent();
 
 		if (currentItem === null) {

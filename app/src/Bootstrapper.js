@@ -4,6 +4,7 @@ define(
 	'config/main',
 	'ResourceManager',
 	'Keyboard',
+	'Mouse',
 	'UI',
 	'Translator',
 	'Navi',
@@ -20,6 +21,7 @@ function(
 	config,
 	resourceManager,
 	keyboard,
+	mouse,
 	ui,
 	translator,
 	navi,
@@ -50,13 +52,15 @@ function(
 	 * @method bootstrap
 	 */
 	Bootstrapper.prototype.bootstrap = function() {
-		var self = this;
+		var self = this,
+			key;
 
 		this._app = {
 			config: config,
 			dbg: dbg.init(),
 			resourceManager: resourceManager.init(),
 			keyboard: keyboard.init(),
+			mouse: mouse.init(),
 			ui: ui.init(),
 			translator: translator.init(translations, config.language),
 			navi: navi.init(),
@@ -72,7 +76,7 @@ function(
 
 		this._app.module.config(function($provide) {
 				// register module resources
-				for (var key in self._app) {
+				for (key in self._app) {
 					$provide.value(key, self._app[key]);
 				}
 
@@ -97,8 +101,17 @@ function(
 		this._app.root = this._app.injector.get('$rootScope');
 		this._app.navi.setModule(this._app.module);
 
-		this._app.root.languages = translator.getLanguages();
+		this._app.module.run(function($rootScope) {
+			self._app.root = $rootScope;
+
+			for (key in self._app) {
+				self._app.root[key] = self._app[key];
+			}
+		});
+
+		/*this._app.root.languages = translator.getLanguages();
 		this._app.root.language = translator.getLanguage();
+		this._app.root.navi = navi;*/
 
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {

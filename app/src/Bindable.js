@@ -17,7 +17,7 @@ function() {
 	 * Adds a new listener of given type.
 	 *
 	 * @method bind
-	 * @param {String} type Type of listener to add
+	 * @param {String|Array} type Type of listener to add (or array of them)
 	 * @param {Function} listener The listener function to add
 	 * @return {Function} The added listener
 	 */

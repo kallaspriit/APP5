@@ -29,7 +29,7 @@ function(Bindable) {
 	 * @param {Object} Event
 	 * @param {String} Event.??? Triggered ???
 	 */
-	Navi.prototype.Event = {
+	${NAME}.prototype.Event = {
 		???: '???'
 	};
 
@@ -42,4 +42,6 @@ function(Bindable) {
 	${NAME}.prototype.init = function() {
 		return this;
 	};
+	
+	return new ${NAME};
 });

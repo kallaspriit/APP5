@@ -9,9 +9,9 @@ function(Bindable, util, $) {
 	 * Can fire the following events:
 	 *
 	 *	> KEYDOWN - fired when key is pressed down
-	 *		info - Keyboard.KeyEvent event
+	 *		info - Keyboard.KeyEvent info
 	 *	> KEYUP - fired when key is released
-	 *		info - Keyboard.KeyEvent event
+	 *		info - Keyboard.KeyEvent info
 	 *
 	 * @class Keyboard
 	 * @extends Bindable
@@ -273,7 +273,7 @@ function(Bindable, util, $) {
 
 		$(document.body).keydown(function(e) {
 			self.consume(self.generate(
-				'keydown',
+				self.Event.KEYDOWN,
 				e.keyCode,
 				e.altKey,
 				e.ctrlKey,
@@ -284,7 +284,7 @@ function(Bindable, util, $) {
 
 		$(document.body).keyup(function(e) {
 			self.consume(self.generate(
-				'keyup',
+				self.Event.KEYUP,
 				e.keyCode,
 				e.altKey,
 				e.ctrlKey,
@@ -361,9 +361,7 @@ function(Bindable, util, $) {
 	 * @param {Keyboard.KeyEvent} event Event to consume
 	 */
 	Keyboard.prototype.consume = function(event) {
-		var eventType;
-
-		if (event.type === 'keydown') {
+		if (event.type === this.Event.KEYDOWN) {
 			if (util.contains(this._keyDown, event.keyCode)) {
 				event.repeated = true;
 			} else {
@@ -371,20 +369,16 @@ function(Bindable, util, $) {
 
 				this._keyDown.push(event.keyCode);
 			}
-
-			eventType = this.Event.KEYDOWN;
-		} else if (event.type === 'keyup') {
+		} else if (event.type === this.Event.KEYUP) {
 			if (util.contains(this._keyDown, event.keyCode)) {
 				util.remove(event.keyCode, this._keyDown);
 			}
-
-			eventType = this.Event.KEYUP;
 		} else {
 			throw new Error('Unexpected key event type "' + event.type + '"');
 		}
 
 		this.fire({
-			type: eventType,
+			type: event.type,
 			info: event
 		});
 	};

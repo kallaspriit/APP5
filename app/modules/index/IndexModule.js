@@ -42,15 +42,17 @@ function(phonebook) {
 		 * @param {Navi} navi Navigator
 		 * @param {Scheduler} scheduler Scheduler
 		 * @param {Keyboard} keyboard Keyboard
+		 * @param {Mouse} mouse Mouse
 		 * @param {Translator} translator Translator
 		 * @param {Object} parameters Action parameters
 		 */
-		indexAction: function($scope, dbg, util, navi, scheduler, keyboard, translator, parameters) {
+		indexAction: function($scope, dbg, util, navi, scheduler, keyboard, mouse, translator, parameters) {
 			console.log('PARAMETERS', parameters);
 			//this.$inject = ['$scope', 'dbg', 'util', 'navi', 'scheduler'];
 
 			//dbg.console('IndexModule contructor', util.date());
 
+			$scope.navi = navi;
 			$scope.title = 'Testing AngularJS!';
 			$scope.phones = [
 				{
@@ -128,6 +130,18 @@ function(phonebook) {
 				dbg.console('MODULE KEY UP', keyEvent.name);
 			});
 
+			$scope.$on(mouse.Event.MOUSEDOWN, function(e, mouseEvent) {
+				dbg.console('MODULE MOUSE DOWN', mouseEvent.pageX, mouseEvent.pageY);
+			});
+
+			$scope.$on(mouse.Event.MOUSEUP, function(e, mouseEvent) {
+				dbg.console('MODULE MOUSE UP', mouseEvent.pageX, mouseEvent.pageY);
+			});
+
+			/*$scope.$on(mouse.Event.MOUSEMOVE, function(e, mouseEvent) {
+				dbg.console('MODULE MOUSE MOVE', mouseEvent.pageX, mouseEvent.pageY);
+			});*/
+
 			//dbg.error('Test error', 'another');
 
 			//errorTest();
@@ -176,6 +190,25 @@ function(phonebook) {
 			$scope.$on(navi.Event.WAKEUP, function(e, args) {
 				dbg.console('index::test WAKEUP', e, args);
 			});
+		},
+
+		drawAction: function($scope, navi, mouse) {
+			$scope.back = function() {
+				navi.back();
+			};
+
+			var canvas = $('#canvas')[0],
+				c = canvas.getContext('2d');
+
+			c.fillStyle = '#F00';
+
+			$scope.$on(mouse.Event.MOUSEMOVE, function(e, mouseEvent) {
+				if (mouseEvent.target !== canvas || !mouse.isButtonDown(mouse.Button.LEFT)) {
+					return;
+				}
+
+				c.fillRect(mouseEvent.offsetX - 1, mouseEvent.offsetY - 1, 3, 3);
+			}.bind({canvas: canvas, c: c}));
 		}
 	};
 });

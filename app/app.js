@@ -1,7 +1,8 @@
 /*
- * TODO Models support
  * TODO Fix build system
- * TODO Mouse event
+ * TODO Mouse events
+ * TODO Touch events
+ * TODO Example application
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  */
