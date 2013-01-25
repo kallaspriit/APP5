@@ -69,7 +69,7 @@ define(function() {
 
 								args = _.values(map);
 								args.unshift(key);
-								util.normalizeType(args)
+								util.normalizeType(args);
 
 								validArgs = _.reduce(args, function(memo, arg) {
 									return arg !== null && memo === true;
@@ -78,9 +78,9 @@ define(function() {
 								if (validArgs) {
 									try {
 										element.html(translator.translate.apply(translator, args));
-									} catch (e) {}
+									} catch (e) { util.noop(e); }
 
-									translator.bind(translator.Event.LANGUAGE_CHANGED, function(e) {
+									translator.bind(translator.Event.LANGUAGE_CHANGED, function() {
 										this.element.html(translator.translate.apply(translator, this.args));
 									}.bind({args: args, element: element}));
 								}
@@ -89,7 +89,7 @@ define(function() {
 					} else {
 						element.html(translator.translate(key));
 
-						translator.bind(translator.Event.LANGUAGE_CHANGED, function(e) {
+						translator.bind(translator.Event.LANGUAGE_CHANGED, function() {
 							this.element.html(translator.translate(this.key));
 						}.bind({key: key, element: element}));
 					}

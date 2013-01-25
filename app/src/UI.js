@@ -118,6 +118,8 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 			debugRenderer.init();
 		}
 
+		//$(document).bind('touchmove', false);
+
 		this.fire({
 			type: this.Event.READY
 		});

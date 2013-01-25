@@ -76,7 +76,7 @@ function(phonebook) {
 			$scope.languages = translator.getLanguages(true);
 			$scope.language = translator.getLanguage();
 
-			$scope.$watch('language', function(newLanguage, previousLanguage) {
+			$scope.$watch('language', function(newLanguage) {
 				translator.setLanguage(newLanguage);
 			});
 
@@ -192,11 +192,7 @@ function(phonebook) {
 			});
 		},
 
-		drawAction: function($scope, navi, mouse) {
-			$scope.back = function() {
-				navi.back();
-			};
-
+		drawAction: function($scope, mouse) {
 			var canvas = $('#canvas')[0],
 				c = canvas.getContext('2d');
 
@@ -209,6 +205,10 @@ function(phonebook) {
 
 				c.fillRect(mouseEvent.offsetX - 1, mouseEvent.offsetY - 1, 3, 3);
 			}.bind({canvas: canvas, c: c}));
+		},
+
+		touchAction: function() {
+
 		}
 	};
 });

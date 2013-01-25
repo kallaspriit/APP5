@@ -109,6 +109,10 @@ function($, dbg, resourceManager, util, moment, _) {
 	 */
 	DebugRenderer.prototype._initHtml = function() {
 		$(document.body).append('<div id="debug-renderer"></div>');
+
+		$('#debug-renderer').on('tap', function() {
+			$(this).toggleClass('visible');
+		});
 	};
 
 	/**
@@ -260,7 +264,14 @@ function($, dbg, resourceManager, util, moment, _) {
 	 */
 	DebugRenderer.prototype._appendMessage = function(type, message, source) {
 		var wrap = $('#debug-renderer'),
-			sourceContent;
+			sourceContent,
+			lineLimit = 100,
+			lines = wrap.find('div'),
+			lineCount = lines.length;
+
+		if (lineCount > lineLimit - 1) {
+			$(lines.splice(0, lineCount - (lineLimit - 1))).remove();
+		}
 
 		if (util.isObject(source)) {
 			sourceContent = util.formatPath(source.filename) + ':' + source.line;

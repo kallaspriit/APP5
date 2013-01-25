@@ -52,8 +52,7 @@ function(
 	 * @method bootstrap
 	 */
 	Bootstrapper.prototype.bootstrap = function() {
-		var self = this,
-			key;
+		var self = this;
 
 		this._app = {
 			config: config,
@@ -76,7 +75,7 @@ function(
 
 		this._app.module.config(function($provide) {
 				// register module resources
-				for (key in self._app) {
+				for (var key in self._app) {
 					$provide.value(key, self._app[key]);
 				}
 
@@ -104,7 +103,7 @@ function(
 		this._app.module.run(function($rootScope) {
 			self._app.root = $rootScope;
 
-			for (key in self._app) {
+			for (var key in self._app) {
 				self._app.root[key] = self._app[key];
 			}
 		});
