@@ -1,6 +1,5 @@
 /*
  * TODO Fix build system
- * TODO Mouse events
  * TODO Touch events
  * TODO Example application
  * TODO Merge & compress CSS
@@ -34,7 +33,7 @@ require.config({
 });
 
 require(
-	['Bootstrapper'],
+	['Bootstrapper', 'lib/jquery/jquery.mobile-events.js'],
 	function(bootstrapper) {
 		'use strict';
 
