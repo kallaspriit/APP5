@@ -19,7 +19,8 @@ function(mainMenu) {
 		 * @param {$scope} $scope Angular scope
 		 */
 		mainMenuAction: function($scope) {
+			$scope.items = mainMenu;
 			$scope.test = 'World';
 		}
-	}
+	};
 });

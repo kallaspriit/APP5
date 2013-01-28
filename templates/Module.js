@@ -21,5 +21,5 @@ function(???) {
 		indexAction: function($scope) {
 		
 		}
-	}
+	};
 });

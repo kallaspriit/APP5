@@ -136,7 +136,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			resourceManager.loadModule(module),
 			resourceManager.loadView(module, action),
 			resourceManager.loadCss(moduleCssFilename)
-		).done(function(moduleObj, viewContent, link) {
+		).done(function(moduleObj, viewContent) {
 			item = self._showView(
 				module,
 				action,
@@ -177,11 +177,9 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters=null] Action parameters
-	 *
-	 * @param {Function} [doneCallback=null] Optional callback to call when ready
 	 * @return {Navi} Self
 	 */
-	Navi.prototype.partial = function(containerSelector, module, action, parameters, doneCallback) {
+	Navi.prototype.partial = function(containerSelector, module, action, parameters) {
 		action = action || 'index';
 		parameters = parameters || [];
 
@@ -208,7 +206,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			resourceManager.loadModule(module),
 			resourceManager.loadView(module, action),
 			resourceManager.loadCss(moduleCssFilename)
-		).done(function(moduleObj, viewContent, link) {
+		).done(function(moduleObj, viewContent) {
 			container = $(containerSelector);
 
 			item = self._showPartial(
