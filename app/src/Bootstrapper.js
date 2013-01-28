@@ -56,6 +56,7 @@ function(
 
 		this._app = {
 			config: config,
+			bootstrapper: this,
 			dbg: dbg.init(),
 			resourceManager: resourceManager.init(),
 			keyboard: keyboard.init(),
@@ -118,15 +119,29 @@ function(
 		}
 
 		$(document).ready(function() {
-			// navigate to the index action
-			navi.open(
-				config.index.module,
-				config.index.action,
-				config.index.parameters
-			);
+			self._run();
 		});
+	};
 
-		dbg.log('+ Bootstrap complete');
+	/**
+	 * Called when all base bootstrapping has been completed and DOM is ready.
+	 *
+	 * @method _run
+	 * @private
+	 */
+	Bootstrapper.prototype._run = function() {
+		navi.partial(
+			'#header',
+			'site',
+			'main-menu'
+		);
+
+		// navigate to the index action
+		navi.open(
+			config.index.module,
+			config.index.action,
+			config.index.parameters
+		);
 	};
 
 	return new Bootstrapper();

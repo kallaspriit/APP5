@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bindable', 'Deferred', 'Util'],
-function($, Bindable, Deferred, util) {
+['jquery', 'Bindable', 'Deferred', 'Util', 'config/main'],
+function($, Bindable, Deferred, util, config) {
 	'use strict';
 
 	/**
@@ -183,6 +183,10 @@ function($, Bindable, Deferred, util) {
 
 				module[key].$module = name;
 				module[key].$name = key;
+			}
+
+			if (config.debug) {
+				window.app.modules[className] = module;
 			}
 
 			self.fire({

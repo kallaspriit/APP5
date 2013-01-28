@@ -16,6 +16,16 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 *		module - module name
 	 *		action - action name
 	 *		parameters - action parameters
+	 *	> PRE_PARTIAL - fired before opening a partial view
+	 *		containerSelector - selector for the partial container
+	 *		module - module name
+	 *		action - action name
+	 *		parameters - action parameters
+	 *	> POST_PARTIAL - fired after opening a partial view
+	 *		containerSelector - selector for the partial container
+	 *		module - module name
+	 *		action - action name
+	 *		parameters - action parameters
 	 *	> STACK_CHANGED - fired when navigation stack changes
 	 *		stack - updated navigation stack
 	 *
@@ -39,6 +49,8 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 * @param {Object} Event
 	 * @param {String} Event.PRE_NAVIGATE Triggered just before navigation
 	 * @param {String} Event.POST_NAVIGATE Triggered just after navigation
+	 * @param {String} Event.PRE_PARTIAL Triggered just before opening partial
+	 * @param {String} Event.POST_PARTIAL Triggered just after opening partial
 	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
 	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
 	 * @param {String} Event.WAKEUP Called on scope when action is awaken
@@ -47,6 +59,8 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	Navi.prototype.Event = {
 		PRE_NAVIGATE: 'pre-navigate',
 		POST_NAVIGATE: 'post-navigate',
+		PRE_PARTIAL: 'pre-partial',
+		POST_PARTIAL: 'post-partial',
 		STACK_CHANGED: 'stack-changed',
 		SLEEP: 'sleep',
 		WAKEUP: 'wakeup',
@@ -89,22 +103,25 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	/**
 	 * Navigates to a module action.
 	 *
+	 * By default the action is opened in container defined by the configuration property viewSelector.
+	 *
 	 * @method open
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters=null] Action parameters
-	 * @param {Function} [doneCallback=null] Optional callback to call when ready
 	 * @return {Navi} Self
 	 */
-	Navi.prototype.open = function(module, action, parameters, doneCallback) {
+	Navi.prototype.open = function(module, action, parameters) {
 		action = action || 'index';
 		parameters = parameters || [];
 
 		var self = this,
+			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			body = $(document.body);
+			body = $(document.body),
+			item = null;
 
 		this.fire({
 			type: this.Event.PRE_NAVIGATE,
@@ -120,13 +137,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			resourceManager.loadView(module, action),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent, link) {
-			dbg.log('+ Loaded module, view and css', moduleObj, viewContent, link);
-
-			if (config.debug) {
-				window.app.modules[className] = moduleObj;
-			}
-
-			self._showView(
+			item = self._showView(
 				module,
 				action,
 				className,
@@ -134,58 +145,101 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 				parameters,
 				moduleObj,
 				viewContent,
-				doneCallback
+				function() {
+					self.fire({
+						type: self.Event.POST_NAVIGATE,
+						module: module,
+						action: action,
+						parameters: parameters
+					});
+
+					body.removeClass('loading-view');
+
+					deferred.resolve(item);
+				}
+			);
+		}).fail(function() {
+			dbg.error('Loading module "' + module + '" resources failed');
+
+			deferred.reject('Loading module "' + module + '" resources failed');
+		});
+
+		return deferred.promise();
+	};
+
+	/**
+	 * Opens a partial view.
+	 *
+	 * Partials can be used to load module actions in any container to display main menu etc.
+	 *
+	 * @method partial
+	 * @param {String} containerSelector Container selector
+	 * @param {String} module Module to open
+	 * @param {String} [action=index] Action to navigate to
+	 * @param {Array} [parameters=null] Action parameters
+	 *
+	 * @param {Function} [doneCallback=null] Optional callback to call when ready
+	 * @return {Navi} Self
+	 */
+	Navi.prototype.partial = function(containerSelector, module, action, parameters, doneCallback) {
+		action = action || 'index';
+		parameters = parameters || [];
+
+		var self = this,
+			deferred = new Deferred(),
+			className = util.convertEntityName(module) + 'Module',
+			actionName = util.convertCallableName(action) + 'Action',
+			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			body = $(document.body),
+			item = null,
+			container;
+
+		this.fire({
+			type: this.Event.PRE_PARTIAL,
+			containerSelector: containerSelector,
+			module: module,
+			action: action,
+			parameters: parameters
+		});
+
+		body.addClass('loading-partial');
+
+		util.when(
+			resourceManager.loadModule(module),
+			resourceManager.loadView(module, action),
+			resourceManager.loadCss(moduleCssFilename)
+		).done(function(moduleObj, viewContent, link) {
+			container = $(containerSelector);
+
+			item = self._showPartial(
+				module,
+				action,
+				className,
+				actionName,
+				parameters,
+				moduleObj,
+				viewContent,
+				container
 			);
 
-			if (util.isFunction(doneCallback)) {
-				doneCallback(module, action, parameters, moduleObj);
-			}
-
 			self.fire({
-				type: self.Event.POST_NAVIGATE,
+				type: self.Event.POST_PARTIAL,
+				containerSelector: containerSelector,
 				module: module,
 				action: action,
 				parameters: parameters
 			});
 
-			body.removeClass('loading-view');
+			body.removeClass('loading-partial');
+
+			deferred.resolve(item);
 		}).fail(function() {
 			dbg.error('Loading module "' + module + '" resources failed');
+
+			deferred.reject('Loading module "' + module + '" resources failed');
 		});
 
-		/*resourceManager.loadModule(module, function(moduleObj) {
-			resourceManager.loadView(module, action, function(viewContent) {
-				if (config.debug) {
-					window.app.modules[className] = moduleObj;
-				}
-				
-				self._showView(
-					module,
-					action,
-					className,
-					actionName,
-					parameters,
-					moduleObj,
-					viewContent,
-					doneCallback
-				);
-
-				if (util.isFunction(doneCallback)) {
-					doneCallback(module, action, parameters, moduleObj);
-				}
-
-				self.fire({
-					type: self.Event.POST_NAVIGATE,
-					module: module,
-					action: action,
-					parameters: parameters
-				});
-
-				body.removeClass('loading-view');
-			});
-		});*/
-
-		return this;
+		return deferred.promise();
 	};
 
 	/**
@@ -202,7 +256,10 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			return;
 		}
 
-		/*if (previousItem === null) {
+		if (
+			previousItem === null
+			&& (currentItem.module !== config.index.module || currentItem.action !== config.index.action)
+		) {
 			this.open(
 				config.index.module,
 				config.index.action,
@@ -210,7 +267,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			);
 
 			return;
-		}*/
+		}
 
 		this._stack.pop();
 
@@ -344,12 +401,12 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 		}
 
 		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
-			outerWrap = $(config.viewSelector),
 			newWrapId = 'content-' + newItem.id,
-			currentWrap = outerWrap.find('.page-active'),
+			container = $(config.viewSelector),
+			currentWrap = container.find('.page-active'),
 			newWrap;
 
-		outerWrap.append('<div id="' + newWrapId + '" class="page ' + module + '-module ' + action + '-action"></div>');
+		container.append('<div id="' + newWrapId + '" class="page ' + module + '-module ' + action + '-action"></div>');
 
 		newWrap = $('#' + newWrapId)
 			.html(viewContent)
@@ -378,6 +435,42 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 		newItem.fire = function(type, parameters) {
 			this.injector.get('$rootScope').$broadcast(type, parameters);
 		};
+
+		return newItem;
+	};
+
+	/**
+	 * Displays partial content.
+	 *
+	 * @method _showPartial
+	 * @param {String} module Name of the module
+	 * @param {String} action Name of the action
+	 * @param {String} className Class name of the module
+	 * @param {String} actionName Method name of the action
+	 * @param {Array} parameters Action parameters
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent View content to render
+	 * @param {jQuery} container Container to place the content into
+	 * @private
+	 */
+	Navi.prototype._showPartial = function(
+		module,
+		action,
+		className,
+		actionName,
+		parameters,
+		moduleObj,
+		viewContent,
+		container
+	) {
+		container
+			.html(viewContent)
+			.attr('ng-controller', className + '.' + actionName);
+
+		this._module.value('parameters', parameters);
+		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
+
+		angular.bootstrap(container, ['app']);
 	};
 
 	/**
@@ -434,7 +527,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
 	 * @param {Object} instance Instance of the module
-	 * @return {Number} Content id
+	 * @return {Object} New stack item
 	 * @private
 	 */
 	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {

@@ -5,7 +5,7 @@ function() {
 	/**
 	 * ${NAME} model
 	 *
-	 * @class NAME
+	 * @class ${NAME}
 	 * @constructor
 	 * @module Models
 	 */

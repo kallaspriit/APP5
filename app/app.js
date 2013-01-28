@@ -1,7 +1,8 @@
 /*
- * TODO Standalone modules (header menu etc)
+ * TODO Standalone modules - partials (header menu etc)
  * TODO Fix build system
  * TODO Example application
+ * TODO Opening a module action in a modal
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  */
