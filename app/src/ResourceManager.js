@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bindable', 'Util'],
-function($, Bindable, util) {
+['jquery', 'Bindable', 'Deferred', 'Util'],
+function($, Bindable, Deferred, util) {
 	'use strict';
 
 	/**
@@ -160,7 +160,7 @@ function($, Bindable, util) {
 	 */
 	ResourceManager.prototype.loadModule = function(name, callback) {
 		var self = this,
-			deferred = $.Deferred(),
+			deferred = new Deferred(),
 			className = util.convertEntityName(name) + 'Module';
 
 		if (util.isObject(this._modules[name])) {
@@ -219,7 +219,7 @@ function($, Bindable, util) {
 	ResourceManager.prototype.loadView = function(module, action, callback) {
 		var self = this,
 			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
-			deferred = $.Deferred();
+			deferred = new Deferred();
 
 		if (util.isString(this._views[filename])) {
 			if (util.isFunction(callback)) {
@@ -265,7 +265,7 @@ function($, Bindable, util) {
 	 *
 	ResourceManager.prototype.loadCss = function(filename, loadedCallback) {
 		var id = 'css-' + util.uid(),
-			deferred = $.Deferred();
+			deferred = new Deferred();
 
 		$('<link>')
 			.attr({
@@ -296,7 +296,7 @@ function($, Bindable, util) {
 	 */
 	ResourceManager.prototype.loadCss = function(filename, loadedCallback) {
 		var self = this,
-			deferred = $.Deferred();
+			deferred = new Deferred();
 
 		if (!util.isUndefined(this._loadedCssFiles[filename])) {
 			deferred.resolve(this._loadedCssFiles[filename]);
@@ -356,16 +356,6 @@ function($, Bindable, util) {
 		head.appendChild(link);
 
 		return deferred.promise();
-	};
-
-	/**
-	 * Proxy to jQuery::when.
-	 *
-	 * @method when
-	 * @return {jQuery.Deferred}
-	 */
-	ResourceManager.prototype.when = function() {
-		return $.when.apply(window, arguments);
 	};
 
 	return new ResourceManager();

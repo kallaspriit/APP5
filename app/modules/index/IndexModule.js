@@ -100,6 +100,12 @@ function(phonebook) {
 				dbg.log('! Another event', this);
 			}, 5000, true);
 
+			util
+				.when(timeout, timeout2)
+				.then(function() {
+					dbg.log('! Timeouts complete');
+				});
+
 			scheduler.setInterval(function() {
 				dbg.log('! Interval', this);
 			}, 1000);

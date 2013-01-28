@@ -1,12 +1,10 @@
 define(
-['Bindable', 'Util', 'Navi'],
-function(Bindable, util, navi) {
+['Deferred', 'Util', 'Navi'],
+function(Deferred, util, navi) {
 	'use strict';
 
 	/**
 	 * Provides functionality for scheduling timeout and interval events.
-	 *
-	 * // TODO Build this on deferred promises?
 	 *
 	 * @class Scheduler
 	 * @constructor
@@ -47,6 +45,7 @@ function(Bindable, util, navi) {
 	 * @param {Array} parameters Optional parameters
 	 * @param {Boolean} interval Is the timeout of interval type
 	 * @constructor
+	 * @extends Deferred
 	 * @module Core
 	 */
 	Scheduler.Timeout = function(component, callback, milliseconds, persistent, parameters, interval) {
@@ -76,9 +75,18 @@ function(Bindable, util, navi) {
 				if (util.isFunction(callback)) {
 					callback.apply(self, parameters);
 				}
+
+				self.resolve.apply(self, [self, 'fired']);
 			}, milliseconds);
 		}
+
+		// can't use normal prototype inheritance
+		// http://blog.jcoglan.com/2012/01/19/the-cost-of-privacy/
+		util.extend(this, new Deferred());
 	};
+
+	// extend from the deferred.
+	//Scheduler.Timeout.prototype = new Deferred();
 
 	/**
 	 * Returns whether given timeout is still alive.
@@ -129,6 +137,8 @@ function(Bindable, util, navi) {
 		} else {
 			window.clearTimeout(this._id);
 		}
+
+		this.resolve(this, 'cancel');
 
 		this._alive = false;
 	};

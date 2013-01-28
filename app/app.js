@@ -1,6 +1,6 @@
 /*
+ * TODO Standalone modules (header menu etc)
  * TODO Fix build system
- * TODO Touch events
  * TODO Example application
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred

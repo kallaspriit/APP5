@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'Mouse', 'config/main', 'angular'],
-function(Bindable, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
+['Bindable', 'Deferred', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'Mouse', 'config/main', 'angular'],
+function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
 	'use strict';
 
 	/**
@@ -115,7 +115,7 @@ function(Bindable, dbg, util, ui, resourceManager, keyboard, mouse, config, angu
 
 		body.addClass('loading-view');
 
-		resourceManager.when(
+		util.when(
 			resourceManager.loadModule(module),
 			resourceManager.loadView(module, action),
 			resourceManager.loadCss(moduleCssFilename)

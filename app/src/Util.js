@@ -1,6 +1,6 @@
 define(
-['underscore'],
-function(_) {
+['Deferred', 'underscore'],
+function(Deferred, _) {
 	'use strict';
 
 	/**
@@ -646,6 +646,15 @@ function(_) {
 			argv.unshift(fmt);
 
 			return this.sprintf.apply(null, argv);
+		},
+
+		/**
+		 * Proxy to Deferred.when().
+		 *
+		 * @method when
+		 */
+		when: function() {
+			return Deferred.when.apply(window, arguments);
 		},
 
 		/**
