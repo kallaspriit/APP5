@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bindable', 'Deferred', 'Util', 'config/main'],
-function($, Bindable, Deferred, util, config) {
+['jquery', 'Bindable', 'Deferred', 'Util', 'Translator', 'config/main'],
+function($, Bindable, Deferred, util, translator, config) {
 	'use strict';
 
 	/**
@@ -161,7 +161,10 @@ function($, Bindable, Deferred, util, config) {
 	ResourceManager.prototype.loadModule = function(name, callback) {
 		var self = this,
 			deferred = new Deferred(),
-			className = util.convertEntityName(name) + 'Module';
+			className = util.convertEntityName(name) + 'Module',
+			translationsName = name + '-translations.js',
+			translationKey,
+			translationLanguage;
 
 		if (util.isObject(this._modules[name])) {
 			deferred.resolve(this._modules[name]);
@@ -173,40 +176,54 @@ function($, Bindable, Deferred, util, config) {
 			return deferred.promise();
 		}
 
-		require(['modules/' + name + '/' + className], function(module) {
-			module.$name = name;
-
-			for (var key in module) {
-				if (key.substr(-6) !== 'Action') {
-					continue;
+		require(
+			['modules/' + name + '/' + className, 'modules/' + name + '/' + translationsName],
+			function(module, translations) {
+				if (util.isObject(translations)) {
+					for (translationKey in translations) {
+						for (translationLanguage in translations[translationKey]) {
+							translator.addTranslation(
+								name + '.' + translationKey,
+								translationLanguage, translations[translationKey][translationLanguage]
+							);
+						}
+					}
 				}
 
-				module[key].$module = name;
-				module[key].$name = key;
+				module.$name = name;
+
+				for (var key in module) {
+					if (key.substr(-6) !== 'Action') {
+						continue;
+					}
+
+					module[key].$module = name;
+					module[key].$name = key;
+				}
+
+				if (config.debug) {
+					window.app.modules[className] = module;
+				}
+
+				self.fire({
+					type: self.Event.MODULE_LOADED,
+					name: name,
+					module: module
+				});
+
+				if (!util.isObject(module)) {
+					throw new Error('Invalid module "' + name + '" requested');
+				}
+
+				self._modules[name] = module;
+
+				deferred.resolve(module);
+
+				if (util.isFunction(callback)) {
+					callback(module);
+				}
 			}
-
-			if (config.debug) {
-				window.app.modules[className] = module;
-			}
-
-			self.fire({
-				type: self.Event.MODULE_LOADED,
-				name: name,
-				module: module
-			});
-
-			if (!util.isObject(module)) {
-				throw new Error('Invalid module "' + name + '" requested');
-			}
-
-			self._modules[name] = module;
-
-			deferred.resolve(module);
-
-			if (util.isFunction(callback)) {
-				callback(module);
-			}
-		});
+		);
 
 		return deferred.promise();
 	};

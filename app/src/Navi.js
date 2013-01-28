@@ -159,9 +159,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 				}
 			);
 		}).fail(function() {
-			dbg.error('Loading module "' + module + '" resources failed');
-
-			deferred.reject('Loading module "' + module + '" resources failed');
+			throw new Error('Loading module "' + module + '" resources failed');
 		});
 
 		return deferred.promise();
@@ -209,6 +207,10 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 		).done(function(moduleObj, viewContent) {
 			container = $(containerSelector);
 
+			if (container.length === 0) {
+				throw new Error('Partial container for "' + containerSelector + '" not found');
+			}
+
 			item = self._showPartial(
 				module,
 				action,
@@ -232,9 +234,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 			deferred.resolve(item);
 		}).fail(function() {
-			dbg.error('Loading module "' + module + '" resources failed');
-
-			deferred.reject('Loading module "' + module + '" resources failed');
+			throw new Error('Loading module "' + module + '" resources failed');
 		});
 
 		return deferred.promise();

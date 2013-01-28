@@ -87,6 +87,25 @@ function(Bindable, util, _) {
 	};
 
 	/**
+	 * Adds a single translation.
+	 *
+	 * @method addTranslation
+	 * @param {String} key Translation key to add
+	 * @param {String} language Translation language code
+	 * @param {String} translation The actual translation in given language
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.addTranslation = function(key, language, translation) {
+		if (!util.isObject(this._translations[key])) {
+			this._translations[key] = {};
+		}
+
+		this._translations[key][language] = translation;
+
+		return this;
+	};
+
+	/**
 	 * Sets active language.
 	 *
 	 * @method setLanguage

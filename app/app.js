@@ -1,5 +1,7 @@
 /*
+ * TODO Make browser back button to work
  * TODO Standalone modules - partials (header menu etc)
+ * TODO Each module has its own translation files?
  * TODO Fix build system
  * TODO Example application
  * TODO Opening a module action in a modal
@@ -14,7 +16,7 @@ require.config({
 		modules: '../modules',
 		models: '../models',
 		config: '../config',
-		translations: '../translations/translations',
+		translations: '../translations/core-translations',
 		angular: '../lib/angular/angular',
 		underscore: '../lib/underscore/underscore',
 		moment: '../lib/moment/moment',

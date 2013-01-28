@@ -10,18 +10,37 @@ function() {
 	 * @module Models
 	 */
 	var MainMenu = [{
-		name: 'home',
-		module: 'index',
-		action: 'index'
-	}, {
-		name: 'test',
-		module: 'index',
-		action: 'test'
-	}];
+			name: 'contacts',
+			module: 'phonebook',
+			action: 'contacts',
+			active: true
+		}, {
+			name: 'add-contact',
+			module: 'phonebook',
+			action: 'add-contact',
+			active: false
+		}],
+		i;
 
-	/*MainMenu.method = function(value) {
-		this.push(value);
-	};*/
+	MainMenu.activeIndex = 0;
+
+	for (i = 0; i < MainMenu.length; i++) {
+		if (MainMenu[i].active === true) {
+			MainMenu.activeIndex = i;
+
+			break;
+		}
+	}
+
+	MainMenu.markOpen = function(index) {
+		if (index === this.activeIndex) {
+			return;
+		}
+
+		this[this.activeIndex].active = false;
+		this[index].active = true;
+		this.activeIndex = index;
+	};
 
 	return MainMenu;
 });

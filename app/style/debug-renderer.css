@@ -14,6 +14,7 @@
 	-moz-transition: width 300ms ease-in;
 	-o-transition: width 300ms ease-in;
 	transition: width 300ms ease-in;
+	z-index: 100;
 }
 #debug-renderer:hover, #debug-renderer.visible {
 	width: 600px;

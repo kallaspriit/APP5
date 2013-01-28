@@ -27,8 +27,8 @@ define(function() {
 		 * @type Object
 		 */
 		index: {
-			module: 'index',
-			action: 'index',
+			module: 'phonebook',
+			action: 'contacts',
 			parameters: []
 		},
 
