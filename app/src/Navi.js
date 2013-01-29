@@ -269,6 +269,13 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 		this._stack.pop();
 
+		this.fire({
+			type: this.Event.STACK_CHANGED,
+			stack: this._stack
+		});
+
+		previousItem.injector.get('$rootScope').$safeApply();
+
 		previousItem.fire(this.Event.WAKEUP);
 
 		var currentWrap = $('#content-' + currentItem.id),
@@ -309,6 +316,16 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 		}
 
 		return this._stack[this._stack.length - 2];
+	};
+
+	/**
+	 * Returns whether there is any page to go back to.
+	 *
+	 * @method isBackPossible
+	 * @return {Boolean}
+	 */
+	Navi.prototype.isBackPossible = function() {
+		return this._stack.length >= 2;
 	};
 
 	/**

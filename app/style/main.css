@@ -7,9 +7,12 @@ HTML, BODY {
 }
 
 /* Pages */
+#header {
+
+}
 #pages {
 	min-width: 980px;
-	z-index: 10;
+
 }
 .page {
 	box-sizing: border-box;
@@ -28,6 +31,13 @@ HTML, BODY {
 	display: block;
 	overflow: visible;
 }
+
+@media (max-width: 979px) {
+	.navbar-fixed-top, .navbar-fixed-bottom {
+		position: relative;
+	}
+}
+
 
 /* Bootstrap customizations */
 .sidebar-nav {
@@ -65,4 +75,15 @@ HTML, BODY {
 }
 .navbar .nav-collapse .lang-nav > li {
 	display: inline-block;
+}
+
+/* Brand back button */
+.brand {
+	padding-left: 42px !important;
+}
+.brand.back-possible {
+	background: url(../images/back-icon.png) no-repeat 10px top;
+}
+.brand.back-possible:hover {
+	background-position: 10px bottom;
 }

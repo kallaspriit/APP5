@@ -162,9 +162,7 @@ function($, Bindable, Deferred, util, translator, config) {
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(name) + 'Module',
-			translationsName = name + '-translations.js',
-			translationKey,
-			translationLanguage;
+			translationsName = name + '-translations.js';
 
 		if (util.isObject(this._modules[name])) {
 			deferred.resolve(this._modules[name]);
@@ -179,6 +177,9 @@ function($, Bindable, Deferred, util, translator, config) {
 		require(
 			['modules/' + name + '/' + className, 'modules/' + name + '/' + translationsName],
 			function(module, translations) {
+				var translationKey,
+					translationLanguage;
+
 				if (util.isObject(translations)) {
 					for (translationKey in translations) {
 						for (translationLanguage in translations[translationKey]) {

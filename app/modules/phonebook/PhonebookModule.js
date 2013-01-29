@@ -19,7 +19,14 @@ function(phonebook) {
 		 * @param {$scope} $scope Angular scope
 		 */
 		contactsAction: function($scope) {
-		
+			$scope.phonebook = phonebook;
+			$scope.filter = '';
+			$scope.order = 'name';
+			$scope.orderOptions = ['name', 'number'];
+
+			$scope.orderBy = function(property) {
+				$scope.order = property;
+			};
 		},
 
 		/**
@@ -27,9 +34,14 @@ function(phonebook) {
 		 *
 		 * @method addContactAction
 		 * @param {$scope} $scope Angular scope
+		 * @param {Navi} navi Navigation
 		 */
-		addContactAction: function($scope) {
+		addContactAction: function($scope, navi) {
+			$scope.addContact = function(name, number) {
+				phonebook.add(name, number);
 
+				navi.back();
+			};
 		}
 	};
 });

@@ -19,27 +19,16 @@ function() {
 			module: 'phonebook',
 			action: 'add-contact',
 			active: false
-		}],
-		i;
+		}];
 
-	MainMenu.activeIndex = 0;
+	MainMenu.markActive = function(module, action) {
+		for (var i = 0; i < this.length; i++) {
+			this[i].active = false;
 
-	for (i = 0; i < MainMenu.length; i++) {
-		if (MainMenu[i].active === true) {
-			MainMenu.activeIndex = i;
-
-			break;
+			if (this[i].module === module && this[i].action === action) {
+				this[i].active = true;
+			}
 		}
-	}
-
-	MainMenu.markOpen = function(index) {
-		if (index === this.activeIndex) {
-			return;
-		}
-
-		this[this.activeIndex].active = false;
-		this[index].active = true;
-		this.activeIndex = index;
 	};
 
 	return MainMenu;

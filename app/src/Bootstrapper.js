@@ -102,11 +102,7 @@ function(
 		this._app.navi.setModule(this._app.module);
 
 		this._app.module.run(function($rootScope) {
-			self._app.root = $rootScope;
-
-			for (var key in self._app) {
-				self._app.root[key] = self._app[key];
-			}
+			self._onModuleRun($rootScope);
 		});
 
 		/*this._app.root.languages = translator.getLanguages();
@@ -119,17 +115,50 @@ function(
 		}
 
 		$(document).ready(function() {
-			self._run();
+			self._onDomReady();
+		});
+	};
+
+	/**
+	 * Called when angular injector has performed loading all the modules.
+	 *
+	 * @method _onModuleRun
+	 * @private
+	 */
+	Bootstrapper.prototype._onModuleRun = function(rootScope) {
+		var self = this;
+
+		this._app.root = rootScope;
+
+		// @TODO Not sure if this is a good idea, used against $apply already in progress
+		this._app.root.$safeApply = function(fn) {
+			var phase = this.$root.$$phase;
+
+			if (phase == '$apply' || phase == '$digest') {
+				if (util.isFunction(fn)) {
+					fn();
+				}
+			} else {
+				this.$apply(fn);
+			}
+		};
+
+		for (var key in this._app) {
+			this._app.root[key] = this._app[key];
+		}
+
+		this._app.translator.bind(this._app.translator.Event.LANGUAGE_CHANGED, function() {
+			self._app.root.$safeApply();
 		});
 	};
 
 	/**
 	 * Called when all base bootstrapping has been completed and DOM is ready.
 	 *
-	 * @method _run
+	 * @method _onDomReady
 	 * @private
 	 */
-	Bootstrapper.prototype._run = function() {
+	Bootstrapper.prototype._onDomReady = function() {
 		navi.partial(
 			'#header',
 			'site',

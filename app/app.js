@@ -36,7 +36,7 @@ require.config({
 });
 
 require(
-	['Bootstrapper', 'lib/jquery/jquery.mobile-events.js'],
+	['Bootstrapper', 'lib/jquery/jquery.mobile-events.js', 'lib/bootstrap/js/bootstrap.js'],
 	function(bootstrapper) {
 		'use strict';
 

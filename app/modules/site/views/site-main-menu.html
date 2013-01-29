@@ -5,22 +5,30 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</a>
-		<a class="brand" href="#" translate>site.title</a>
+		<a class="brand" ng-class="{'back-possible' : backPossible}" href="javascript: void(0);" ng-click="navi.back()" translate>site.title</a>
 		<div class="nav-collapse collapse">
 			<ul class="nav pull-right lang-nav">
-				<li class="active">
-					<a href="javascript: void(0);" style="background-image: url('modules/site/images/flags/et.png');" translate>lang.et</a>
-				</li>
-				<li>
-					<a href="javascript: void(0);" style="background-image: url('modules/site/images/flags/en.png');" translate>lang.en</a>
+				<li ng-class="{active : language == translator.getLanguage()}" ng-repeat="language in translator.getLanguages()">
+					<a href="javascript: void(0);" style="background-image: url('modules/site/images/flags/{{language}}.png');" ng-click="translator.setLanguage(language)">{{translator.translate('lang.' + language)}}</a>
 				</li>
 			</ul>
-			<p class="navbar-text pull-right">
-				Logged in as <strong>Admin</strong> | <a href="#" class="navbar-link">log out</a>
-			</p>
 			<ul class="nav">
 				<li ng-repeat="menu in menus" ng-class="{active : menu.active}"><a href="javascript: void(0);" ng-click="open($index)">{{translator.translate('site.menu.' + menu.name)}}</a></li>
 			</ul>
 		</div>
 	</div>
 </div>
+
+<script>
+
+	$('[data-toggle=collapse]').click(function (e) {
+		var $this = $(this), href
+				, target = $this.attr('data-target')
+						|| e.preventDefault()
+						|| (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
+				, option = $(target).data('collapse') ? 'toggle' : $this.data()
+		$this[$(target).hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
+		$(target).collapse(option)
+	})
+
+</script>
