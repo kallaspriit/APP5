@@ -27,8 +27,8 @@
 				<p><strong translate>phonebook.phone-number</strong>: <span class="nr">{{contact.number}}</span></p>
 
 				<div class="btn-group">
-					<button class="btn btn-mini" translate>edit</button>
-					<button class="btn btn-mini" translate>delete</button>
+					<button class="btn btn-mini" ng-click="edit(contact.id)" translate>edit</button>
+					<button class="btn btn-mini" ng-click="delete(contact.id)" translate>delete</button>
 				</div>
 			</div>
 		</li>

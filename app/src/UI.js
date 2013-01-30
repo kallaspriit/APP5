@@ -1,6 +1,6 @@
 define(
-['jquery', 'config/main', 'Bindable', 'Debug', 'DebugRenderer', 'Util'],
-function($, config, Bindable, dbg, debugRenderer, util) {
+['jquery', 'config/main', 'Bindable', 'ResourceManager', 'Debug', 'DebugRenderer', 'Util'],
+function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 	'use strict';
 
 	/**
@@ -27,9 +27,13 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 	 * @event
 	 * @param {Object} Event
 	 * @param {String} Event.READY UI is ready
+	 * @param {String} Event.MODAL_SHOWN A modal window is displayed
+	 * @param {String} Event.MODAL_HIDDEN A modal window is hidden
 	 */
 	UI.prototype.Event = {
-		READY: 'ready'
+		READY: 'ready',
+		MODAL_SHOWN: 'modal-shown',
+		MODAL_HIDDEN: 'modal-hidden'
 	};
 
 	/**
@@ -60,38 +64,39 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 	UI.prototype.transitionView = function(currentWrap, newWrap, isReverse, completeCallback) {
 		isReverse = util.isBoolean(isReverse) ? isReverse : false;
 
-		var body = $(document.body),
+		var prefix = config.cssPrefix,
+			body = $(document.body),
 			transitionType = config.pageTransition,
 			simultaneousTransitions = ['slide', 'slideup', 'slidedown'],
 			isSimultaneous = util.contains(simultaneousTransitions, transitionType);
 
 		if (currentWrap.length > 0) {
-			body.addClass('transitioning transition-' + transitionType);
+			body.addClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 
 			if (isReverse) {
-				currentWrap.addClass('reverse');
-				newWrap.addClass('reverse');
+				currentWrap.addClass(prefix + 'reverse');
+				newWrap.addClass(prefix + 'reverse');
 			}
 
-			currentWrap.addClass(transitionType + ' out');
+			currentWrap.addClass(prefix + transitionType + ' ' + prefix + 'out');
 
 			if (isSimultaneous) {
-				newWrap.addClass('page-active ' + transitionType + ' in');
+				newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 			}
 
 			currentWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
-				currentWrap.removeClass(transitionType + ' out page-active reverse');
+				currentWrap.removeClass(prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse');
 
 				if (!isSimultaneous) {
-					newWrap.addClass('page-active ' + transitionType + ' in');
+					newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 				}
 
 				currentWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
 			});
 
 			newWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
-				newWrap.removeClass(transitionType + ' in reverse');
-				body.removeClass('transitioning transition-' + transitionType);
+				newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
+				body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 				newWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
 
 				if (util.isFunction(completeCallback)) {
@@ -99,12 +104,126 @@ function($, config, Bindable, dbg, debugRenderer, util) {
 				}
 			});
 		} else {
-			newWrap.addClass('page-active');
+			newWrap.addClass(prefix + 'page-active');
 
 			if (util.isFunction(completeCallback)) {
 				completeCallback();
 			}
 		}
+	};
+
+	/**
+	 * Opens a view in a modal window.
+	 *
+	 * @method openModal
+	 * @param {String} module Module to open
+	 * @param {String} [action=index] Action to navigate to
+	 * @param {Object} [parameters] Action parameters
+	 * @param {Object} [options] Optional modal options
+	 */
+	UI.prototype.openModal = function(module, action, parameters, options) {
+		this.showModal('<div id="modal-content"></div>', options);
+
+		require(['Navi'], function(navi) {
+			navi.partial('#modal-content', module, action, parameters);
+		});
+	};
+
+	/**
+	 * Displays a modal window with specific content.
+	 *
+	 * @method showModal
+	 * @param {String} content Modal content
+	 * @param {Object} [options] Optional modal options
+	 */
+	UI.prototype.showModal = function(content, options) {
+		var self = this,
+			filename = 'partials/modal.html',
+			existing = $('#modal');
+
+		// TODO Not sure if this is great..
+		if (existing.length > 0) {
+			existing.remove();
+		}
+
+		resourceManager.loadView(filename)
+			.done(function(template) {
+				$(document.body).append(template);
+
+				$('#modal')
+					.html(content)
+					.modal(util.isObject(options) ? options : {})
+					.on('shown', function() {
+						self.fire({
+							type: self.Event.MODAL_SHOWN,
+							modal: $(this)
+						});
+					})
+					.on('hidden', function() {
+						$(this).remove();
+
+						self.fire({
+							type: self.Event.MODAL_HIDDEN
+						});
+					});
+			})
+			.fail(function() {
+				throw new Error('Loading modal template from ' + filename + ' failed');
+			});
+	};
+
+	/**
+	 * Hides currently visible modal window if exists.
+	 *
+	 * @method hideModal
+	 */
+	UI.prototype.hideModal = function() {
+		$('#modal').modal('hide');
+	};
+
+	/**
+	 * Displays a confirmation window.
+	 *
+	 * The method accepts any number of additional parameters that are used in the translation of the content.
+	 *
+	 * @method confirm
+	 * @param {Function} callback Callback to call on confirmation
+	 * @param {String} [title] Default title override, can be translation key
+	 * @param {String} [content] Default confirmation text override, can be translation key
+	 */
+	UI.prototype.confirm = function(callback, title, content) {
+		var self = this,
+			filename = 'partials/confirm.html',
+			existing = $('#confirm');
+
+		// TODO Not sure if this is great..
+		if (existing.length > 0) {
+			existing.remove();
+		}
+
+		resourceManager.loadView(filename)
+			.done(function(template) {
+				$(document.body).append(template);
+
+				$('#confirm')
+					.modal()
+					.on('shown', function() {
+						self.fire({
+							type: self.Event.MODAL_SHOWN,
+							modal: $(this)
+						});
+					})
+					.on('hidden', function() {
+						$(this).remove();
+
+						self.fire({
+							type: self.Event.MODAL_HIDDEN
+						});
+					});
+			})
+			.fail(function() {
+				throw new Error('Loading confirm template from ' + filename + ' failed');
+			});
 	};
 
 	/**

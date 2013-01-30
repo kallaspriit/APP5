@@ -25,13 +25,17 @@ function(menus) {
 			$scope.backPossible = false;
 
 			$scope.open = function(index) {
+				var current = navi.getCurrent();
+
+				if (menus[index].module === current.module && menus[index].action === current.action) {
+					return;
+				}
+
 				navi.open(
 					menus[index].module,
 					menus[index].action || 'index',
 					menus[index].parameters || []
 				);
-
-				//menus.markOpen(index);
 			};
 
 			navi.bind(navi.Event.STACK_CHANGED, function() {

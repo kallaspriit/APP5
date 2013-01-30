@@ -1,0 +1,24 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	<h3 id="myModalLabel" translate>phonebook.edit-contact</h3>
+</div>
+<div class="modal-body">
+	<form class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="contact-name" translate>phonebook.name</label>
+			<div class="controls">
+				<input type="text" id="contact-name" ng-model="contact.name">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="contact-number" translate>phonebook.number</label>
+			<div class="controls">
+				<input type="tel" id="contact-number" ng-model="contact.number">
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button class="btn" data-dismiss="modal" aria-hidden="true" translate>cancel</button>
+	<button class="btn btn-primary" ng-click="update(contact)" translate>save</button>
+</div>

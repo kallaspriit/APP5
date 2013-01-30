@@ -17,7 +17,7 @@ function(base, _) {
 	var options = _.clone(base);
 
 	// override any developer-specific options
-	options.debug = false;
+	options.debug = true;
 
 	return options;
 });

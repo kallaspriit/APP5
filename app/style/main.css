@@ -11,10 +11,9 @@ HTML, BODY {
 
 }
 #pages {
-	min-width: 980px;
 
 }
-.page {
+.app5-page {
 	box-sizing: border-box;
 	padding: 60px 0 0 0;
 	margin: 0;
@@ -27,7 +26,7 @@ HTML, BODY {
 	border: 0;
 	outline: none;
 }
-.page-active {
+.app5-page-active {
 	display: block;
 	overflow: visible;
 }

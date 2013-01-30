@@ -39,6 +39,10 @@ function() {
 			'en': 'Phone number',
 			'et': 'Telefoninumber'
 		},
+		'edit-contact': {
+			'en': 'Edit Contact',
+			'et': 'Muuda Kontakti'
+		},
 
 
 		'': {

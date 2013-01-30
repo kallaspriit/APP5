@@ -41,6 +41,14 @@ define(function() {
 		viewSelector: '#pages',
 
 		/**
+		 * Prefix for system CSS rules.
+		 *
+		 * @property cssPrefix
+		 * @type String
+		 */
+		cssPrefix: 'app5-',
+
+		/**
 		 * Page transition to use.
 		 *
 		 * One of:

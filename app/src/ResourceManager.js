@@ -233,14 +233,12 @@ function($, Bindable, Deferred, util, translator, config) {
 	 * Loads a module view.
 	 *
 	 * @method loadView
-	 * @param {String} module Name of the module
-	 * @param {String} action Name of the module action
+	 * @param {String} filename Filename of the view
 	 * @param {Function} callback Callback to call with loaded
 	 * @return {jQuery.Deferred} jQuery deferred
 	 */
-	ResourceManager.prototype.loadView = function(module, action, callback) {
+	ResourceManager.prototype.loadView = function(filename, callback) {
 		var self = this,
-			filename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
 			deferred = new Deferred();
 
 		if (util.isString(this._views[filename])) {
@@ -269,7 +267,7 @@ function($, Bindable, Deferred, util, translator, config) {
 					callback(html);
 				}
 			}).error(function() {
-				deferred.reject('Loading view for ' + module + '::' + action + ' failed');
+				deferred.reject('Loading view from ' + filename + ' failed');
 			});
 
 		return deferred.promise();

@@ -1,5 +1,5 @@
-.transitioning,
-.transitioning .page {
+.app5-transitioning,
+.app5-transitioning .page {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
@@ -9,7 +9,7 @@
 }
 
 /*transitions*/
-.in {
+.app5-in {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
@@ -21,7 +21,7 @@
 	animation-duration: 350ms;
 }
 
-.out {
+.app5-out {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-in;
 	-webkit-animation-duration: 225ms;
@@ -87,7 +87,7 @@
 	}
 }
 
-.fade.out {
+.app5-fade.app5-out {
 	opacity: 0;
 	-webkit-animation-duration: 125ms;
 	-webkit-animation-name: fadeout;
@@ -97,7 +97,7 @@
 	animation-name: fadeout;
 }
 
-.fade.in {
+.app5-fade.app5-in {
 	opacity: 1;
 	-webkit-animation-duration: 225ms;
 	-webkit-animation-name: fadein;
@@ -107,13 +107,13 @@
 	animation-name: fadein;
 }
 
-.pop {
+.app5-pop {
 	-webkit-transform-origin: 50% 50%;
 	-moz-transform-origin: 50% 50%;
 	transform-origin: 50% 50%;
 }
 
-.pop.in {
+.app5-pop.app5-in {
 	-webkit-transform: scale(1);
 	-webkit-animation-name: popin;
 	-webkit-animation-duration: 350ms;
@@ -126,7 +126,7 @@
 	opacity: 1;
 }
 
-.pop.out {
+.app5-pop.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
 	-moz-animation-name: fadeout;
@@ -136,13 +136,13 @@
 	opacity: 0;
 }
 
-.pop.in.reverse {
+.app5-pop.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-moz-animation-name: fadein;
 	animation-name: fadein;
 }
 
-.pop.out.reverse {
+.app5-pop.app5-out.app5-reverse {
 	-webkit-transform: scale(.8);
 	-webkit-animation-name: popout;
 	-moz-transform: scale(.8);
@@ -327,7 +327,7 @@
 	}
 }
 
-.slide.out, .slide.in {
+.app5-slide.app5-out, .app5-slide.app5-in {
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
 	-moz-animation-timing-function: ease-out;
@@ -336,7 +336,7 @@
 	animation-duration: 350ms;
 }
 
-.slide.out {
+.app5-slide.app5-out {
 	-webkit-transform: translateX(-100%);
 	-webkit-animation-name: slideouttoleft;
 	-moz-transform: translateX(-100%);
@@ -345,7 +345,7 @@
 	animation-name: slideouttoleft;
 }
 
-.slide.in {
+.app5-slide.app5-in {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromright;
 	-moz-transform: translateX(0);
@@ -354,7 +354,7 @@
 	animation-name: slideinfromright;
 }
 
-.slide.out.reverse {
+.app5-slide.app5-out.app5-reverse {
 	-webkit-transform: translateX(100%);
 	-webkit-animation-name: slideouttoright;
 	-moz-transform: translateX(100%);
@@ -363,7 +363,7 @@
 	animation-name: slideouttoright;
 }
 
-.slide.in.reverse {
+.app5-slide.app5-in.app5-reverse {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: slideinfromleft;
 	-moz-transform: translateX(0);
@@ -372,7 +372,7 @@
 	animation-name: slideinfromleft;
 }
 
-.slidefade.out {
+.app5-slidefade.app5-out {
 	-webkit-transform: translateX(-100%);
 	-webkit-animation-name: slideouttoleft;
 	-webkit-animation-duration: 225ms;
@@ -384,7 +384,7 @@
 	animation-duration: 225ms;
 }
 
-.slidefade.in {
+.app5-slidefade.app5-in {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 200ms;
@@ -396,7 +396,7 @@
 	animation-duration: 200ms;
 }
 
-.slidefade.out.reverse {
+.app5-slidefade.app5-out.app5-reverse {
 	-webkit-transform: translateX(100%);
 	-webkit-animation-name: slideouttoright;
 	-webkit-animation-duration: 200ms;
@@ -408,7 +408,7 @@
 	animation-duration: 200ms;
 }
 
-.slidefade.in.reverse {
+.app5-slidefade.app5-in.app5-reverse {
 	-webkit-transform: translateX(0);
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 200ms;
@@ -419,7 +419,7 @@
 }
 
 /* slide down */
-.slidedown.out {
+.app5-slidedown.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
 	-moz-animation-name: fadeout;
@@ -428,7 +428,7 @@
 	animation-duration: 100ms;
 }
 
-.slidedown.in {
+.app5-slidedown.app5-in {
 	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfromtop;
 	-webkit-animation-duration: 250ms;
@@ -440,7 +440,7 @@
 	animation-duration: 250ms;
 }
 
-.slidedown.in.reverse {
+.app5-slidedown.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 150ms;
 	-moz-animation-name: fadein;
@@ -449,7 +449,7 @@
 	animation-duration: 150ms;
 }
 
-.slidedown.out.reverse {
+.app5-slidedown.app5-out.app5-reverse {
 	-webkit-transform: translateY(-100%);
 	-webkit-animation-name: slideouttotop;
 	-webkit-animation-duration: 200ms;
@@ -516,7 +516,7 @@
 }
 
 /* slide up */
-.slideup.out {
+.app5-slideup.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
 	-moz-animation-name: fadeout;
@@ -525,7 +525,7 @@
 	animation-duration: 100ms;
 }
 
-.slideup.in {
+.app5-slideup.app5-in {
 	-webkit-transform: translateY(0);
 	-webkit-animation-name: slideinfrombottom;
 	-webkit-animation-duration: 250ms;
@@ -537,7 +537,7 @@
 	animation-duration: 250ms;
 }
 
-.slideup.in.reverse {
+.app5-slideup.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 150ms;
 	-moz-animation-name: fadein;
@@ -546,7 +546,7 @@
 	animation-duration: 150ms;
 }
 
-.slideup.out.reverse {
+.app5-slideup.app5-out.app5-reverse {
 	-webkit-transform: translateY(100%);
 	-webkit-animation-name: slideouttobottom;
 	-webkit-animation-duration: 200ms;
@@ -618,14 +618,14 @@
  * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
  * value.
  */
-.viewport-flip {
+.app5-viewport-flip {
 	-webkit-perspective: 1000;
 	-moz-perspective: 1000;
 	perspective: 1000;
 	position: absolute;
 }
 
-.flip {
+.app5-flip {
 	-webkit-backface-visibility: hidden;
 	-webkit-transform: translateX(0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-moz-backface-visibility: hidden;
@@ -634,7 +634,7 @@
 	transform: translateX(0);
 }
 
-.flip.out {
+.app5-flip.app5-out {
 	-webkit-transform: rotateY(-90deg) scale(.9);
 	-webkit-animation-name: flipouttoleft;
 	-webkit-animation-duration: 175ms;
@@ -646,7 +646,7 @@
 	animation-duration: 175ms;
 }
 
-.flip.in {
+.app5-flip.app5-in {
 	-webkit-animation-name: flipintoright;
 	-webkit-animation-duration: 225ms;
 	-moz-animation-name: flipintoright;
@@ -655,7 +655,7 @@
 	animation-duration: 225ms;
 }
 
-.flip.out.reverse {
+.app5-flip.app5-out.app5-reverse {
 	-webkit-transform: rotateY(90deg) scale(.9);
 	-webkit-animation-name: flipouttoright;
 	-moz-transform: rotateY(90deg) scale(.9);
@@ -664,7 +664,7 @@
 	animation-name: flipouttoright;
 }
 
-.flip.in.reverse {
+.app5-flip.app5-in.app5-reverse {
 	-webkit-animation-name: flipintoleft;
 	-moz-animation-name: flipintoleft;
 	animation-name: flipintoleft;
@@ -784,7 +784,7 @@
  * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
  * value.
  */
-.viewport-turn {
+.app5-viewport-turn {
 	-webkit-perspective: 200px;
 	-moz-perspective: 200px;
 	-ms-perspective: 200px;
@@ -792,7 +792,7 @@
 	position: absolute;
 }
 
-.turn {
+.app5-turn {
 	-webkit-backface-visibility: hidden;
 	-webkit-transform: translateX(0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-webkit-transform-origin: 0;
@@ -806,7 +806,7 @@
 	transform-origin: 0;
 }
 
-.turn.out {
+.app5-turn.app5-out {
 	-webkit-transform: rotateY(-90deg) scale(.9);
 	-webkit-animation-name: flipouttoleft;
 	-webkit-animation-duration: 125ms;
@@ -818,7 +818,7 @@
 	animation-duration: 125ms;
 }
 
-.turn.in {
+.app5-turn.app5-in {
 	-webkit-animation-name: flipintoright;
 	-webkit-animation-duration: 250ms;
 	-moz-animation-name: flipintoright;
@@ -828,7 +828,7 @@
 
 }
 
-.turn.out.reverse {
+.app5-turn.app5-out.app5-reverse {
 	-webkit-transform: rotateY(90deg) scale(.9);
 	-webkit-animation-name: flipouttoright;
 	-moz-transform: rotateY(90deg) scale(.9);
@@ -837,7 +837,7 @@
 	animation-name: flipouttoright;
 }
 
-.turn.in.reverse {
+.app5-turn.app5-in.app5-reverse {
 	-webkit-animation-name: flipintoleft;
 	-moz-animation-name: flipintoleft;
 	animation-name: flipintoleft;
@@ -952,7 +952,7 @@
 }
 
 /* flow transition */
-.flow {
+.app5-flow {
 	-webkit-transform-origin: 50% 30%;
 	-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .4);
 	-moz-transform-origin: 50% 30%;
@@ -961,7 +961,7 @@
 	box-shadow: 0 0 20px rgba(0, 0, 0, .4);
 }
 
-.dialog.flow {
+.app5-dialog.app5-flow {
 	-webkit-transform-origin: none;
 	-webkit-box-shadow: none;
 	-moz-transform-origin: none;
@@ -970,7 +970,7 @@
 	box-shadow: none;
 }
 
-.flow.out {
+.app5-flow.app5-out {
 	-webkit-transform: translateX(-100%) scale(.7);
 	-webkit-animation-name: flowouttoleft;
 	-webkit-animation-timing-function: ease;
@@ -985,7 +985,7 @@
 	animation-duration: 350ms;
 }
 
-.flow.in {
+.app5-flow.app5-in {
 	-webkit-transform: translateX(0) scale(1);
 	-webkit-animation-name: flowinfromright;
 	-webkit-animation-timing-function: ease;
@@ -1000,7 +1000,7 @@
 	animation-duration: 350ms;
 }
 
-.flow.out.reverse {
+.app5-flow.app5-out.app5-reverse {
 	-webkit-transform: translateX(100%);
 	-webkit-animation-name: flowouttoright;
 	-moz-transform: translateX(100%);
@@ -1009,7 +1009,7 @@
 	animation-name: flowouttoright;
 }
 
-.flow.in.reverse {
+.app5-flow.app5-in.app5-reverse {
 	-webkit-animation-name: flowinfromleft;
 	-moz-animation-name: flowinfromleft;
 	animation-name: flowinfromleft;
@@ -1067,19 +1067,12 @@
 	0% {
 		-moz-transform: translateX(0) scale(1);
 	}
-	60%, 70%
-
-{
-	-moz-transform: translateX(0) scale(.7)
-;
-}
-100
-%
-{
-	-moz-transform: translateX(100%) scale(.7)
-;
-}
+	60%, 70% {
+		-moz-transform: translateX(0) scale(.7);
+	} 100% {
+		-moz-transform: translateX(100%) scale(.7);
 	}
+}
 
 @keyframes flowouttoright {
 	0% {

@@ -108,7 +108,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 * @method open
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
-	 * @param {Array} [parameters=null] Action parameters
+	 * @param {Object} [parameters] Action parameters
 	 * @return {Navi} Self
 	 */
 	Navi.prototype.open = function(module, action, parameters) {
@@ -120,6 +120,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
 			body = $(document.body),
 			item = null;
 
@@ -134,7 +135,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 		util.when(
 			resourceManager.loadModule(module),
-			resourceManager.loadView(module, action),
+			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
 			item = self._showView(
@@ -174,7 +175,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 	 * @param {String} containerSelector Container selector
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
-	 * @param {Array} [parameters=null] Action parameters
+	 * @param {Object} [parameters] Action parameters
 	 * @return {Navi} Self
 	 */
 	Navi.prototype.partial = function(containerSelector, module, action, parameters) {
@@ -186,6 +187,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
 			body = $(document.body),
 			item = null,
 			container;
@@ -202,7 +204,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 		util.when(
 			resourceManager.loadModule(module),
-			resourceManager.loadView(module, action),
+			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
 			container = $(containerSelector);
@@ -416,12 +418,13 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 		}
 
 		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
+			prefix = config.cssPrefix,
 			newWrapId = 'content-' + newItem.id,
 			container = $(config.viewSelector),
-			currentWrap = container.find('.page-active'),
+			currentWrap = container.find('.' + prefix + 'page-active'),
 			newWrap;
 
-		container.append('<div id="' + newWrapId + '" class="page ' + module + '-module ' + action + '-action"></div>');
+		container.append('<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>');
 
 		newWrap = $('#' + newWrapId)
 			.html(viewContent)
