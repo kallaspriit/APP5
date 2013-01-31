@@ -43,6 +43,14 @@ function() {
 			'en': 'Edit Contact',
 			'et': 'Muuda Kontakti'
 		},
+		'confirm-delete': {
+			'en': 'Confirm deletion',
+			'et': 'Kinnita kustutamine'
+		},
+		'confirm-delete-text(name)': {
+			'en': 'Are you sure you want to delete %s?',
+			'et': 'Kas olete kindel et soovite kasutaja "%s" kustutada?'
+		},
 
 
 		'': {

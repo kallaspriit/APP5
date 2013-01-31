@@ -1,6 +1,6 @@
 define(
-['Util'],
-function(util) {
+['jquery', 'underscore', 'Util', 'App'],
+function($, _, util, app) {
 	'use strict';
 
 	/**
@@ -10,47 +10,7 @@ function(util) {
 	 * @constructor
 	 * @module Models
 	 */
-	var Phonebook = [{
-			id: 1,
-			name: 'Alice',
-			number: '+372 6234623',
-			image: '1.png'
-		},{
-			id: 2,
-			name: 'Damian',
-			number: '+455 1254523',
-			image: '2.png'
-		},{
-			id: 3,
-			name: 'Dave',
-			number: '+372 5535256',
-			image: '3.png'
-		},{
-			id: 4,
-			name: 'Carol',
-			number: '+372 2553265',
-			image: '4.png'
-		},{
-			id: 5,
-			name: 'Susan',
-			number: '+372 5540125',
-			image: '5.png'
-		},{
-			id: 6,
-			name: 'Jack',
-			number: '+82 5565226',
-			image: '3.png'
-		},{
-			id: 7,
-			name: 'Eve',
-			number: '+172 3543265',
-			image: '4.png'
-		},{
-			id: 8,
-			name: 'Katrin',
-			number: '+372 8246364',
-			image: '5.png'
-		}];
+	var Phonebook = [];
 
 	Phonebook.get = function(id) {
 		return _.find(this, function(contact) { return contact.id === id; });
@@ -58,7 +18,7 @@ function(util) {
 
 	Phonebook.add = function(name, number) {
 		this.push({
-			id: this.length,
+			id: this.length + 1,
 			name: name,
 			number: number,
 			image: ((this.length % 6) + 1) + '.png'
@@ -70,6 +30,24 @@ function(util) {
 
 		util.extend(contact, properties);
 	};
+
+	Phonebook.remove = function(id) {
+		var contact = this.get(id);
+
+		util.remove(contact, this);
+	};
+
+	$.ajax({
+		url: 'data/contacts.json',
+		type: 'GET',
+		dataType: 'JSON'
+	}).success(function(data) {
+		util.extend(Phonebook, data);
+
+		app.validate();
+	}).fail(function() {
+
+	});
 
 	return Phonebook;
 });

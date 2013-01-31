@@ -16,7 +16,7 @@ function(phonebook) {
 		 * Contact list action.
 		 *
 		 * @method contactsAction
-		 * @param {$scope} $scope Angular scope
+		 * @param {Scope} $scope Angular scope
 		 * @param {UI} ui User interface
 		 */
 		contactsAction: function($scope, ui) {
@@ -37,17 +37,19 @@ function(phonebook) {
 						callback: function() {
 							ui.hideModal();
 
-							$scope.$apply();
+							$scope.$digest();
 						}
 					}
 				);
 			};
-			$scope.delete = function(id) {
+			$scope.remove = function(id) {
 				var contact = phonebook.get(id);
 
 				ui.confirm(
 					function() {
-						// TODO Continue..
+						phonebook.remove(id);
+
+						$scope.$digest();
 					},
 					'phonebook.confirm-delete',
 					'phonebook.confirm-delete-text(name)',
@@ -60,7 +62,7 @@ function(phonebook) {
 		 * Add new contact action.
 		 *
 		 * @method addContactAction
-		 * @param {$scope} $scope Angular scope
+		 * @param {Scope} $scope Angular scope
 		 * @param {Navi} navi Navigation
 		 */
 		addContactAction: function($scope, navi) {
@@ -75,7 +77,7 @@ function(phonebook) {
 		 * Enables editing contact information.
 		 *
 		 * @method addContactAction
-		 * @param {$scope} $scope Angular scope
+		 * @param {Scope} $scope Angular scope
 		 * @param {Object} parameters Action parameters
 		 * @param {Navi} navi Navigation
 		 * @param {Util} util Utilities

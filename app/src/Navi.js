@@ -276,7 +276,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			stack: this._stack
 		});
 
-		previousItem.injector.get('$rootScope').$safeApply();
+		previousItem.injector.get('$rootScope').$digest();
 
 		previousItem.fire(this.Event.WAKEUP);
 
@@ -424,7 +424,9 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			currentWrap = container.find('.' + prefix + 'page-active'),
 			newWrap;
 
-		container.append('<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>');
+		container.append(
+			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
+		);
 
 		newWrap = $('#' + newWrapId)
 			.html(viewContent)

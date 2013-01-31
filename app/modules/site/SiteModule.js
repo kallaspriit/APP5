@@ -16,7 +16,7 @@ function(menus) {
 		 * Displays main menu.
 		 *
 		 * @method mainMenuAction
-		 * @param {$scope} $scope Angular scope
+		 * @param {Scope} $scope Angular scope
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
 		 */
@@ -44,7 +44,10 @@ function(menus) {
 				menus.markActive(page.module, page.action);
 
 				$scope.backPossible = navi.isBackPossible();
-				$scope.$safeApply();
+
+				if ($scope.$$phase === null) {
+					$scope.$digest();
+				}
 			});
 		}
 	};

@@ -110,9 +110,10 @@ function($, dbg, resourceManager, util, moment, _) {
 	DebugRenderer.prototype._initHtml = function() {
 		$(document.body).append('<div id="debug-renderer"></div>');
 
-		$('#debug-renderer').on('tap', function() {
-			$(this).toggleClass('visible');
-		});
+		/*$('#debug-renderer').on('singletap', function() {
+			dbg.log('! tap');
+			//$(this).toggleClass('visible');
+		});*/
 	};
 
 	/**

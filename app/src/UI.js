@@ -1,6 +1,6 @@
 define(
-['jquery', 'config/main', 'Bindable', 'ResourceManager', 'Debug', 'DebugRenderer', 'Util'],
-function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
+['jquery', 'underscore', 'config/main', 'Bindable', 'ResourceManager', 'Debug', 'DebugRenderer', 'Util', 'Translator'],
+function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, translator) {
 	'use strict';
 
 	/**
@@ -85,7 +85,9 @@ function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 			}
 
 			currentWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
-				currentWrap.removeClass(prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse');
+				currentWrap.removeClass(
+					prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
+				);
 
 				if (!isSimultaneous) {
 					newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
@@ -122,10 +124,10 @@ function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 	 * @param {Object} [options] Optional modal options
 	 */
 	UI.prototype.openModal = function(module, action, parameters, options) {
-		this.showModal('<div id="modal-content"></div>', options);
-
-		require(['Navi'], function(navi) {
-			navi.partial('#modal-content', module, action, parameters);
+		this.showModal('<div id="modal-content"></div>', options, function() {
+			require(['Navi'], function(navi) {
+				navi.partial('#modal-content', module, action, parameters);
+			});
 		});
 	};
 
@@ -135,8 +137,9 @@ function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 	 * @method showModal
 	 * @param {String} content Modal content
 	 * @param {Object} [options] Optional modal options
+	 * @param {Function} [readyCallback] Callback to call once modal is displayed
 	 */
-	UI.prototype.showModal = function(content, options) {
+	UI.prototype.showModal = function(content, options, readyCallback) {
 		var self = this,
 			filename = 'partials/modal.html',
 			existing = $('#modal');
@@ -166,6 +169,10 @@ function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 							type: self.Event.MODAL_HIDDEN
 						});
 					});
+
+				if (util.isFunction(readyCallback)) {
+					readyCallback();
+				}
 			})
 			.fail(function() {
 				throw new Error('Loading modal template from ' + filename + ' failed');
@@ -201,9 +208,38 @@ function($, config, Bindable, resourceManager, dbg, debugRenderer, util) {
 			existing.remove();
 		}
 
+		title = title || 'confirm-title';
+		content = content || 'confirm-text';
+
+		if (translator.has(title)) {
+			title = translator.translate(title);
+		}
+
+		if (translator.has(content)) {
+			var translationArgs = [];
+
+			if (arguments.length > 3) {
+				translationArgs = _.toArray(arguments).slice(3);
+			}
+
+			translationArgs.unshift(content);
+
+			content = translator.translate.apply(translator, translationArgs);
+		}
+
 		resourceManager.loadView(filename)
 			.done(function(template) {
 				$(document.body).append(template);
+
+				$('#confirm-title').html(title);
+				$('#confirm-content').html(content);
+				$('#confirm-btn').click(function() {
+					if (util.isFunction(callback)) {
+						callback();
+					}
+
+					$('#confirm').modal('hide');
+				});
 
 				$('#confirm')
 					.modal()

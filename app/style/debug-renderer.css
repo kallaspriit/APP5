@@ -9,6 +9,7 @@
 	overflow: hidden;
 	/*border-left: 2px solid #CCC;*/
 	padding: 0 0 0 1px;
+	outline: none;
 	font-family: Consolas;
 	-webkit-transition: width 300ms ease-in;
 	-moz-transition: width 300ms ease-in;

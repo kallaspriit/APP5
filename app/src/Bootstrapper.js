@@ -2,6 +2,7 @@ define(
 [
 	'Debug',
 	'config/main',
+	'App',
 	'ResourceManager',
 	'Keyboard',
 	'Mouse',
@@ -19,6 +20,7 @@ define(
 function(
 	dbg,
 	config,
+	app,
 	resourceManager,
 	keyboard,
 	mouse,
@@ -43,7 +45,7 @@ function(
 	 * @module Core
 	 */
 	var Bootstrapper = function() {
-		this._app = {};
+
 	};
 
 	/**
@@ -52,32 +54,35 @@ function(
 	 * @method bootstrap
 	 */
 	Bootstrapper.prototype.bootstrap = function() {
-		var self = this;
+		var self = this,
+			components = {
+				config: config,
+				bootstrapper: this,
+				dbg: dbg.init(),
+				resourceManager: resourceManager.init(),
+				keyboard: keyboard.init(),
+				mouse: mouse.init(),
+				ui: ui.init(),
+				translator: translator.init(translations, config.language),
+				navi: navi.init(),
+				scheduler: scheduler.init(),
+				util: util,
+				module: null,
+				injector: null,
+				models: {},
+				modules: {},
+				scopes: []
+			};
 
-		this._app = {
-			config: config,
-			bootstrapper: this,
-			dbg: dbg.init(),
-			resourceManager: resourceManager.init(),
-			keyboard: keyboard.init(),
-			mouse: mouse.init(),
-			ui: ui.init(),
-			translator: translator.init(translations, config.language),
-			navi: navi.init(),
-			scheduler: scheduler.init(),
-			util: util,
-			module: null,
-			injector: null,
-			models: {},
-			modules: {}
-		};
-
-		this._app.module = angular.module('app', []);
-
-		this._app.module.config(function($provide) {
+		components.module = angular.module('app', []);
+		components.module.config(function($provide) {
 				// register module resources
-				for (var key in self._app) {
-					$provide.value(key, self._app[key]);
+				for (var key in components) {
+					if (key === 'module') {
+						continue;
+					}
+
+					$provide.value(key, components[key]);
 				}
 
 				// provide underscore and jQuery too
@@ -94,24 +99,24 @@ function(
 			});
 
 		for (var directiveName in directives) {
-			this._app.module.directive(directiveName, directives[directiveName]);
+			components.module.directive(directiveName, directives[directiveName]);
 		}
 
-		this._app.injector = angular.injector(['ng', 'app']);
-		this._app.root = this._app.injector.get('$rootScope');
-		this._app.navi.setModule(this._app.module);
+		components.navi.setModule(components.module);
 
-		this._app.module.run(function($rootScope) {
-			self._onModuleRun($rootScope);
+		components.module.run(function($rootScope) {
+			self._onModuleRun(components, $rootScope);
 		});
 
-		/*this._app.root.languages = translator.getLanguages();
-		this._app.root.language = translator.getLanguage();
-		this._app.root.navi = navi;*/
+		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
+			app.validate();
+		});
+
+		util.extend(app, components);
 
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
-			window.app = this._app;
+			window.a = app;
 		}
 
 		$(document).ready(function() {
@@ -123,33 +128,22 @@ function(
 	 * Called when angular injector has performed loading all the modules.
 	 *
 	 * @method _onModuleRun
+	 * @param {Object} components Application components
+	 * @param {Scope} scope Root scope
 	 * @private
 	 */
-	Bootstrapper.prototype._onModuleRun = function(rootScope) {
-		var self = this;
+	Bootstrapper.prototype._onModuleRun = function(components, scope) {
+		var key;
 
-		this._app.root = rootScope;
+		components.scopes.push(scope);
 
-		// @TODO Not sure if this is a good idea, used against $apply already in progress
-		this._app.root.$safeApply = function(fn) {
-			var phase = this.$root.$$phase;
-
-			if (phase == '$apply' || phase == '$digest') {
-				if (util.isFunction(fn)) {
-					fn();
-				}
-			} else {
-				this.$apply(fn);
+		for (key in components) {
+			if (key === 'root') {
+				continue;
 			}
-		};
 
-		for (var key in this._app) {
-			this._app.root[key] = this._app[key];
+			scope[key] = components[key];
 		}
-
-		this._app.translator.bind(this._app.translator.Event.LANGUAGE_CHANGED, function() {
-			self._app.root.$safeApply();
-		});
 	};
 
 	/**

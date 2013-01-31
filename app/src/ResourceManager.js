@@ -203,7 +203,7 @@ function($, Bindable, Deferred, util, translator, config) {
 				}
 
 				if (config.debug) {
-					window.app.modules[className] = module;
+					window.a.modules[className] = module;
 				}
 
 				self.fire({

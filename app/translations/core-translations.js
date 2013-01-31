@@ -27,6 +27,14 @@ function() {
 		'cancel': {
 			'en': 'Cancel',
 			'et': 'Tühista'
+		},
+		'confirm-title': {
+			'en': 'Confirmation',
+			'et': 'Kinnitus'
+		},
+		'confirm-text': {
+			'en': 'Are you sure you wish to complete this action?',
+			'et': 'Kas oled kindel et soovid antud tegevuse läbi viia?'
 		}
 	};
 });
