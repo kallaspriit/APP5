@@ -88,7 +88,7 @@ function($, Bindable, Deferred, util, translator, config) {
 		dataType = dataType || 'json';
 		data = data || null;
 
-		if (url.substr(-5) === '.html') {
+		if (url.substr(url.length - 5) === '.html') {
 			dataType = 'html';
 		}
 
@@ -194,7 +194,7 @@ function($, Bindable, Deferred, util, translator, config) {
 				module.$name = name;
 
 				for (var key in module) {
-					if (key.substr(-6) !== 'Action') {
+					if (key.substr(key.length - 6) !== 'Action') {
 						continue;
 					}
 

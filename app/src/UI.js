@@ -84,7 +84,9 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 				newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 			}
 
-			currentWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
+			var animationEndEvents = 'animationEnd oAnimationEnd msAnimationEnd mozAnimationEnd webkitAnimationEnd';
+
+			currentWrap.bind(animationEndEvents, function() {
 				currentWrap.removeClass(
 					prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
 				);
@@ -93,13 +95,13 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 					newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 				}
 
-				currentWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
+				currentWrap.unbind(animationEndEvents);
 			});
 
-			newWrap.bind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd', function() {
+			newWrap.bind(animationEndEvents, function() {
 				newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
 				body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
-				newWrap.unbind('animationend webkitAnimationEnd oAnimationEnd MSAnimationEnd');
+				newWrap.unbind(animationEndEvents);
 
 				if (util.isFunction(completeCallback)) {
 					completeCallback();

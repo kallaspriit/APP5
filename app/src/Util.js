@@ -209,7 +209,7 @@ function(Deferred, _) {
 		 * @return {Boolean}
 		 */
 		isObject: function(arg) {
-			return this.typeOf(arg) === 'object';
+			return this.typeOf(arg) === 'object' && arg !== null;
 		},
 
 		/**
@@ -431,7 +431,7 @@ function(Deferred, _) {
 			var type = this.typeOf(collection);
 
 			if (type === 'array') {
-				var index = collection.indexOf(item);
+				var index = _.indexOf(collection, item);
 
 				if (index === -1) {
 					return false;

@@ -157,7 +157,11 @@ function($, dbg, resourceManager, util, moment, _) {
 				args.push(e.args[i]);
 			}
 
-			console.log.apply(console, args);
+			if (util.isFunction(console.log.apply)) {
+				console.log.apply(console, args);
+			} else {
+				console.log(args);
+			}
 		});
 
 		dbg.bind(dbg.Event.LOG, function(e) {
@@ -201,7 +205,11 @@ function($, dbg, resourceManager, util, moment, _) {
 				args.push(formatError(arg));
 			});
 
-			console.error.apply(console, args);
+			if (util.isFunction(console.error.apply)) {
+				console.error.apply(console, args);
+			} else {
+				console.error(args);
+			}
 
 			var message = 'Unknown error',
 				stack = [],
@@ -214,13 +222,17 @@ function($, dbg, resourceManager, util, moment, _) {
 				line = e.args[2];
 			} else if (e.args.length === 1 && util.isError(e.args[0])) {
 				message = e.args[0].message;
-				stack = _.filter(_.map(e.args[0].stack.split('\n'), function(line) {
-					return util.parseStackLine(line);
-				}), function(item) {
-					return item !== null;
-				});
-				filename = stack[0].filename;
-				line = stack[0].line;
+
+				if (util.isArray(e.args) && e.args.length > 0 && util.isString(e.args[0].stack)) {
+					stack = _.filter(_.map(e.args[0].stack.split('\n'), function(line) {
+						return util.parseStackLine(line);
+					}), function(item) {
+						return item !== null;
+					});
+
+					filename = stack[0].filename;
+					line = stack[0].line;
+				}
 			} else if (e.args.length === 1 && util.isString(e.args[0])) {
 				message = e.args[0];
 				filename = e.source.filename;

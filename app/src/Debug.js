@@ -274,7 +274,7 @@ function(Bindable, util, _) {
 
 			if (matches === null) {
 				return null;
-			} else if (matches.filename.substr(-8) == 'Debug.js' && index === 3) {
+			} else if (matches.filename.substr(matches.filename.length - 8) == 'Debug.js' && index === 3) {
 				return this._getSource(5);
 			} else {
 				return matches;
