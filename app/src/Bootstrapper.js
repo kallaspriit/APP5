@@ -75,7 +75,7 @@ function(
 			};
 
 		components.module = angular.module('app', []);
-		components.module.config(function($provide) {
+		components.module.config(function($provide, $locationProvider) {
 				// register module resources
 				for (var key in components) {
 					if (key === 'module') {
@@ -96,6 +96,8 @@ function(
 						return false;
 					};
 				});
+
+				$locationProvider.html5Mode(true).hashPrefix('!');
 			});
 
 		for (var directiveName in directives) {
@@ -104,8 +106,8 @@ function(
 
 		components.navi.setModule(components.module);
 
-		components.module.run(function($rootScope) {
-			self._onModuleRun(components, $rootScope);
+		components.module.run(function($rootScope, $location) {
+			self._onModuleRun(components, $rootScope, $location);
 		});
 
 		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
@@ -130,9 +132,10 @@ function(
 	 * @method _onModuleRun
 	 * @param {Object} components Application components
 	 * @param {Scope} scope Root scope
+	 * @param {Location} location The location service
 	 * @private
 	 */
-	Bootstrapper.prototype._onModuleRun = function(components, scope) {
+	Bootstrapper.prototype._onModuleRun = function(components, scope, location) {
 		var key;
 
 		components.scopes.push(scope);
@@ -144,6 +147,25 @@ function(
 
 			scope[key] = components[key];
 		}
+
+		components.navi.bind(components.navi.Event.PRE_NAVIGATE, function(e) {
+			var parameters = {
+				module: e.module,
+				action: e.action
+			};
+
+			if (e.parameters.length > 0) {
+				parameters['parameters'] = util.str(e.parameters);
+			}
+
+			location.search(parameters);
+		});
+
+		/*scope.$watch('$location.search()', function() {
+			var parameters = location.search();
+
+			dbg.log('! Route', parameters);
+		});*/
 	};
 
 	/**

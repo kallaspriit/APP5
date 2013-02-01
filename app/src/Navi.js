@@ -280,6 +280,13 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 		previousItem.fire(this.Event.WAKEUP);
 
+		this.fire({
+			type: this.Event.PRE_NAVIGATE,
+			module: previousItem.module,
+			action: previousItem.action,
+			parameters: previousItem.parameters
+		});
+
 		var currentWrap = $('#content-' + currentItem.id),
 			newWrap = $('#content-' + previousItem.id);
 
@@ -289,6 +296,13 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 			if (currentWrap.length > 0) {
 				currentWrap.remove();
 			}
+
+			self.fire({
+				type: self.Event.POST_NAVIGATE,
+				module: previousItem.module,
+				action: previousItem.action,
+				parameters: previousItem.parameters
+			});
 		});
 	};
 
