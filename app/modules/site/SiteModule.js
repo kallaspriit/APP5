@@ -17,10 +17,11 @@ function(menus) {
 		 *
 		 * @method mainMenuAction
 		 * @param {Scope} $scope Angular scope
+		 * @param {Location} $location Angular location service
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
 		 */
-		mainMenuAction: function($scope, dbg, navi) {
+		mainMenuAction: function($scope, $location, dbg, navi) {
 			$scope.menus = menus;
 			$scope.backPossible = false;
 
@@ -47,6 +48,23 @@ function(menus) {
 
 				if ($scope.$$phase === null) {
 					$scope.$digest();
+				}
+			});
+
+			$scope.$watch(function () {
+				return $location.absUrl();
+			}, function() {
+				var parameters = $location.search(),
+					current = navi.getCurrent();
+
+				if (
+					current !== null
+					&& (parameters.module !== current.module || parameters.action !== current.action)
+				) {
+					navi.open(
+						parameters.module,
+						parameters.action
+					);
 				}
 			});
 		}

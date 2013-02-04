@@ -1,6 +1,18 @@
 define(
-['Bindable', 'Deferred', 'Debug', 'Util', 'UI', 'ResourceManager', 'Keyboard', 'Mouse', 'config/main', 'angular'],
-function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
+[
+	'Bindable',
+	'Deferred',
+	'App',
+	'Debug',
+	'Util',
+	'UI',
+	'ResourceManager',
+	'Keyboard',
+	'Mouse',
+	'config/main',
+	'angular'
+],
+function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
 	'use strict';
 
 	/**
@@ -157,6 +169,8 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 					body.removeClass('loading-view');
 
 					deferred.resolve(item);
+
+					app.validate();
 				}
 			);
 		}).fail(function() {
@@ -292,6 +306,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 
 		ui.transitionView(currentWrap, newWrap, true, function() {
 			currentItem.fire(self.Event.EXIT);
+			currentItem.injector.get('$rootScope').$emit('$destroy');
 
 			if (currentWrap.length > 0) {
 				currentWrap.remove();
@@ -303,6 +318,8 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 				action: previousItem.action,
 				parameters: previousItem.parameters
 			});
+
+			app.validate();
 		});
 	};
 
@@ -421,6 +438,7 @@ function(Bindable, Deferred, dbg, util, ui, resourceManager, keyboard, mouse, co
 				}
 
 				stackItem.fire(this.Event.EXIT);
+				stackItem.injector.get('$rootScope').$emit('$destroy');
 				stackItem.container.remove();
 
 				if (stackItem.module === module && stackItem.action === action) {

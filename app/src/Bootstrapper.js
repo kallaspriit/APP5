@@ -148,24 +148,26 @@ function(
 			scope[key] = components[key];
 		}
 
-		components.navi.bind(components.navi.Event.PRE_NAVIGATE, function(e) {
+		components.navi.bind(components.navi.Event.POST_NAVIGATE, function(e) {
 			var parameters = {
 				module: e.module,
 				action: e.action
 			};
 
 			if (e.parameters.length > 0) {
-				parameters['parameters'] = util.str(e.parameters);
+				parameters.parameters = util.str(e.parameters);
 			}
 
 			location.search(parameters);
 		});
 
-		/*scope.$watch('$location.search()', function() {
-			var parameters = location.search();
+		/*scope.$on('$locationChangeStart', function(event) {
+			dbg.console('URL CHANGED', event, this.scope.$id);
+		}.bind({scope: scope}));*/
 
-			dbg.log('! Route', parameters);
-		});*/
+		scope.$on('$destroy', function(e) {
+			util.remove(e.targetScope, this.scopes);
+		}.bind({ scopes: components.scopes }));
 	};
 
 	/**
