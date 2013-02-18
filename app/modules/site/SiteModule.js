@@ -20,8 +20,9 @@ function(menus) {
 		 * @param {Location} $location Angular location service
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
+		 * @param {Util} util Utilities
 		 */
-		mainMenuAction: function($scope, $location, dbg, navi) {
+		mainMenuAction: function($scope, $location, dbg, navi, util) {
 			$scope.menus = menus;
 			$scope.backPossible = false;
 
@@ -57,10 +58,11 @@ function(menus) {
 				var parameters = $location.search(),
 					current = navi.getCurrent();
 
-				if (
-					current !== null
-					&& (parameters.module !== current.module || parameters.action !== current.action)
-				) {
+				if (current === null ||!util.isString(parameters.module) || !util.isString(parameters.action)) {
+					return;
+				}
+
+				if (parameters.module !== current.module || parameters.action !== current.action) {
 					navi.open(
 						parameters.module,
 						parameters.action
