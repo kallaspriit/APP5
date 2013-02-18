@@ -39,7 +39,8 @@ require(
 	[
 		'Bootstrapper',
 		'lib/es5-shim/es5-shim.js',
-		'lib/jquery/jquery.mobile-events.js',
+		'lib/hammer/hammer.js',
+		'lib/hammer/jquery.hammer.js',
 		'lib/bootstrap/js/bootstrap.js'
 	],
 	function(bootstrapper) {

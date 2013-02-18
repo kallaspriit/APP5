@@ -38,6 +38,8 @@ function(menus) {
 					menus[index].action || 'index',
 					menus[index].parameters || []
 				);
+
+				dbg.log('! open');
 			};
 
 			navi.bind(navi.Event.STACK_CHANGED, function() {

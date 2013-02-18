@@ -4,7 +4,7 @@
 			<div class="pagination pagination-small span7">
 				<p class="pull-left" style="margin: 4px 10px 0 0"><span translate>phonebook.sort-by</span>:</p>
 				<ul>
-					<li ng-class="{active : orderOption == order}" ng-repeat="orderOption in orderOptions"><a href="javascript: void(0);" ng-click="orderBy(orderOption)">{{translator.translate('phonebook.sort-by.' + orderOption)}}</a></li>
+					<li ng-class="{active : orderOption == order}" ng-repeat="orderOption in orderOptions"><a href="javascript: void(0);" ng-tap="orderBy(orderOption)">{{translator.translate('phonebook.sort-by.' + orderOption)}}</a></li>
 				</ul>
 			</div>
 			<form class="navbar-form span3 pull-right" style="margin: 15px 0;">

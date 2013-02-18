@@ -11,17 +11,20 @@ function($, dbg, resourceManager, util, moment, _) {
 	 * @module Core
 	 */
 	var DebugRenderer = function() {
-
+		this.ui = null;
 	};
 
 	/**
 	 * Starts listening for the debug events.
 	 *
 	 * @method init
+	 * @param {UI} ui The UI instance
 	 * @return {DebugRenderer} Self
 	 */
-	DebugRenderer.prototype.init = function() {
+	DebugRenderer.prototype.init = function(ui) {
 		var self = this;
+
+		this.ui = ui;
 
 		this._initCss(function() {
 			self._initHtml();
@@ -110,10 +113,39 @@ function($, dbg, resourceManager, util, moment, _) {
 	DebugRenderer.prototype._initHtml = function() {
 		$(document.body).append('<div id="debug-renderer"></div>');
 
-		/*$('#debug-renderer').on('singletap', function() {
-			dbg.log('! tap');
-			//$(this).toggleClass('visible');
-		});*/
+		if (!$(document.body).hasClass('with-touch')) {
+			return;
+		}
+
+		$('#debug-renderer')
+			.hammer()
+			/*.bind('drag', function(e) {
+				if (e.direction !== 'left' && e.direction !== 'right') {
+					return;
+				}
+
+				var clientWidth = parseInt($(window).width());
+
+				$(this).removeClass('visible').width(clientWidth - e.touches[0].x);
+			})*/
+			.bind('swipe', function(e) {
+				switch (e.direction) {
+					case 'left':
+						$(this).addClass('visible');
+
+						return false;
+					break;
+
+					case 'right':
+						$(this).removeClass('visible');
+
+						return false;
+					break;
+				}
+			})
+			.bind('hold', function(e) {
+				$(this).empty();
+			});
 	};
 
 	/**
@@ -166,8 +198,17 @@ function($, dbg, resourceManager, util, moment, _) {
 
 		dbg.bind(dbg.Event.LOG, function(e) {
 			var type = 'info',
-				message = e.args[0],
-				id = message.substr(0, 2),
+				message = e.args[0];
+
+			if (!util.isString(message)) {
+				if (util.isFunction(message.toString())) {
+					message = message.toString();
+				} else {
+					return;
+				}
+			}
+
+			var id = message.substr(0, 2),
 				content = self._formatContent(e.args);
 
 			if (id === '+ ') {

@@ -104,6 +104,20 @@ function(
 			components.module.directive(directiveName, directives[directiveName]);
 		}
 
+		components.module.directive('ngTap', function() {
+			return function(scope, element, attrs) {
+				if ('ontouchstart' in document) {
+					element.bind('touchstart', function() {
+						scope.$apply(attrs['ngTap']);
+					});
+				} else {
+					element.bind('click', function() {
+						scope.$apply(attrs['ngTap']);
+					});
+				}
+			};
+		});
+
 		components.navi.setModule(components.module);
 
 		components.module.run(function($rootScope, $location) {
