@@ -1,10 +1,6 @@
 /*
  * TODO Make browser back button to work
- * TODO Standalone modules - partials (header menu etc)
- * TODO Each module has its own translation files?
  * TODO Fix build system
- * TODO Example application
- * TODO Opening a module action in a modal
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  */

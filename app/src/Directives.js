@@ -10,7 +10,7 @@ define(function() {
 	 */
 	return {
 
-		liveDate: function($timeout, dateFilter) {
+		liveDate: ['$timeout', 'dateFilter', function($timeout, dateFilter) {
 			// return the directive link function. (compile function not needed)
 			return function(scope, element, attrs) {
 				var format,  // date format
@@ -44,9 +44,9 @@ define(function() {
 
 				updateLater(); // kick off the UI update process.
 			};
-		},
+		}],
 
-		translate: function(translator, util, _) {
+		translate: ['translator', 'util', '_', function(translator, util, _) {
 			return function(scope, element, attrs) {
 				var key = element.html(),
 					params = [],
@@ -95,6 +95,6 @@ define(function() {
 					}
 				}
 			};
-		}
+		}]
 	};
 });

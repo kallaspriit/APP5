@@ -11,8 +11,12 @@
 
 	<target name="build">
 		<exec executable="node.exe" failonerror="true">
+			<arg line="tools/build/preprocess.js"/>
+		</exec>
+		<exec executable="node.exe" failonerror="true">
 			<arg line="tools/build/r.js -o tools/build/app.build.js"/>
 		</exec>
+		<delete dir="${basedir}/_app"/>
 	</target>
 
 	<property name="yuidoc-path" location="tools\yuidoc\yuidoc.cmd"/>
@@ -22,6 +26,16 @@
 			<arg line="-N app"/>
 		</exec>
 	</target>
+
+	<target name="clean-doc">
+		<delete dir="${basedir}/docs"/>
+	</target>
+
+	<target name="clean-build">
+		<delete dir="${basedir}/build"/>
+	</target>
+
+	<target name="clean" depends="clean-build,clean-doc"></target>
 
 	<target name="all" depends="jshint,build,doc"></target>
 

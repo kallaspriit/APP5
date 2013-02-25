@@ -26,6 +26,8 @@ HTML, BODY {
 	display: none;
 	border: 0;
 	outline: none;
+	-webkit-transform: translate3d(0, 0, 0);
+	-webkit-backface-visibility: hidden;
 }
 .app5-page-active {
 	display: block;

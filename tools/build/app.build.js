@@ -1,6 +1,6 @@
 ({
-    appDir: '../../app',
-	mainConfigFile: '../../app/app.js',
+    appDir: '../../_app',
+	mainConfigFile: '../../_app/app.js',
     dir: '../../build',
 	baseUrl: 'src',
     //optimize: "none",

@@ -75,7 +75,7 @@ function(
 			};
 
 		components.module = angular.module('app', []);
-		components.module.config(function($provide, $locationProvider) {
+		components.module.config(['$provide', '$locationProvider', function($provide, $locationProvider) {
 				// register module resources
 				for (var key in components) {
 					if (key === 'module') {
@@ -98,7 +98,7 @@ function(
 				});
 
 				$locationProvider.html5Mode(true).hashPrefix('!');
-			});
+			}]);
 
 		for (var directiveName in directives) {
 			components.module.directive(directiveName, directives[directiveName]);
@@ -108,11 +108,11 @@ function(
 			return function(scope, element, attrs) {
 				if ('ontouchstart' in document) {
 					element.bind('touchstart', function() {
-						scope.$apply(attrs['ngTap']);
+						scope.$apply(attrs.ngTap);
 					});
 				} else {
 					element.bind('click', function() {
-						scope.$apply(attrs['ngTap']);
+						scope.$apply(attrs.ngTap);
 					});
 				}
 			};
@@ -120,9 +120,9 @@ function(
 
 		components.navi.setModule(components.module);
 
-		components.module.run(function($rootScope, $location) {
+		components.module.run(['$rootScope', '$location', function($rootScope, $location) {
 			self._onModuleRun(components, $rootScope, $location);
-		});
+		}]);
 
 		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
 			app.validate();

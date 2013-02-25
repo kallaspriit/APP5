@@ -134,16 +134,14 @@ function($, dbg, resourceManager, util, moment, _) {
 						$(this).addClass('visible');
 
 						return false;
-					break;
 
 					case 'right':
 						$(this).removeClass('visible');
 
 						return false;
-					break;
 				}
 			})
-			.bind('hold', function(e) {
+			.bind('hold', function() {
 				$(this).empty();
 			});
 	};
