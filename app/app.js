@@ -7,22 +7,30 @@
  * Configuration for RequireJS.
  */
 require.config({
+	// base url for application scripts requested without a prefix
 	baseUrl: 'src',
+
+	// paths to various resources
 	paths: {
-		lib: '../lib',
-		modules: '../modules',
-		models: '../models',
-		config: '../config',
-		translations: '../translations/core-translations',
-		es5Shim: '../lib/es5-shim/es5-shim',
-		underscore: '../lib/underscore/underscore',
-		angular: '../lib/angular/angular',
-		moment: '../lib/moment/moment',
-		jquery: '../lib/jquery/jquery',
-		hammer: '../lib/hammer/hammer',
-		hammerjQuery: '../lib/hammer/jquery.hammer',
-		twitterBootstrap: '../lib/bootstrap/js/bootstrap'
+		// application resource directories
+		lib:                '../lib',
+		modules:            '../modules',
+		models:             '../models',
+		config:             '../config',
+		translations:       '../translations/core-translations',
+
+		// individual components
+		es5Shim:            '../lib/es5-shim/es5-shim',
+		underscore:         '../lib/underscore/underscore',
+		angular:            '../lib/angular/angular',
+		moment:             '../lib/moment/moment',
+		jquery:             '../lib/jquery/jquery',
+		hammer:             '../lib/hammer/hammer',
+		hammerjQuery:       '../lib/hammer/jquery.hammer',
+		twitterBootstrap:   '../lib/bootstrap/js/bootstrap'
 	},
+
+	// shim configuration for external non-requirejs dependencies
 	shim: {
 		underscore: {
 			exports: '_'
@@ -45,6 +53,7 @@ require.config({
 	}
 });
 
+// require resources needed for startup
 require(
 	[
 		'Bootstrapper',
@@ -56,6 +65,7 @@ require(
 	function(bootstrapper) {
 		'use strict';
 
+		// bootstrap the application
         bootstrapper.bootstrap();
 	}
 );
