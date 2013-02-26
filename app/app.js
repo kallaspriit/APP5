@@ -1,10 +1,11 @@
 /*
- * TODO Make browser back button to work
- * TODO Fix build system
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  */
 
+/**
+ * Configuration for RequireJS.
+ */
 require.config({
 	baseUrl: 'src',
 	paths: {
@@ -13,10 +14,14 @@ require.config({
 		models: '../models',
 		config: '../config',
 		translations: '../translations/core-translations',
-		angular: '../lib/angular/angular',
+		es5Shim: '../lib/es5-shim/es5-shim',
 		underscore: '../lib/underscore/underscore',
+		angular: '../lib/angular/angular',
 		moment: '../lib/moment/moment',
-		jquery: 'empty:'
+		jquery: '../lib/jquery/jquery',
+		hammer: '../lib/hammer/hammer',
+		hammerjQuery: '../lib/hammer/jquery.hammer',
+		twitterBootstrap: '../lib/bootstrap/js/bootstrap'
 	},
 	shim: {
 		underscore: {
@@ -27,6 +32,15 @@ require.config({
         },
 		moment: {
 			exports: 'moment'
+		},
+		hammer: {
+			deps: ['jquery']
+		},
+		hammerjQuery: {
+			deps: ['jquery', 'hammer']
+		},
+		twitterBootstrap: {
+			deps: ['jquery']
 		}
 	}
 });
@@ -34,10 +48,10 @@ require.config({
 require(
 	[
 		'Bootstrapper',
-		'lib/es5-shim/es5-shim.js',
-		'lib/hammer/hammer.js',
-		'lib/hammer/jquery.hammer.js',
-		'lib/bootstrap/js/bootstrap.js'
+		'es5Shim',
+		'hammer',
+		'hammerjQuery',
+		'twitterBootstrap'
 	],
 	function(bootstrapper) {
 		'use strict';

@@ -1,3 +1,9 @@
+/**
+ * TODO Insert version number
+ * TODO Combine CSS files
+ * TODO Rename app.js to include version number
+ */
+
 (function() {
 	function cloneApp(from, to) {
 		var wrench = require('wrench');
@@ -71,15 +77,14 @@
 
 		var arguments = [],
 			argTokens = matches[4].split(','),
-			i;
+			i,
+			actionPos = contents.indexOf(matches[0]),
+			actionContents = contents.substr(actionPos),
+			closingPosition = actionContents.indexOf('\n' + matches[1] + '}') + matches[1].length + actionPos + 1;
 
 		for (i = 0; i < argTokens.length; i++) {
 			arguments.push(argTokens[i].trim());
 		}
-
-		var actionPos = contents.indexOf(matches[0]),
-			actionContents = contents.substr(actionPos),
-			closingPosition = actionContents.indexOf('\n' + matches[1] + '}') + matches[1].length + actionPos + 1;
 
 		return {
 			declaration: matches[0],
