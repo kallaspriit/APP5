@@ -16,6 +16,9 @@
 		<exec executable="node.exe" failonerror="true">
 			<arg line="tools/build/r.js -o tools/build/app.build.js"/>
 		</exec>
+		<exec executable="node.exe" failonerror="true">
+			<arg line="tools/build/postprocess.js"/>
+		</exec>
 		<delete dir="${basedir}/_app"/>
 	</target>
 

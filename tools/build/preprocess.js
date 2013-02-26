@@ -5,10 +5,42 @@
  */
 
 (function() {
-	function cloneApp(from, to) {
-		var wrench = require('wrench');
+	var common = require('./common.js'),
+		fs = require('fs'),
+		wrench = require('wrench');
 
+	function cloneApp(from, to) {
 		wrench.copyDirSyncRecursive(from, to);
+	}
+
+	function annotateVersion(dir, readyCallback) {
+		common.getVersion(function(versionInfo) {
+			common.getHostname(function(hostname) {
+				var versionStr = 'untagged';
+
+				console.log('Working on ' + hostname);
+
+				if (versionInfo !== null) {
+					versionStr = versionInfo.major + '.' + versionInfo.minor + ' #' + versionInfo.hash;
+
+					console.log('Annotating version ' + versionStr);
+				} else {
+					console.log('Create a tag on the repository to get a version number');
+				}
+
+				var filename = dir + '/index.html',
+					contents = fs.readFileSync(filename, 'utf-8'),
+					file = fs.openSync(filename, 'w'),
+					date = new Date();
+
+				contents = '<!-- Version: ' + versionStr + ' by ' + hostname + ' - ' + date.toString() + ' -->\r\n' + contents;
+
+				fs.write(file, contents);
+				fs.close(file);
+
+				readyCallback();
+			});
+		});
 	}
 
 	function convertEntityName(name) {
@@ -22,8 +54,7 @@
 	}
 
 	function getModules(path) {
-		var fs = require('fs'),
-			modules = [],
+		var modules = [],
 			files = fs.readdirSync(path),
 			className,
 			i;
@@ -49,8 +80,7 @@
 	}
 
 	function processModule(moduleInfo) {
-		var fs = require('fs'),
-			contents = fs.readFileSync(moduleInfo.filename, 'utf-8'),
+		var contents = fs.readFileSync(moduleInfo.filename, 'utf-8'),
 			action,
 			file;
 
@@ -97,5 +127,7 @@
 
 	// preprocess
 	cloneApp('app', '_app');
-	processModules(getModules('_app/modules'));
+	annotateVersion('_app', function() {
+		processModules(getModules('_app/modules'));
+	});
 })();
