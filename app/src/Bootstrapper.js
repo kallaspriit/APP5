@@ -44,9 +44,7 @@ function(
 	 * @constructor
 	 * @module Core
 	 */
-	var Bootstrapper = function() {
-
-	};
+	var Bootstrapper = function() {};
 
 	/**
 	 * Bootstraps the application.
@@ -56,26 +54,27 @@ function(
 	Bootstrapper.prototype.bootstrap = function() {
 		var self = this,
 			components = {
-				config: config,
-				bootstrapper: this,
-				dbg: dbg.init(),
-				resourceManager: resourceManager.init(),
-				keyboard: keyboard.init(),
-				mouse: mouse.init(),
-				ui: ui.init(),
-				translator: translator.init(translations, config.language),
-				navi: navi.init(),
-				scheduler: scheduler.init(),
-				util: util,
-				module: null,
-				injector: null,
-				models: {},
-				modules: {},
-				scopes: []
+				config:             config,
+				bootstrapper:       this,
+				dbg:                dbg.init(),
+				resourceManager:    resourceManager.init(),
+				keyboard:           keyboard.init(),
+				mouse:              mouse.init(),
+				ui:                 ui.init(),
+				translator:         translator.init(translations, config.language),
+				navi:               navi.init(),
+				scheduler:          scheduler.init(),
+				util:               util,
+				module:             null,
+				injector:           null,
+				models:             {},
+				modules:            {},
+				scopes:             []
 			};
 
 		components.module = angular.module('app', []);
 		components.module.config(['$provide', '$locationProvider', function($provide, $locationProvider) {
+
 				// register module resources
 				for (var key in components) {
 					if (key === 'module') {
@@ -89,6 +88,7 @@ function(
 				$provide.value('_', _);
 				$provide.value('$', $);
 
+				// listen for angular expections
 				$provide.factory('$exceptionHandler', function() {
 					return function(exception) {
 						dbg.error(exception);
@@ -97,37 +97,29 @@ function(
 					};
 				});
 
+				// use HTML5 url-rewrite mode
 				$locationProvider.html5Mode(true).hashPrefix('!');
 			}]);
 
+		// register directives
 		for (var directiveName in directives) {
 			components.module.directive(directiveName, directives[directiveName]);
 		}
 
-		components.module.directive('ngTap', function() {
-			return function(scope, element, attrs) {
-				if ('ontouchstart' in document) {
-					element.bind('touchstart', function() {
-						scope.$apply(attrs.ngTap);
-					});
-				} else {
-					element.bind('click', function() {
-						scope.$apply(attrs.ngTap);
-					});
-				}
-			};
-		});
-
+		// navi needs reference to the module
 		components.navi.setModule(components.module);
 
+		// register callback for module run
 		components.module.run(['$rootScope', '$location', function($rootScope, $location) {
 			self._onModuleRun(components, $rootScope, $location);
 		}]);
 
+		// redraw the application when language changes
 		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
 			app.validate();
 		});
 
+		// extends the app with component references
 		util.extend(app, components);
 
 		// register the core application components in global scope for debugging, never rely on this
@@ -135,6 +127,7 @@ function(
 			window.a = app;
 		}
 
+		// listen for dom ready event
 		$(document).ready(function() {
 			self._onDomReady();
 		});

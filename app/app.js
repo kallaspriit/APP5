@@ -3,10 +3,9 @@
  * TODO Timeouts & Intervals on deferred
  */
 
-/**
- * Configuration for RequireJS.
- */
+// Configuration for RequireJS.
 require.config({
+
 	// base url for application scripts requested without a prefix
 	baseUrl: 'src',
 
@@ -45,7 +44,7 @@ require.config({
 			deps: ['jquery']
 		},
 		hammerjQuery: {
-			deps: ['jquery', 'hammer']
+			deps: ['hammer']
 		},
 		twitterBootstrap: {
 			deps: ['jquery']
