@@ -120,7 +120,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	 * @method open
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
-	 * @param {Object} [parameters] Action parameters
+	 * @param {Array} [parameters] Action parameters
 	 * @return {Navi} Self
 	 */
 	Navi.prototype.open = function(module, action, parameters) {

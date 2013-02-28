@@ -38,201 +38,96 @@ function(Bindable, util, $) {
 	};
 
 	/**
-	 * Mapping of key-codes to key names.
-	 *
-	 * @property KN
-	 * @type {Object}
-	 */
-	Keyboard.prototype.KN = {
-		8: 'KEY_BACKSPACE',
-		9: 'KEY_TAB',
-		13: 'KEY_RETURN',
-		16: 'KEY_SHIFT',
-		17: 'KEY_CTRL',
-		18: 'KEY_ALT',
-		19: 'KEY_PAUSEBREAK',
-		20: 'KEY_CAPSLOCK',
-		27: 'KEY_ESCAPE',
-		32: 'KEY_SPACE',
-		33: 'KEY_PAGEUP',
-		34: 'KEY_PAGEDOWN',
-		35: 'KEY_END',
-		36: 'KEY_HOME',
-		37: 'KEY_LEFT',
-		38: 'KEY_UP',
-		39: 'KEY_RIGHT',
-		40: 'KEY_DOWN',
-		43: 'KEY_PLUS',
-		44: 'KEY_PRINTSCREEN',
-		45: 'KEY_INSERT',
-		46: 'KEY_DELETE',
-		48: 'KEY_0',
-		49: 'KEY_1',
-		50: 'KEY_2',
-		51: 'KEY_3',
-		52: 'KEY_4',
-		53: 'KEY_5',
-		54: 'KEY_6',
-		55: 'KEY_7',
-		56: 'KEY_8',
-		57: 'KEY_9',
-		65: 'KEY_A',
-		66: 'KEY_B',
-		67: 'KEY_C',
-		68: 'KEY_D',
-		69: 'KEY_E',
-		70: 'KEY_F',
-		71: 'KEY_G',
-		72: 'KEY_H',
-		73: 'KEY_I',
-		74: 'KEY_J',
-		75: 'KEY_K',
-		76: 'KEY_L',
-		77: 'KEY_M',
-		78: 'KEY_N',
-		79: 'KEY_O',
-		80: 'KEY_P',
-		81: 'KEY_Q',
-		82: 'KEY_R',
-		83: 'KEY_S',
-		84: 'KEY_T',
-		85: 'KEY_U',
-		86: 'KEY_V',
-		87: 'KEY_W',
-		88: 'KEY_X',
-		89: 'KEY_Y',
-		90: 'KEY_Z',
-		96: 'KEY_0',
-		97: 'KEY_1',
-		98: 'KEY_2',
-		99: 'KEY_3',
-		100: 'KEY_4',
-		101: 'KEY_5',
-		102: 'KEY_6',
-		103: 'KEY_7',
-		104: 'KEY_8',
-		105: 'KEY_9',
-		106: 'KEY_STAR',
-		107: 'KEY_PLUS',
-		109: 'KEY_DASH',
-		111: 'KEY_SLASH',
-		112: 'KEY_F1',
-		113: 'KEY_F2',
-		114: 'KEY_F3',
-		115: 'KEY_F4',
-		116: 'KEY_F5',
-		117: 'KEY_F6',
-		118: 'KEY_F7',
-		119: 'KEY_F8',
-		120: 'KEY_F9',
-		121: 'KEY_F10',
-		122: 'KEY_F11',
-		123: 'KEY_F12',
-		144: 'KEY_NUMLOCK',
-		145: 'KEY_SCROLLLOCK',
-		186: 'KEY_SEMICOLON',
-		187: 'KEY_EQUALS',
-		188: 'KEY_COMMA',
-		189: 'KEY_DASH',
-		190: 'KEY_FULLSTOP',
-		192: 'KEY_APOSTROPHE',
-		219: 'KEY_LEFT_SQUARE_BRACKET',
-		220: 'KEY_ESC',
-		221: 'KEY_RIGHT_SQUARE_BRACKET',
-		222: 'KEY_SINGLE_QUATE'
-	};
-
-	/**
 	 * Mapping of key names to key-codes.
 	 *
 	 * @property KC
 	 * @type {Object}
 	 */
 	Keyboard.prototype.KC = {
-		'KEY_BACKSPACE': 8,
-		'KEY_TAB': 9,
-		'KEY_RETURN': 13,
-		'KEY_SHIFT': 16,
-		'KEY_CTRL': 17,
-		'KEY_ALT': 18,
-		'KEY_PAUSEBREAK': 19,
-		'KEY_CAPSLOCK': 20,
-		'KEY_ESCAPE': 27,
-		'KEY_SPACE': 32,
-		'KEY_PAGEUP': 33,
-		'KEY_PAGEDOWN': 34,
-		'KEY_END': 35,
-		'KEY_HOME': 36,
-		'KEY_LEFT': 37,
-		'KEY_UP': 38,
-		'KEY_RIGHT': 39,
-		'KEY_DOWN': 40,
-		'KEY_PLUS': 107,
-		'KEY_PRINTSCREEN': 44,
-		'KEY_INSERT': 45,
-		'KEY_DELETE': 46,
-		'KEY_0': 96,
-		'KEY_1': 97,
-		'KEY_2': 98,
-		'KEY_3': 99,
-		'KEY_4': 100,
-		'KEY_5': 101,
-		'KEY_6': 102,
-		'KEY_7': 103,
-		'KEY_8': 104,
-		'KEY_9': 105,
-		'KEY_A': 65,
-		'KEY_B': 66,
-		'KEY_C': 67,
-		'KEY_D': 68,
-		'KEY_E': 69,
-		'KEY_F': 70,
-		'KEY_G': 71,
-		'KEY_H': 72,
-		'KEY_I': 73,
-		'KEY_J': 74,
-		'KEY_K': 75,
-		'KEY_L': 76,
-		'KEY_M': 77,
-		'KEY_N': 78,
-		'KEY_O': 79,
-		'KEY_P': 80,
-		'KEY_Q': 81,
-		'KEY_R': 82,
-		'KEY_S': 83,
-		'KEY_T': 84,
-		'KEY_U': 85,
-		'KEY_V': 86,
-		'KEY_W': 87,
-		'KEY_X': 88,
-		'KEY_Y': 89,
-		'KEY_Z': 90,
-		'KEY_STAR': 106,
-		'KEY_DASH': 189,
-		'KEY_SLASH': 111,
-		'KEY_F1': 112,
-		'KEY_F2': 113,
-		'KEY_F3': 114,
-		'KEY_F4': 115,
-		'KEY_F5': 116,
-		'KEY_F6': 117,
-		'KEY_F7': 118,
-		'KEY_F8': 119,
-		'KEY_F9': 120,
-		'KEY_F10': 121,
-		'KEY_F11': 122,
-		'KEY_F12': 123,
-		'KEY_NUMLOCK': 144,
-		'KEY_SCROLLLOCK': 145,
-		'KEY_SEMICOLON': 186,
-		'KEY_EQUALS': 187,
-		'KEY_COMMA': 188,
-		'KEY_FULLSTOP': 190,
-		'KEY_APOSTROPHE': 192,
-		'KEY_LEFT_SQUARE_BRACKET': 219,
-		'KEY_ESC': 220,
-		'KEY_RIGHT_SQUARE_BRACKET': 221,
-		'KEY_SINGLE_QUATE': 222
+		'BACKSPACE': 8,
+		'TAB': 9,
+		'ENTER': 13,
+		'SHIFT': 16,
+		'CTRL': 17,
+		'ALT': 18,
+		'PAUSEBREAK': 19,
+		'CAPSLOCK': 20,
+		'ESCAPE': 27,
+		'SPACE': 32,
+		'PAGEUP': 33,
+		'PAGEDOWN': 34,
+		'END': 35,
+		'HOME': 36,
+		'LEFT': 37,
+		'UP': 38,
+		'RIGHT': 39,
+		'DOWN': 40,
+		'PLUS': 107,
+		'PRINTSCREEN': 44,
+		'INSERT': 45,
+		'DELETE': 46,
+		'NUM_0': 96,
+		'NUM_1': 97,
+		'NUM_2': 98,
+		'NUM_3': 99,
+		'NUM_4': 100,
+		'NUM_5': 101,
+		'NUM_6': 102,
+		'NUM_7': 103,
+		'NUM_8': 104,
+		'NUM_9': 105,
+		'A': 65,
+		'B': 66,
+		'C': 67,
+		'D': 68,
+		'E': 69,
+		'F': 70,
+		'G': 71,
+		'H': 72,
+		'I': 73,
+		'J': 74,
+		'K': 75,
+		'L': 76,
+		'M': 77,
+		'N': 78,
+		'O': 79,
+		'P': 80,
+		'Q': 81,
+		'R': 82,
+		'S': 83,
+		'T': 84,
+		'U': 85,
+		'V': 86,
+		'W': 87,
+		'X': 88,
+		'Y': 89,
+		'Z': 90,
+		'STAR': 106,
+		'DASH': 189,
+		'SLASH': 111,
+		'F1': 112,
+		'F2': 113,
+		'F3': 114,
+		'F4': 115,
+		'F5': 116,
+		'F6': 117,
+		'F7': 118,
+		'F8': 119,
+		'F9': 120,
+		'F10': 121,
+		'F11': 122,
+		'F12': 123,
+		'NUMLOCK': 144,
+		'SCROLLLOCK': 145,
+		'SEMICOLON': 186,
+		'EQUALS': 187,
+		'COMMA': 188,
+		'FULLSTOP': 190,
+		'APOSTROPHE': 192,
+		'LEFT_SQUARE_BRACKET': 219,
+		'ESC': 220,
+		'RIGHT_SQUARE_BRACKET': 221,
+		'SINGLE_QUATE': 222
 	};
 
 	/**
@@ -262,6 +157,17 @@ function(Bindable, util, $) {
 	};
 
 	/**
+	 * Stops the propagation of the event.
+	 */
+	Keyboard.KeyEvent.prototype.stopPropagation = function() {
+		if (this.original === null) {
+			return;
+		}
+
+		this.original.stopPropagation();
+	};
+
+	/**
 	 * Initiates the component.
 	 *
 	 * @method init
@@ -272,23 +178,25 @@ function(Bindable, util, $) {
 		var self = this;
 
 		$(document.body).keydown(function(e) {
-			self.consume(self.generate(
+			return self.consume(self.generate(
 				self.Event.KEYDOWN,
 				e.keyCode,
 				e.altKey,
 				e.ctrlKey,
 				e.shiftKey,
+				false,
 				e.originalEvent
 			));
 		});
 
 		$(document.body).keyup(function(e) {
-			self.consume(self.generate(
+			return self.consume(self.generate(
 				self.Event.KEYUP,
 				e.keyCode,
 				e.altKey,
 				e.ctrlKey,
 				e.shiftKey,
+				false,
 				e.originalEvent
 			));
 		});
@@ -306,11 +214,13 @@ function(Bindable, util, $) {
 	 * @return {String}
 	 */
 	Keyboard.prototype.getKeyName = function(keyCode) {
-		if (util.isString(this.KN[keyCode])) {
-			return this.KN[keyCode];
-		} else {
-			return 'KEY_UNKNOWN';
+		for (var keyName in this.KC) {
+			if (this.KC[keyName] === keyCode) {
+				return keyName;
+			}
 		}
+
+		return 'KEY_UNKNOWN';
 	};
 
 	/**
@@ -340,7 +250,7 @@ function(Bindable, util, $) {
 		ctrl = util.isBoolean(ctrl) ? ctrl : false;
 		shift = util.isBoolean(shift) ? shift : false;
 		repeated = util.isBoolean(repeated) ? repeated : false;
-		original = util.isObject(original) ? original : null;
+		original = !util.isUndefined(original) ? original : null;
 
 		return new Keyboard.KeyEvent(
 			type,
@@ -377,7 +287,7 @@ function(Bindable, util, $) {
 			throw new Error('Unexpected key event type "' + event.type + '"');
 		}
 
-		this.fire({
+		return this.fire({
 			type: event.type,
 			info: event
 		});

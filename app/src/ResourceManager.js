@@ -234,7 +234,7 @@ function($, Bindable, Deferred, util, translator, config) {
 	 *
 	 * @method loadView
 	 * @param {String} filename Filename of the view
-	 * @param {Function} callback Callback to call with loaded
+	 * @param {Function} [callback] Callback to call with loaded
 	 * @return {jQuery.Deferred} jQuery deferred
 	 */
 	ResourceManager.prototype.loadView = function(filename, callback) {
