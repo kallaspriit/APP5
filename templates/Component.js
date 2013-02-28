@@ -43,5 +43,5 @@ function(Bindable) {
 		return this;
 	};
 	
-	return new ${NAME};
+	return new ${NAME}();
 });
