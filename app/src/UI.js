@@ -3,6 +3,8 @@ define(
 function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, translator) {
 	'use strict';
 
+	var navi = null;
+
 	/**
 	 * Manages the user interface.
 	 *
@@ -57,6 +59,10 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 
 		$(document).ready(function() {
 			self._onDocumentReady();
+		});
+
+		require(['Navi'], function(naviManager) {
+			navi = naviManager;
 		});
 
 		return this;
@@ -137,9 +143,7 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 	 */
 	UI.prototype.openModal = function(module, action, parameters, options) {
 		this.showModal('<div id="modal-content"></div>', options, function() {
-			require(['Navi'], function(navi) {
-				navi.partial('#modal-content', module, action, parameters);
-			});
+			navi.partial('#modal-content', module, action, parameters);
 		});
 	};
 

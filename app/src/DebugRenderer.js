@@ -273,9 +273,17 @@ function($, dbg, resourceManager, util, moment, _) {
 					line = stack[0].line;
 				}
 			} else if (e.args.length === 1 && util.isString(e.args[0])) {
-				message = e.args[0];
-				filename = e.source.filename;
-				line = e.source.line;
+				if (e.args.length > 0) {
+					message = e.args[0];
+				}
+
+				if (util.isObject(e.source) && util.isString(e.source.filename)) {
+					filename = e.source.filename;
+
+					if (util.isNumber(e.source.line)) {
+						line = e.source.line;
+					}
+				}
 			}
 
 			self.showError('System Error Occured', message, filename + ':' + line, stack);
