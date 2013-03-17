@@ -158,6 +158,8 @@ function(Bindable, util, $) {
 
 	/**
 	 * Stops the propagation of the event.
+	 *
+	 * @method stopPropagation
 	 */
 	Keyboard.KeyEvent.prototype.stopPropagation = function() {
 		if (this.original === null) {

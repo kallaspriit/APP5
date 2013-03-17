@@ -12,6 +12,7 @@ define(
 	'Scheduler',
 	'Util',
 	'Directives',
+	'Filters',
 	'translations',
 	'angular',
 	'jquery',
@@ -30,6 +31,7 @@ function(
 	scheduler,
 	util,
 	directives,
+	filters,
 	translations,
 	angular,
 	$,
@@ -74,40 +76,44 @@ function(
 
 		components.module = angular.module('app', []);
 		components.module.config(['$provide', '$locationProvider', function($provide, $locationProvider) {
-
-				// register module resources
-				for (var key in components) {
-					if (key === 'module') {
-						continue;
-					}
-
-					$provide.value(key, components[key]);
+			// register module resources
+			for (var key in components) {
+				if (key === 'module') {
+					continue;
 				}
 
-				// provide underscore and jQuery too
-				$provide.value('_', _);
-				$provide.value('$', $);
+				$provide.value(key, components[key]);
+			}
 
-				// listen for angular expections
-				$provide.factory('$exceptionHandler', function() {
-					return function(exception) {
-						dbg.error(exception);
+			// provide underscore and jQuery too
+			$provide.value('_', _);
+			$provide.value('$', $);
 
-						return false;
-					};
-				});
+			// listen for angular expections
+			$provide.factory('$exceptionHandler', function() {
+				return function(exception) {
+					dbg.error(exception);
 
-				// use HTML5 url-rewrite mode
-				$locationProvider.html5Mode(true).hashPrefix('!');
-			}]);
+					return false;
+				};
+			});
+
+			// use HTML5 url-rewrite mode
+			$locationProvider.html5Mode(true).hashPrefix('!');
+		}]);
 
 		// register directives
 		for (var directiveName in directives) {
 			components.module.directive(directiveName, directives[directiveName]);
 		}
 
+		// register filters
+		for (var filterName in filters) {
+			components.module.filter(filterName, filters[filterName]);
+		}
+
 		// navi needs reference to the module
-		components.navi.setModule(components.module);
+		components.ui.setModule(components.module);
 
 		// register callback for module run
 		components.module.run(['$rootScope', '$location', function($rootScope, $location) {
@@ -124,7 +130,7 @@ function(
 
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
-			window.a = app;
+			window.app = app;
 		}
 
 		// listen for dom ready event

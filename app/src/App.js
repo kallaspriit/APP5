@@ -9,7 +9,24 @@ function() {
 	 * @constructor
 	 * @module Core
 	 */
-	var App = {};
+	var App = function() {
+		this.config = null;
+		this.bootstrapper = null;
+		this.dbg = null;
+		this.resourceManager = null;
+		this.keyboard = null;
+		this.mouse = null;
+		this.ui = null;
+		this.translator = null;
+		this.navi = null;
+		this.scheduler = null;
+		this.util = null;
+		this.module = null;
+		this.injector = null;
+		this.models = {};
+		this.modules = {};
+		this.scopes = [];
+	};
 
 	/**
 	 * Validates and redraws the application with updated data.
@@ -17,7 +34,7 @@ function() {
 	 * @method validate
 	 * @return {App} Self
 	 */
-	App.validate = function() {
+	App.prototype.validate = function() {
 		for (var i = 0; i < this.scopes.length; i++) {
 			if (this.scopes[i].$$phase !== null) {
 				continue;
@@ -28,6 +45,6 @@ function() {
 
 		return this;
 	};
-	
-	return App;
+
+	return new App();
 });

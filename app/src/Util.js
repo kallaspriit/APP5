@@ -289,6 +289,40 @@ function(Deferred, _) {
 		},
 
 		/**
+		 * Formats unit to millions/thousands.
+		 *
+		 * @method formatAmount
+		 * @param {Number} amount Amount to format
+		 * @return {String}
+		 */
+		formatAmount: function(amount) {
+			amount = parseFloat(amount);
+
+			if (isNaN(amount)) {
+				return 'n/a';
+			}
+
+			var sign = amount >= 0 ? 1.0 : -1.0,
+				absAmount = Math.abs(amount),
+				unit = '',
+				result;
+
+			if (absAmount > 1000000) {
+				result = (Math.floor(absAmount / 10000.0) / 100.0);
+				unit = 'm';
+			} else if (absAmount > 1000) {
+				result = (Math.floor(absAmount / 100.0) / 10.0);
+				unit = 'k';
+			} else if (absAmount > 1) {
+				result = Math.floor(absAmount);
+			} else {
+				result = Math.round(absAmount * 100.0) / 100.0;
+			}
+
+			return (result * sign).toString() + unit;
+		},
+
+		/**
 		 * Returns map of URL parameters.
 		 *
 		 * @method getUrlParameters
@@ -457,6 +491,15 @@ function(Deferred, _) {
 			}
 		},
 
+		/**
+		 * Parses a line of a stack trace.
+		 *
+		 * Returns method, filename, line and column.
+		 *
+		 * @method parseStackLine
+		 * @param {String} line Line to parse
+		 * @return {Object}
+		 */
 		parseStackLine: function(line) {
 			var regex = /at (.+) \((.+):(\d+):(\d+)\)/,
 				matches = regex.exec(line);

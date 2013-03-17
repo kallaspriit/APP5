@@ -1,6 +1,28 @@
 define(
-['jquery', 'underscore', 'config/main', 'Bindable', 'ResourceManager', 'Debug', 'DebugRenderer', 'Util', 'Translator'],
-function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, translator) {
+[
+	'jquery',
+	'underscore',
+	'config/main',
+	'Bindable',
+	'ResourceManager',
+	'Debug',
+	'DebugRenderer',
+	'Util',
+	'Translator',
+	'angular'
+],
+function(
+	$,
+	_,
+	config,
+	Bindable,
+	resourceManager,
+	dbg,
+	debugRenderer,
+	util,
+	translator,
+	angular
+) {
 	'use strict';
 
 	var navi = null;
@@ -26,7 +48,8 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 	 * @module Core
 	 */
 	var UI = function() {
-
+		this._module = null;
+		this._transitioning = false;
 	};
 
 	UI.prototype = new Bindable();
@@ -57,13 +80,26 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 	UI.prototype.init = function() {
 		var self = this;
 
-		$(document).ready(function() {
-			self._onDocumentReady();
-		});
-
 		require(['Navi'], function(naviManager) {
 			navi = naviManager;
+
+			$(document).ready(function() {
+				self._onDocumentReady();
+			});
 		});
+
+		return this;
+	};
+
+	/**
+	 * Sets the angular app module to use.
+	 *
+	 * @method setModule
+	 * @param {angular.Module} module Module to use
+	 * @return {Navi} Self
+	 */
+	UI.prototype.setModule = function(module) {
+		this._module = module;
 
 		return this;
 	};
@@ -72,19 +108,37 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 	 * Transitions from one page to another.
 	 *
 	 * @method transitionView
-	 * @param {Object} currentWrap Current page wrap jQuery element
-	 * @param {Object} newWrap New page wrap jQuery element
+	 * @param {String} currentWrapSelector Current page wrap selector
+	 * @param {String} newWrapSelector New page wrap selector
 	 * @param {Boolean} [isReverse=false] Should reverse (back) animation be displayed
+	 * @param {Boolean} [removeCurrent=false] Should the current wrap be removed on completion
 	 * @param {Function} [completeCallback] Called when transition is complete
 	 */
-	UI.prototype.transitionView = function(currentWrap, newWrap, isReverse, completeCallback) {
+	UI.prototype.transitionView = function(
+		currentWrapSelector,
+		newWrapSelector,
+		isReverse,
+		removeCurrent,
+		completeCallback
+	) {
 		isReverse = util.isBoolean(isReverse) ? isReverse : false;
 
-		var prefix = config.cssPrefix,
+		if (this._transitioning) {
+			alert('already transitioning');
+		}
+
+		this._transitioning = true;
+
+		var self = this,
+			currentWrap = $(currentWrapSelector),
+			newWrap = $(newWrapSelector),
+			prefix = config.cssPrefix,
 			body = $(document.body),
 			transitionType = config.pageTransition,
 			simultaneousTransitions = ['slide', 'slideup', 'slidedown'],
 			isSimultaneous = util.contains(simultaneousTransitions, transitionType);
+
+		$(document.body).scrollTop(0);
 
 		if (currentWrap.length > 0) {
 			body.addClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
@@ -100,7 +154,8 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 				newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 			}
 
-			var animationEndEvents = 'animationEnd oAnimationEnd msAnimationEnd mozAnimationEnd webkitAnimationEnd';
+			var animationEndEvents = 'animationEnd animationend oAnimationEnd msAnimationEnd mozAnimationEnd ' +
+				'webkitAnimationEnd transitionend oTransitionEnd otransitionend webkitTransitionEnd MSTransitionEnd';
 
 			currentWrap.bind(animationEndEvents, function() {
 				currentWrap.removeClass(
@@ -119,6 +174,12 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 				body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 				newWrap.unbind(animationEndEvents);
 
+				if (removeCurrent && currentWrap.length > 0) {
+					currentWrap.remove();
+				}
+
+				self._transitioning = false;
+
 				if (util.isFunction(completeCallback)) {
 					completeCallback();
 				}
@@ -126,10 +187,21 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 		} else {
 			newWrap.addClass(prefix + 'page-active');
 
+			this._transitioning = false;
+
 			if (util.isFunction(completeCallback)) {
 				completeCallback();
 			}
 		}
+	};
+
+	/**
+	 * Returns whether the view is already transitioning.
+	 *
+	 * @returns {Boolean}
+	 */
+	UI.prototype.isTransitioning = function() {
+		return this._transitioning;
 	};
 
 	/**
@@ -202,6 +274,148 @@ function($, _, config, Bindable, resourceManager, dbg, debugRenderer, util, tran
 	 */
 	UI.prototype.hideModal = function() {
 		$('#modal').modal('hide');
+	};
+
+	/**
+	 * Renders module action view.
+	 *
+	 * @method showView
+	 * @param {String} module Name of the module
+	 * @param {String} action Name of the action
+	 * @param {String} className Class name of the module
+	 * @param {String} actionName Method name of the action
+	 * @param {Array} parameters Action parameters
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent View content to render
+	 * @param {Function} doneCallback Callback to call when done
+	 * @private
+	 */
+	UI.prototype.showView = function(
+		module,
+		action,
+		className,
+		actionName,
+		parameters,
+		moduleObj,
+		viewContent,
+		doneCallback
+		) {
+		var self = this,
+			currentItem = navi.getCurrent(),
+			existingItem = navi.getExistingItem(module, action),
+			back = false,
+			stackItem;
+
+		if (existingItem !== null) {
+			var stack = navi.getStack();
+
+			while (stack.length > 0) {
+				stackItem = stack.pop();
+
+				if (stackItem === currentItem) {
+					continue;
+				}
+
+				stackItem.fire(this.Event.EXIT);
+				stackItem.injector.get('$rootScope').$emit('$destroy');
+				stackItem.container.remove();
+
+				if (stackItem.module === module && stackItem.action === action) {
+					break;
+				}
+			}
+
+			back = true;
+		}
+
+		var newItem = navi.appendNavigation(module, action, parameters, moduleObj),
+			prefix = config.cssPrefix,
+			newWrapId = 'content-' + newItem.id,
+			container = $(config.viewSelector),
+			currentWrap = container.find('.' + prefix + 'page-active'),
+			newWrap;
+
+		container.append(
+			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
+		);
+
+		newWrap = $('#' + newWrapId)
+			.html(viewContent)
+			.attr('ng-controller', className + '.' + actionName);
+
+		this._module.value('parameters', parameters);
+		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
+
+		newItem.container = newWrap;
+		newItem.injector = angular.bootstrap(newWrap, ['app']);
+		newItem.fire = function(type, parameters) {
+			this.injector.get('$rootScope').$broadcast(type, parameters);
+		};
+
+		if (currentItem !== null && back !== true) {
+			currentItem.fire(this.Event.SLEEP);
+		}
+
+		this.transitionView(currentWrap, newWrap, back, false, function() {
+			if (back) {
+				currentItem.fire(self.Event.EXIT);
+				currentItem.container.remove();
+			}
+
+			if (util.isFunction(doneCallback)) {
+				doneCallback();
+			}
+		});
+
+		return newItem;
+	};
+
+	/**
+	 * Displays partial content.
+	 *
+	 * @method showPartial
+	 * @param {String} module Name of the module
+	 * @param {String} action Name of the action
+	 * @param {String} className Class name of the module
+	 * @param {String} actionName Method name of the action
+	 * @param {Array} parameters Action parameters
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent View content to render
+	 * @param {String} containerSelector Container selector to place the content into
+	 * @param {Boolean} append Should the content be appended instead of replaced
+	 * @private
+	 */
+	UI.prototype.showPartial = function(
+		module,
+		action,
+		className,
+		actionName,
+		parameters,
+		moduleObj,
+		viewContent,
+		containerSelector,
+		append
+		) {
+		var container = $(containerSelector);
+
+		if (container.length === 0) {
+			throw new Error('Partial container for "' + containerSelector + '" not found');
+		}
+
+		if (append) {
+			var containerId = $(viewContent).attr('id');
+
+			container.append(viewContent);
+
+			$('#' + containerId).attr('ng-controller', className + '.' + actionName);
+		} else {
+			container.html(viewContent).attr('ng-controller', className + '.' + actionName);
+		}
+
+		this._module.value('parameters', parameters);
+		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
+
+		angular.bootstrap(container, ['app']);
 	};
 
 	/**

@@ -9,10 +9,9 @@ define(
 	'ResourceManager',
 	'Keyboard',
 	'Mouse',
-	'config/main',
-	'angular'
+	'config/main'
 ],
-function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config, angular) {
+function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config) {
 	'use strict';
 
 	/**
@@ -47,9 +46,10 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	 * @module Core
 	 */
 	var Navi = function() {
+		this.backPossible = false;
 		this._stack = [];
 		this._naviCounter = 0;
-		this._module = null;
+		this._partialRendering = false;
 	};
 
 	Navi.prototype = new Bindable();
@@ -96,18 +96,9 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			self._onMouseEvent(e.info);
 		});
 
-		return this;
-	};
-
-	/**
-	 * Sets the angular app module to use.
-	 *
-	 * @method setModule
-	 * @param {angular.Module} module Module to use
-	 * @return {Navi} Self
-	 */
-	Navi.prototype.setModule = function(module) {
-		this._module = module;
+		this.bind(this.Event.STACK_CHANGED, function() {
+			self.backPossible = self.isBackPossible();
+		});
 
 		return this;
 	};
@@ -127,13 +118,18 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 		action = action || 'index';
 		parameters = parameters || [];
 
+		if (ui.isTransitioning()) {
+			dbg.log('! Alrady transitioning');
+
+			return;
+		}
+
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
-			body = $(document.body),
 			item = null;
 
 		this.fire({
@@ -143,14 +139,12 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			parameters: parameters
 		});
 
-		body.addClass('loading-view');
-
 		util.when(
 			resourceManager.loadModule(module),
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
-			item = self._showView(
+			item = ui.showView(
 				module,
 				action,
 				className,
@@ -165,8 +159,6 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 						action: action,
 						parameters: parameters
 					});
-
-					body.removeClass('loading-view');
 
 					deferred.resolve(item);
 
@@ -190,11 +182,15 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Object} [parameters] Action parameters
+	 * @param {Boolean} [append=false] Should the content be appended instead of replaced
 	 * @return {Navi} Self
 	 */
-	Navi.prototype.partial = function(containerSelector, module, action, parameters) {
+	Navi.prototype.partial = function(containerSelector, module, action, parameters, append) {
 		action = action || 'index';
 		parameters = parameters || [];
+		append = util.isBoolean(append) ? append : false;
+
+		this._partialRendering = true;
 
 		var self = this,
 			deferred = new Deferred(),
@@ -202,9 +198,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
-			body = $(document.body),
-			item = null,
-			container;
+			item = null;
 
 		this.fire({
 			type: this.Event.PRE_PARTIAL,
@@ -214,20 +208,12 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			parameters: parameters
 		});
 
-		body.addClass('loading-partial');
-
 		util.when(
 			resourceManager.loadModule(module),
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
-			container = $(containerSelector);
-
-			if (container.length === 0) {
-				throw new Error('Partial container for "' + containerSelector + '" not found');
-			}
-
-			item = self._showPartial(
+			item = ui.showPartial(
 				module,
 				action,
 				className,
@@ -235,7 +221,8 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 				parameters,
 				moduleObj,
 				viewContent,
-				container
+				containerSelector,
+				append
 			);
 
 			self.fire({
@@ -246,9 +233,9 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 				parameters: parameters
 			});
 
-			body.removeClass('loading-partial');
-
 			deferred.resolve(item);
+
+			self._partialRendering = false;
 		}).fail(function() {
 			throw new Error('Loading module "' + module + '" resources failed');
 		});
@@ -301,16 +288,12 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			parameters: previousItem.parameters
 		});
 
-		var currentWrap = $('#content-' + currentItem.id),
-			newWrap = $('#content-' + previousItem.id);
+		var currentWrapSelector = '#content-' + currentItem.id,
+			newWrapSelector = '#content-' + previousItem.id;
 
-		ui.transitionView(currentWrap, newWrap, true, function() {
+		ui.transitionView(currentWrapSelector, newWrapSelector, true, true, function() {
 			currentItem.fire(self.Event.EXIT);
 			currentItem.injector.get('$rootScope').$emit('$destroy');
-
-			if (currentWrap.length > 0) {
-				currentWrap.remove();
-			}
 
 			self.fire({
 				type: self.Event.POST_NAVIGATE,
@@ -375,7 +358,6 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 		});
 	};
 
-
 	/**
 	 * Returns already open matching navi item if available.
 	 *
@@ -400,129 +382,12 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	};
 
 	/**
-	 * Renders module action view.
+	 * Returns the navigation stack.
 	 *
-	 * @method _showView
-	 * @param {String} module Name of the module
-	 * @param {String} action Name of the action
-	 * @param {String} className Class name of the module
-	 * @param {String} actionName Method name of the action
-	 * @param {Array} parameters Action parameters
-	 * @param {Object} moduleObj Module object
-	 * @param {String} viewContent View content to render
-	 * @param {Function} doneCallback Callback to call when done
-	 * @private
+	 * @return {Array}
 	 */
-	Navi.prototype._showView = function(
-		module,
-		action,
-		className,
-		actionName,
-		parameters,
-		moduleObj,
-		viewContent,
-		doneCallback
-	) {
-		var self = this,
-			currentItem = this.getCurrent(),
-			existingItem = this.getExistingItem(module, action),
-			back = false,
-			stackItem;
-
-		if (existingItem !== null) {
-			while (this._stack.length > 0) {
-				stackItem = this._stack.pop();
-
-				if (stackItem === currentItem) {
-					continue;
-				}
-
-				stackItem.fire(this.Event.EXIT);
-				stackItem.injector.get('$rootScope').$emit('$destroy');
-				stackItem.container.remove();
-
-				if (stackItem.module === module && stackItem.action === action) {
-					break;
-				}
-			}
-
-			back = true;
-		}
-
-		var newItem = this._appendNavigation(module, action, parameters, moduleObj),
-			prefix = config.cssPrefix,
-			newWrapId = 'content-' + newItem.id,
-			container = $(config.viewSelector),
-			currentWrap = container.find('.' + prefix + 'page-active'),
-			newWrap;
-
-		container.append(
-			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
-		);
-
-		newWrap = $('#' + newWrapId)
-			.html(viewContent)
-			.attr('ng-controller', className + '.' + actionName);
-
-		ui.transitionView(currentWrap, newWrap, back, function() {
-			if (back) {
-				currentItem.fire(self.Event.EXIT);
-				currentItem.container.remove();
-			}
-
-			if (util.isFunction(doneCallback)) {
-				doneCallback();
-			}
-		});
-
-		this._module.value('parameters', parameters);
-		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
-
-		if (currentItem !== null && back !== true) {
-			currentItem.fire(this.Event.SLEEP);
-		}
-
-		newItem.container = newWrap;
-		newItem.injector = angular.bootstrap(newWrap, ['app']);
-		newItem.fire = function(type, parameters) {
-			this.injector.get('$rootScope').$broadcast(type, parameters);
-		};
-
-		return newItem;
-	};
-
-	/**
-	 * Displays partial content.
-	 *
-	 * @method _showPartial
-	 * @param {String} module Name of the module
-	 * @param {String} action Name of the action
-	 * @param {String} className Class name of the module
-	 * @param {String} actionName Method name of the action
-	 * @param {Array} parameters Action parameters
-	 * @param {Object} moduleObj Module object
-	 * @param {String} viewContent View content to render
-	 * @param {jQuery} container Container to place the content into
-	 * @private
-	 */
-	Navi.prototype._showPartial = function(
-		module,
-		action,
-		className,
-		actionName,
-		parameters,
-		moduleObj,
-		viewContent,
-		container
-	) {
-		container
-			.html(viewContent)
-			.attr('ng-controller', className + '.' + actionName);
-
-		this._module.value('parameters', parameters);
-		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
-
-		angular.bootstrap(container, ['app']);
+	Navi.prototype.getStack = function() {
+		return this._stack;
 	};
 
 	/**
@@ -574,15 +439,14 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	/**
 	 * Append an item to the navigation stack.
 	 *
-	 * @method _appendNavigation
+	 * @method appendNavigation
 	 * @param {String} module Name of the module to use
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
 	 * @param {Object} instance Instance of the module
 	 * @return {Object} New stack item
-	 * @private
 	 */
-	Navi.prototype._appendNavigation = function(module, action, parameters, instance) {
+	Navi.prototype.appendNavigation = function(module, action, parameters, instance) {
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
@@ -590,7 +454,8 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			parameters: parameters,
 			instance: instance,
 			level: this._stack.length,
-			container: null
+			container: null,
+			fire: function() {}
 		});
 
 		this.fire({
@@ -613,7 +478,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	Navi.prototype._onKeyEvent = function(event) {
 		var currentItem = this.getCurrent();
 
-		if (currentItem === null) {
+		if (currentItem === null || !util.isFunction(currentItem.fire)) {
 			return;
 		}
 
@@ -632,7 +497,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	Navi.prototype._onMouseEvent = function(event) {
 		var currentItem = this.getCurrent();
 
-		if (currentItem === null) {
+		if (currentItem === null || !util.isFunction(currentItem.fire)) {
 			return;
 		}
 

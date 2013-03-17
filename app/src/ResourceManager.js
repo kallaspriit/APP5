@@ -115,6 +115,8 @@ function($, Bindable, Deferred, util, translator, config) {
 	/**
 	 * Makes a GET request to given URL.
 	 *
+	 * Data parameter can be skipped.
+	 *
 	 * @method get
 	 * @param {String} url URL of the data
 	 * @param {Object} [data] Optional POST data to send
@@ -128,11 +130,21 @@ function($, Bindable, Deferred, util, translator, config) {
 		callback,
 		dataType
 	) {
-		return this.request(url, this.HTTP.GET, data, callback, dataType);
+		var parameters;
+
+		if (util.isFunction(data) && util.isUndefined(dataType)) {
+			parameters = [url, this.HTTP.GET, null, data, callback];
+		} else {
+			parameters = [url, this.HTTP.GET, data, callback, dataType];
+		}
+
+		return this.request.apply(this, parameters);
 	};
 
 	/**
 	 * Makes a POST request to given URL.
+	 *
+	 * Data parameter can be skipped.
 	 *
 	 * @method post
 	 * @param {String} url URL of the data
@@ -147,7 +159,15 @@ function($, Bindable, Deferred, util, translator, config) {
 		callback,
 		dataType
 	) {
-		return this.request(url, this.HTTP.POST, data, callback, dataType);
+		var parameters;
+
+		if (util.isFunction(data) && util.isUndefined(dataType)) {
+			parameters = [url, this.HTTP.POST, null, data, callback];
+		} else {
+			parameters = [url, this.HTTP.POST, data, callback, dataType];
+		}
+
+		return this.request.apply(this, parameters);
 	};
 
 	/**
@@ -203,7 +223,7 @@ function($, Bindable, Deferred, util, translator, config) {
 				}
 
 				if (config.debug) {
-					window.a.modules[className] = module;
+					window.app.modules[className] = module;
 				}
 
 				self.fire({

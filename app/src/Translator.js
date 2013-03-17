@@ -148,7 +148,7 @@ function(Bindable, util, _) {
 	 */
 	Translator.prototype.getLanguages = function(translated) {
 		translated = util.isBoolean(translated) ? translated : false;
-		
+
 		var languages = [],
 			key,
 			language;
