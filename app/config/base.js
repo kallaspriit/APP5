@@ -72,6 +72,18 @@ define(function() {
 		 * @property language
 		 * @type String
 		 */
-		language: 'en'
+		language: 'en',
+
+		/**
+		 * Setup for the test client.
+		 *
+		 * @property testClient
+		 * @type Object
+		 */
+		testClient: {
+			active: true,
+			host: '127.0.0.1',
+			port: 10082
+		}
 	};
 });
