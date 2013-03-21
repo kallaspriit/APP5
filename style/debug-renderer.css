@@ -1,0 +1,123 @@
+
+#debug-renderer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 14px;
+	height: 100%;
+	background-color: rgba(255, 255, 255, 0.75);
+	overflow: hidden;
+	
+	padding: 0 0 0 1px;
+	outline: none;
+	font-family: Consolas;
+	-webkit-transition: width 300ms ease-in;
+	-moz-transition: width 300ms ease-in;
+	-o-transition: width 300ms ease-in;
+	transition: width 300ms ease-in;
+	z-index: 100;
+}
+.no-touch #debug-renderer:hover,
+#debug-renderer.visible {
+	width: 600px;
+	overflow-y: auto;
+}
+#debug-renderer DIV {
+	position: relative;
+	line-height: 14px;
+	height: 14px;
+	overflow: hidden;
+	font-size: 11px;
+	color: #333;
+	padding: 0 0 0 14px;
+	background-position: 1px 1px;
+	background-repeat: no-repeat;
+}
+#debug-renderer DIV:nth-child(even) {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+#debug-renderer DIV SPAN {
+	position: absolute;
+	right: 0;
+	top: 0;
+	line-height: 14px;
+	height: 14px;
+	font-size: 11px;
+	color: #FFF;
+	padding: 0 2px;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: none;
+}
+#debug-renderer DIV:hover {
+	height: auto;
+}
+#debug-renderer DIV:hover SPAN {
+	display: block;
+}
+#debug-renderer .info {
+	background-image: url(../images/debug-renderer/info-bg.png);
+}
+#debug-renderer .alert {
+	background-image: url(../images/debug-renderer/alert-bg.png);
+}
+#debug-renderer .error {
+	background-image: url(../images/debug-renderer/error-bg.png);
+}
+#debug-renderer .success {
+	background-image: url(../images/debug-renderer/success-bg.png);
+}
+#debug-renderer-error {
+	position: absolute;
+	width: 620px;
+	left: 50%;
+	top: 200px;
+	padding: 10px;
+	margin-left: -320px;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	z-index: 51
+}
+#debug-renderer-error .debug-renderer-error-inner {
+	position: relative;
+	background-color: #FFF;
+	border-radius: 5px;
+	padding: 0;
+}
+#debug-renderer-error .debug-renderer-error-title {
+	display: block;
+	padding: 10px 20px;
+	margin: 0 0 20px 0;
+	height: 40px;
+	line-height: 40px;
+	font-size: 24px;
+	font-weight: normal;
+	border-bottom: 1px solid #EEE;
+	background-color: #F8F8F8;
+	border-radius: 5px 5px 0 0;
+}
+#debug-renderer-error .debug-renderer-error-close {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	background-color: #FFF;
+	border: 1px solid #CCC;
+	outline: 2px solid #FFF;
+	font-family: sans-serif;
+	border-radius: 3px;
+	cursor: pointer;
+}
+#debug-renderer-error .debug-renderer-error-content {
+	padding: 0 20px 20px 20px;
+}
+#debug-renderer-error .debug-renderer-error-location {
+	padding: 0 8px 0 0;
+	margin: -40px 0 20px 0;
+	line-height: 14px;
+	font-size: 14px;
+	font-style: italic;
+	text-align: right;
+}
