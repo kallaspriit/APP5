@@ -70,7 +70,7 @@ Features
 
 Issues
 ------
-* Requires modern browser (Safari, Chrome, Firefox work fine, requires IE8+)
+* Requires modern browser (Safari, Chrome, Firefox, IE8+)
 * As the content is generated on the client side, search engines don't see much without some additional trickery
 
 Development status
