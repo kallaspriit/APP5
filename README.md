@@ -8,7 +8,7 @@ APP5
 Features
 --------
 * Uses Google's [AngularJS](http://angularjs.org/) for rendering
-	* Keep JavaScript and HTML seperate
+	* Keep JavaScript and HTML separate
 	* Extend HTML with reusable components
 	* Two-way data-binding between the controllers and views
 	* Dependency injection makes the code clearer and easier to test
@@ -35,14 +35,14 @@ Features
 	* User can create new directives and filters
 	* Simple to use any UI frameworks such as Twitter Bootstrap
 * Multilingual
-	* Includes AngularJS directives for easy internatianalization (i18n)
-	* Language can be changed live withour reloading application or losing current state
+	* Includes AngularJS directives for easy internationalization (i18n)
+	* Language can be changed live without reloading application or losing current state
 	* Each module has its own translations file
 	* Supports any number of languages
 * Event-driven architecture
 	* Many components emit custom events such as navigating to a new page
 	* Components can register any number of listeners to such events
-	* Keepts the components loosely coupled as the emitters are not aware of consumers
+	* Keeps the components loosely coupled as the emitters are not aware of consumers
 * Includes build system
 	* ANT and nodejs scripts
 	* Verify code quality
@@ -57,19 +57,19 @@ Features
 	* Includes ANT task for verifying code using JsHint
 	* Includes reasonable JsHint rules usable with supporting editors such as JetBrains WebStorm
 	* Includes file templates for common components such as models and modules for WebStorm.
-* Mobile-frendly
+* Mobile-friendly
 	* Tested with modern mobile browsers
 	* Great for making app-like rich applications
 	* Supports various transitions between views
 	* Supports optional touch events
 	* Previous views are kept alive for instant back navigation without losing state
-* Backend indipendent
+* Backend independent
 	* Server backend does not need to concern itself with how the data should be presented
 	* No HTML generated on the server side
 	* Only JSON/XML data is exchanged with the backend to fetch/store information and validate business rules
 	* Reduces backend load as it only has to deal with data
 	* Any number of frontend application can be built on the same backend web service
-	* Frontend and backend people can work seperately
+	* Frontend and backend people can work separately
 	* Backend can be implemented in any language such as Java/.NET/PHP/Node without affecting frontend
 
 Issues
