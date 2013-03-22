@@ -2,6 +2,7 @@ APP5
 ====
 
 **HTML5 Application Framework.**
+![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/assets/logo-doc.png "APP5")
 
 Features
 --------
@@ -15,6 +16,8 @@ Features
 	* No need to define all required resources upfront
 	* Lazy-loads modules as needed
 	* Simultaneous asynchronous module loading with automatic dependency resolution
+	* There are no "magic" global variables, each component requests required resources
+	* Makes validating code with linting software (jshint) easier
 * Modular architecture
 	* The application is divided into stand-alone modules
 	* Each module has its own logic, views, css, translations
