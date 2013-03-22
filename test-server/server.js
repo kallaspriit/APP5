@@ -5,7 +5,7 @@
 	var WebSocketServer = require('ws').Server,
 		wss = new WebSocketServer({
 			host: '127.0.0.1',
-			port: 10082
+			port: 8080
 		}),
 		clients = [],
 		clientIdCounter = 0,
