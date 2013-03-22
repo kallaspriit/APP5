@@ -70,8 +70,6 @@ function(SocketClient, util, navi, dbg, $) {
 	 * @method becomeMaster
 	 */
 	TestClient.prototype.becomeMaster = function() {
-		var self = this;
-
 		this.request('becomeMaster');
 	};
 
@@ -185,6 +183,10 @@ function(SocketClient, util, navi, dbg, $) {
 		switch (request.action) {
 			case 'navigate':
 				this._handleNavigateRequest(request.parameters);
+			break;
+
+			case 'refresh':
+				//this._handleRefreshRequest(request.parameters);
 			break;
 
 			default:
