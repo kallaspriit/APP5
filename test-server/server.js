@@ -1,6 +1,8 @@
 (function() {
 	'use strict';
 
+	
+
 	// https://github.com/einaros/ws
 	var WebSocketServer = require('ws').Server,
 		wss = new WebSocketServer({
