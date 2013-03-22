@@ -53,6 +53,9 @@ Features
 	* Includes interface for logging various events
 	* Users can easily implements their own debug event listeners for logging etc
 	* Develop with full sources, automatically compress and merge for deployment
+* Documented
+	* The entire code-base is well-documented according to YUIDoc rules
+	* Project site with manual and tutorials will follow
 * Endorses good code quality
 	* Includes ANT task for verifying code using JsHint
 	* Includes reasonable JsHint rules usable with supporting editors such as JetBrains WebStorm
