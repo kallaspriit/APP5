@@ -1,6 +1,6 @@
 define(
-['SocketClient', 'Util', 'Navi', 'Debug'],
-function(SocketClient, util, navi, dbg) {
+['SocketClient', 'Util', 'Navi', 'Debug', 'jquery'],
+function(SocketClient, util, navi, dbg, $) {
 	'use strict';
 
 	/**
@@ -111,7 +111,9 @@ function(SocketClient, util, navi, dbg) {
 		var self = this;
 
 		navi.bind(navi.Event.PRE_NAVIGATE, function(e) {
-			if (!self._isMaster) return;
+			if (!self._isMaster) {
+				return;
+			}
 
 			self.request(
 				'navigate',
