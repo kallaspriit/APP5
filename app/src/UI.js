@@ -198,7 +198,8 @@ function(
 	/**
 	 * Returns whether the view is already transitioning.
 	 *
-	 * @returns {Boolean}
+	 * @method isTransitioning
+	 * @return {Boolean}
 	 */
 	UI.prototype.isTransitioning = function() {
 		return this._transitioning;

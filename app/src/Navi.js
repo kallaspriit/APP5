@@ -384,6 +384,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	/**
 	 * Returns the navigation stack.
 	 *
+	 * @method getStack
 	 * @return {Array}
 	 */
 	Navi.prototype.getStack = function() {

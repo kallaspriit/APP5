@@ -12,7 +12,7 @@ function(Bindable, util, _) {
 	 *		newLanguage - new language name
 	 *		previousLanguage - last language name
 	 *
-	 * @class Navi
+	 * @class Translator
 	 * @extends Bindable
 	 * @constructor
 	 * @module Core

@@ -5,7 +5,7 @@ function() {
 	/**
 	 * Custom angularjs directives.
 	 *
-	 * @class Directives
+	 * @class Filters
 	 * @module Core
 	 * @static
 	 */

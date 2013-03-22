@@ -1,6 +1,6 @@
 define(
-['SocketClient', 'Util', 'Navi', 'Debug', 'jquery'],
-function(SocketClient, util, navi, dbg, $) {
+['SocketClient', 'Util', 'Navi', 'Debug'],
+function(SocketClient, util, navi, dbg) {
 	'use strict';
 
 	/**

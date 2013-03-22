@@ -178,6 +178,7 @@ function(Bindable) {
 	/**
 	 * Sets the reconnecting interval to use (milliseconds).
 	 *
+	 * @method setReconnectInterval
 	 * @param {Number} interval Interval to use in milliseconds
 	 */
 	SocketClient.prototype.setReconnectInterval = function(interval) {
@@ -187,6 +188,7 @@ function(Bindable) {
 	/**
 	 * Sets the number of reconnection attempts.
 	 *
+	 * @method setReconnectAttempts
 	 * @param {Number} attempts Max number of attempts
 	 */
 	SocketClient.prototype.setReconnectAttempts = function(attempts) {
