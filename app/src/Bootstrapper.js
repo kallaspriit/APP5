@@ -123,7 +123,9 @@ function(
 		// register callback for module run
 		app.module.run([
 			'$rootScope', '$location', '$compile',
-			this._onModuleRun.bind(this)
+			function($rootScope, $location, $compile) {
+				self._onModuleRun($rootScope, $location, $compile);
+			}
 		]);
 
 		// redraw the application when language changes

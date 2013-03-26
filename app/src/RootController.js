@@ -6,11 +6,14 @@ function(app) {
 	/**
 	 * Main root controller.
 	 *
+	 * TODO Annotate this function automatically in the preprocess build script
+	 *
 	 * @class RootController
 	 * @constructor
 	 * @module Core
 	 */
-	return function($scope, translator, navi) {
+	return ['$scope', 'translator', 'navi',
+		function($scope, translator, navi) {
 		// register the base scope that is used for compiling module actions
 		app.baseScope = $scope;
 
@@ -35,5 +38,5 @@ function(app) {
 			'site',
 			'main-menu'
 		);
-	};
+	}];
 });

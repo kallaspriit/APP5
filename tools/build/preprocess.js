@@ -5,6 +5,8 @@
  */
 
 (function() {
+	'use strict';
+
 	var common = require('./common.js'),
 		fs = require('fs'),
 		wrench = require('wrench');
@@ -18,14 +20,14 @@
 			common.getHostname(function(hostname) {
 				var versionStr = 'untagged';
 
-				console.log('Working on ' + hostname);
+				console.log('  > working on ' + hostname);
 
 				if (versionInfo !== null) {
 					versionStr = versionInfo.major + '.' + versionInfo.minor + ' #' + versionInfo.hash;
 
-					console.log('Annotating version ' + versionStr);
+					console.log('  > annotating version ' + versionStr);
 				} else {
-					console.log('Create a tag on the repository to get a version number');
+					console.log('  ! Create a tag on the repository to get a version number');
 				}
 
 				var filename = dir + '/index.html',
@@ -33,7 +35,8 @@
 					file = fs.openSync(filename, 'w'),
 					date = new Date();
 
-				contents = '<!-- Version: ' + versionStr + ' by ' + hostname + ' - ' + date.toString() + ' -->\r\n' + contents;
+				contents = '<!-- Version: ' + versionStr + ' by ' + hostname
+					+ ' - ' + date.toString() + ' -->\r\n' + contents;
 
 				fs.write(file, contents);
 				fs.close(file);
@@ -80,15 +83,18 @@
 	}
 
 	function processModule(moduleInfo) {
+		console.log('  > processing ' + moduleInfo.filename);
+
 		var contents = fs.readFileSync(moduleInfo.filename, 'utf-8'),
 			action,
 			file;
 
 		while ((action = parseAction(contents)) !== null) {
-			console.log('Annotating', action.name);
+			console.log('    > annotating', action.name);
 
 			contents = contents.substr(0, action.closingPosition) + '}]' + contents.substr(action.closingPosition + 1);
-			contents = contents.replace(action.declaration, action.whitespace + action.name + ': [\'' + action.arguments.join('\', \'') + '\', function(' + action.arguments.join(', ') + ')');
+			contents = contents.replace(action.declaration, action.whitespace + action.name
+				+ ': [\'' + action.args.join('\', \'') + '\', function(' + action.args.join(', ') + ')');
 		}
 
 		file = fs.openSync(moduleInfo.filename, 'w');
@@ -105,7 +111,7 @@
 			return null;
 		}
 
-		var arguments = [],
+		var args = [],
 			argTokens = matches[4].split(','),
 			i,
 			actionPos = contents.indexOf(matches[0]),
@@ -113,13 +119,13 @@
 			closingPosition = actionContents.indexOf('\n' + matches[1] + '}') + matches[1].length + actionPos + 1;
 
 		for (i = 0; i < argTokens.length; i++) {
-			arguments.push(argTokens[i].trim());
+			args.push(argTokens[i].trim());
 		}
 
 		return {
 			declaration: matches[0],
 			name: matches[2],
-			arguments: arguments,
+			args: args,
 			whitespace: matches[1],
 			closingPosition: closingPosition
 		};
