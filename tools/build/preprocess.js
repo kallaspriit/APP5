@@ -126,6 +126,8 @@
 	}
 
 	// preprocess
+	console.log('! Preprocessing build');
+
 	cloneApp('app', '_app');
 	annotateVersion('_app', function() {
 		processModules(getModules('_app/modules'));

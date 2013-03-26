@@ -14,10 +14,13 @@
 			fs.write(file, contents);
 			fs.close(file);
 
+			console.log('  > renaming "app.js" to "' + newAppFilename + '"');
+
 			fs.renameSync(dir + '/app.js', dir + '/' + newAppFilename);
 		});
 	}
 
 	// postprocess
+	console.log('! Postprocessing build');
 	renameVersion('build');
 })();
