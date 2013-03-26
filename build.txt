@@ -29,10 +29,11 @@ style/transitions.css
 
 src/../app.js
 ----------------
-src/Bindable.js
+lib/angular/angular.js
 lib/jquery/jquery.js
-src/Deferred.js
 lib/underscore/underscore.js
+src/Bindable.js
+src/Deferred.js
 src/Util.js
 src/Debug.js
 config/base.js
@@ -44,7 +45,6 @@ src/Keyboard.js
 src/Mouse.js
 lib/moment/moment.js
 src/DebugRenderer.js
-lib/angular/angular.js
 src/UI.js
 src/Navi.js
 src/Scheduler.js
@@ -52,6 +52,7 @@ src/SocketClient.js
 src/TestClient.js
 src/Directives.js
 src/Filters.js
+src/RootController.js
 translations/core-translations.js
 src/Bootstrapper.js
 lib/es5-shim/es5-shim.js
