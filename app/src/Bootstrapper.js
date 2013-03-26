@@ -1,5 +1,8 @@
 define(
 [
+	'angular',
+	'jquery',
+	'underscore',
 	'Debug',
 	'config/main',
 	'App',
@@ -14,12 +17,13 @@ define(
 	'Util',
 	'Directives',
 	'Filters',
-	'translations',
-	'angular',
-	'jquery',
-	'underscore'
+	'RootController',
+	'translations'
 ],
 function(
+	angular,
+	$,
+	_,
 	dbg,
 	config,
 	app,
@@ -34,10 +38,8 @@ function(
 	util,
 	directives,
 	filters,
-	translations,
-	angular,
-	$,
-    _
+	RootController,
+	translations
 ) {
 	'use strict';
 
@@ -58,8 +60,9 @@ function(
 	Bootstrapper.prototype.bootstrap = function() {
 		var self = this,
 			components = {
+				_:                  _,
+				$:                  $,
 				config:             config,
-				bootstrapper:       this,
 				dbg:                dbg.init(),
 				resourceManager:    resourceManager.init(),
 				keyboard:           keyboard.init(),
@@ -69,121 +72,74 @@ function(
 				navi:               navi.init(),
 				scheduler:          scheduler.init(),
 				testClient:         testClient.init(),
-				util:               util,
-				module:             null,
-				injector:           null,
-				models:             {},
-				modules:            {},
-				scopes:             []
-			};
+				util:               util
+			},
+			directiveName,
+			filterName;
 
-		components.module = angular.module('app', []);
-		components.module.config(['$provide', '$locationProvider', function($provide, $locationProvider) {
-			// register module resources
-			for (var key in components) {
-				if (key === 'module') {
-					continue;
+		app.module = angular.module('app', []);
+
+		app.module.config([
+			'$provide', '$locationProvider', '$controllerProvider',
+			function($provide, $locationProvider, $controllerProvider) {
+				// provide the components to module actions
+				for (var key in components) {
+					$provide.value(key, components[key]);
 				}
 
-				$provide.value(key, components[key]);
+				// listen for angular expections
+				// TODO Try to disable angular expection handling
+				$provide.factory('$exceptionHandler', function() {
+					return function(exception) {
+						dbg.error(exception);
+
+						return false;
+					};
+				});
+
+				// use HTML5 url-rewrite mode
+				$locationProvider
+					.html5Mode(config.useUrlHTML5)
+					.hashPrefix(config.urlHashPrefix);
+
+				app.provide = $provide;
+				app.controllerProvider = $controllerProvider;
+
+				// register the root-controller
+				app.registerController('RootController', RootController);
 			}
-
-			// provide underscore and jQuery too
-			$provide.value('_', _);
-			$provide.value('$', $);
-
-			// listen for angular expections
-			$provide.factory('$exceptionHandler', function() {
-				return function(exception) {
-					dbg.error(exception);
-
-					return false;
-				};
-			});
-
-			// use HTML5 url-rewrite mode
-			$locationProvider.html5Mode(true).hashPrefix('!');
-		}]);
+		]);
 
 		// register directives
-		for (var directiveName in directives) {
-			components.module.directive(directiveName, directives[directiveName]);
+		for (directiveName in directives) {
+			app.module.directive(directiveName, directives[directiveName]);
 		}
 
 		// register filters
-		for (var filterName in filters) {
-			components.module.filter(filterName, filters[filterName]);
+		for (filterName in filters) {
+			app.module.filter(filterName, filters[filterName]);
 		}
 
-		// navi needs reference to the module
-		components.ui.setModule(components.module);
-
 		// register callback for module run
-		components.module.run(['$rootScope', '$location', function($rootScope, $location) {
-			self._onModuleRun(components, $rootScope, $location);
-		}]);
+		app.module.run([
+			'$rootScope', '$location', '$compile',
+			this._onModuleRun.bind(this)
+		]);
 
 		// redraw the application when language changes
 		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
 			app.validate();
 		});
 
-		// extends the app with component references
-		util.extend(app, components);
+		// listen for dom ready event
+		$(document).ready(function() {
+			self._onDomReady();
+		});
 
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
 			window.app = app;
 		}
-
-		// listen for dom ready event
-		$(document).ready(function() {
-			self._onDomReady();
-		});
-	};
-
-	/**
-	 * Called when angular injector has performed loading all the modules.
-	 *
-	 * @method _onModuleRun
-	 * @param {Object} components Application components
-	 * @param {Scope} scope Root scope
-	 * @param {Location} location The location service
-	 * @private
-	 */
-	Bootstrapper.prototype._onModuleRun = function(components, scope, location) {
-		var key;
-
-		components.scopes.push(scope);
-
-		for (key in components) {
-			if (key === 'root') {
-				continue;
-			}
-
-			scope[key] = components[key];
-		}
-
-		components.navi.bind(components.navi.Event.POST_NAVIGATE, function(e) {
-			var parameters = {
-				module: e.module,
-				action: e.action
-			};
-
-			if (e.parameters.length > 0) {
-				parameters.parameters = util.str(e.parameters);
-			}
-
-			location.search(parameters);
-		});
-
-		/*scope.$on('$locationChangeStart', function(event) {
-			dbg.console('URL CHANGED', event, this.scope.$id);
-		}.bind({scope: scope}));*/
-
-		scope.$on('$destroy', function(e) {
-			util.remove(e.targetScope, this.scopes);
-		}.bind({ scopes: components.scopes }));
 	};
 
 	/**
@@ -193,18 +149,25 @@ function(
 	 * @private
 	 */
 	Bootstrapper.prototype._onDomReady = function() {
-		navi.partial(
-			'#header',
-			'site',
-			'main-menu'
-		);
+		// bootstrap the application, results in _onModuleRun below
+		app.injector = angular.bootstrap($('HTML'), ['app']);
+	};
 
-		// navigate to the index action
-		navi.open(
-			config.index.module,
-			config.index.action,
-			config.index.parameters
-		);
+	/**
+	 * Called when angular injector has performed loading all the modules.
+	 *
+	 * @method _onModuleRun
+	 * @param {Scope} $rootScope Root scope
+	 * @param {Location} $location The location service
+	 * @param {Compile} $compile The compiler service
+	 * @private
+	 */
+	Bootstrapper.prototype._onModuleRun = function($rootScope, $location, $compile) {
+		app.rootScope = $rootScope;
+		app.location = $location;
+		app.compile = $compile;
+
+		this._setupUrlListener($rootScope, $location);
 
 		if (config.testClient.active) {
 			testClient.open(
@@ -212,6 +175,40 @@ function(
 				config.testClient.port
 			);
 		}
+	};
+
+	/**
+	 * Sets up listener for URL changes.
+	 *
+	 * @method _setupUrlListener
+	 * @private
+	 */
+	Bootstrapper.prototype._setupUrlListener = function($scope, $location) {
+		$scope.$watch(function () {
+			return $location.absUrl();
+		}, function() {
+			var parameters = $location.search(),
+				current = navi.getCurrent();
+
+			// TODO Move to a seperate router
+			if (
+				util.isString(parameters.module)
+				&& util.isString(parameters.action)
+				&& (current === null || parameters.module !== current.module || parameters.action !== current.action)
+			) {
+				navi._open(
+					parameters.module,
+					parameters.action,
+					util.isObject(parameters.parameters) ? parameters.parameters : {}
+				);
+			} else {
+				navi._open(
+					config.index.module,
+					config.index.action,
+					config.index.parameters
+				);
+			}
+		});
 	};
 
 	return new Bootstrapper();

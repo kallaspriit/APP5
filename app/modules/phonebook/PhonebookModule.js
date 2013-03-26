@@ -20,6 +20,9 @@ function(phonebook) {
 		 * @param {UI} ui User interface
 		 */
 		contactsAction: function($scope, ui) {
+			// TODO Blows up
+			//$scope.setTitle('Contact List');
+
 			$scope.phonebook = phonebook;
 			$scope.filter = '';
 			$scope.order = 'name';
@@ -37,7 +40,7 @@ function(phonebook) {
 						callback: function() {
 							ui.hideModal();
 
-							$scope.$digest();
+							//app.validate();
 						}
 					}
 				);
@@ -48,8 +51,6 @@ function(phonebook) {
 				ui.confirm(
 					function() {
 						phonebook.remove(id);
-
-						$scope.$digest();
 					},
 					'phonebook.confirm-delete',
 					'phonebook.confirm-delete-text(name)',
@@ -66,10 +67,12 @@ function(phonebook) {
 		 * @param {Navi} navi Navigation
 		 */
 		addContactAction: function($scope, navi) {
+			$scope.setTitle('Add Contact');
+
 			$scope.addContact = function(name, number) {
 				phonebook.add(name, number);
 
-				navi.back();
+				navi.open('phonebook', 'contacts');
 			};
 		},
 

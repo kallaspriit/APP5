@@ -1,5 +1,6 @@
 define(
 [
+	'underscore',
 	'Bindable',
 	'Deferred',
 	'App',
@@ -11,7 +12,7 @@ define(
 	'Mouse',
 	'config/main'
 ],
-function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config) {
+function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config) {
 	'use strict';
 
 	/**
@@ -115,11 +116,42 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	 * @return {Navi} Self
 	 */
 	Navi.prototype.open = function(module, action, parameters) {
+		if (ui.isTransitioning()) {
+			dbg.log('! Already transitioning');
+
+			return;
+		}
+
+		var urlArguments = {
+			module: module,
+			action: action
+		};
+
+		if (!_.isEmpty(parameters)) {
+			urlArguments.parameters = parameters;
+		}
+
+		app.location.search(urlArguments);
+		app.validate();
+	};
+
+	/**
+	 * Opens module action.
+	 *
+	 * By default the action is opened in container defined by the configuration property viewSelector.
+	 *
+	 * @method _open
+	 * @param {String} module Module to open
+	 * @param {String} [action=index] Action to navigate to
+	 * @param {Array} [parameters] Action parameters
+	 * @return {Navi} Self
+	 */
+	Navi.prototype._open = function(module, action, parameters) {
 		action = action || 'index';
 		parameters = parameters || [];
 
 		if (ui.isTransitioning()) {
-			dbg.log('! Alrady transitioning');
+			dbg.log('! Already transitioning');
 
 			return;
 		}
@@ -235,6 +267,8 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 
 			deferred.resolve(item);
 
+			app.validate();
+
 			self._partialRendering = false;
 		}).fail(function() {
 			throw new Error('Loading module "' + module + '" resources failed');
@@ -249,15 +283,20 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 	 * @method back
 	 */
 	Navi.prototype.back = function() {
-		var self = this,
-			currentItem = this.getCurrent(),
+		var currentItem = this.getCurrent(),
 			previousItem = this.getPrevious();
 
 		if (currentItem === null || previousItem === null) {
 			return;
 		}
 
-		if (
+		this.open(
+			config.index.module,
+			config.index.action,
+			config.index.parameters
+		);
+
+		/*if (
 			previousItem === null
 			&& (currentItem.module !== config.index.module || currentItem.action !== config.index.action)
 		) {
@@ -277,8 +316,6 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			stack: this._stack
 		});
 
-		previousItem.injector.get('$rootScope').$digest();
-
 		previousItem.fire(this.Event.WAKEUP);
 
 		this.fire({
@@ -293,7 +330,6 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 
 		ui.transitionView(currentWrapSelector, newWrapSelector, true, true, function() {
 			currentItem.fire(self.Event.EXIT);
-			currentItem.injector.get('$rootScope').$emit('$destroy');
 
 			self.fire({
 				type: self.Event.POST_NAVIGATE,
@@ -303,7 +339,7 @@ function(Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mous
 			});
 
 			app.validate();
-		});
+		});*/
 	};
 
 	/**

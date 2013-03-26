@@ -12,13 +12,11 @@ function() {
 	var MainMenu = [{
 			name: 'contacts',
 			module: 'phonebook',
-			action: 'contacts',
-			active: true
+			action: 'contacts'
 		}, {
 			name: 'add-contact',
 			module: 'phonebook',
-			action: 'add-contact',
-			active: false
+			action: 'add-contact'
 		}];
 
 	MainMenu.markActive = function(module, action) {

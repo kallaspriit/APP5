@@ -4,24 +4,24 @@ define(
 	'underscore',
 	'config/main',
 	'Bindable',
+	'App',
 	'ResourceManager',
 	'Debug',
 	'DebugRenderer',
 	'Util',
-	'Translator',
-	'angular'
+	'Translator'
 ],
 function(
 	$,
 	_,
 	config,
 	Bindable,
+	app,
 	resourceManager,
 	dbg,
 	debugRenderer,
 	util,
-	translator,
-	angular
+	translator
 ) {
 	'use strict';
 
@@ -48,7 +48,6 @@ function(
 	 * @module Core
 	 */
 	var UI = function() {
-		this._module = null;
 		this._transitioning = false;
 	};
 
@@ -87,19 +86,6 @@ function(
 				self._onDocumentReady();
 			});
 		});
-
-		return this;
-	};
-
-	/**
-	 * Sets the angular app module to use.
-	 *
-	 * @method setModule
-	 * @param {angular.Module} module Module to use
-	 * @return {Navi} Self
-	 */
-	UI.prototype.setModule = function(module) {
-		this._module = module;
 
 		return this;
 	};
@@ -300,7 +286,7 @@ function(
 		moduleObj,
 		viewContent,
 		doneCallback
-		) {
+	) {
 		var self = this,
 			currentItem = navi.getCurrent(),
 			existingItem = navi.getExistingItem(module, action),
@@ -318,7 +304,6 @@ function(
 				}
 
 				stackItem.fire(this.Event.EXIT);
-				stackItem.injector.get('$rootScope').$emit('$destroy');
 				stackItem.container.remove();
 
 				if (stackItem.module === module && stackItem.action === action) {
@@ -344,14 +329,16 @@ function(
 			.html(viewContent)
 			.attr('ng-controller', className + '.' + actionName);
 
-		this._module.value('parameters', parameters);
-		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
+		// TODO Find a better way to pass parameters
+		app.provide.value('parameters', parameters);
+		app.registerController(className + '.' + actionName, moduleObj[actionName]);
 
 		newItem.container = newWrap;
-		newItem.injector = angular.bootstrap(newWrap, ['app']);
 		newItem.fire = function(type, parameters) {
-			this.injector.get('$rootScope').$broadcast(type, parameters);
+			app.broadcast(type, parameters);
 		};
+
+		app.compile(newWrap)(app.baseScope);
 
 		if (currentItem !== null && back !== true) {
 			currentItem.fire(this.Event.SLEEP);
@@ -396,27 +383,29 @@ function(
 		viewContent,
 		containerSelector,
 		append
-		) {
-		var container = $(containerSelector);
+	) {
+		var container = $(containerSelector),
+			controllerName = className + '-' + actionName,
+			containerId;
 
 		if (container.length === 0) {
 			throw new Error('Partial container for "' + containerSelector + '" not found');
 		}
 
 		if (append) {
-			var containerId = $(viewContent).attr('id');
+			containerId = $(viewContent).attr('id');
 
 			container.append(viewContent);
 
-			$('#' + containerId).attr('ng-controller', className + '.' + actionName);
+			$('#' + containerId).attr('ng-controller', controllerName);
 		} else {
-			container.html(viewContent).attr('ng-controller', className + '.' + actionName);
+			container.html(viewContent).attr('ng-controller', controllerName);
 		}
 
-		this._module.value('parameters', parameters);
-		this._module.controller(className + '.' + actionName, moduleObj[actionName]);
-
-		angular.bootstrap(container, ['app']);
+		// TODO Find a better way to pass parameters
+		app.provide.value('parameters', parameters);
+		app.registerController(controllerName, moduleObj[actionName]);
+		app.compile(container)(app.baseScope);
 	};
 
 	/**
@@ -479,6 +468,8 @@ function(
 							type: self.Event.MODAL_SHOWN,
 							modal: $(this)
 						});
+
+						app.validate();
 					})
 					.on('hidden', function() {
 						$(this).remove();
@@ -486,6 +477,8 @@ function(
 						self.fire({
 							type: self.Event.MODAL_HIDDEN
 						});
+
+						app.validate();
 					});
 			})
 			.fail(function() {

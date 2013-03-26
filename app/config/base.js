@@ -75,6 +75,34 @@ define(function() {
 		language: 'en',
 
 		/**
+		 * Should the HTML5 URL-rewrite method be used.
+		 *
+		 * @property useUrlHTML5
+		 * @type Boolean
+		 */
+		useUrlHTML5: true,
+
+		/**
+		 * What URL has prefix to use.
+		 *
+		 * @property urlHashPrefix
+		 * @type String
+		 */
+		urlHashPrefix: '!',
+
+		/**
+		 * URL mode.
+		 *
+		 * Defines how URL's should be generated. For action "add-contact" in module "phonebook":
+		 * - "path" will create http://example.com/phonebook/add-contact
+		 * - "query" will create http://example.com/?module=phonebook&action=contacts
+		 *
+		 * @property urlMode
+		 * @type String
+		 */
+		urlMode: 'query',
+
+		/**
 		 * Setup for the test client.
 		 *
 		 * @property testClient

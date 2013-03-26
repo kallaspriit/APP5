@@ -20,19 +20,12 @@ function(menus) {
 		 * @param {Location} $location Angular location service
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
-		 * @param {Util} util Utilities
 		 */
-		mainMenuAction: function($scope, $location, dbg, navi, util) {
+		mainMenuAction: function($scope, $location, dbg, navi) {
 			$scope.menus = menus;
 			$scope.backPossible = false;
 
 			$scope.open = function(index) {
-				var current = navi.getCurrent();
-
-				if (menus[index].module === current.module && menus[index].action === current.action) {
-					return;
-				}
-
 				navi.open(
 					menus[index].module,
 					menus[index].action || 'index',
@@ -40,35 +33,23 @@ function(menus) {
 				);
 			};
 
-			navi.bind(navi.Event.STACK_CHANGED, function() {
+			$scope.updateActive = function() {
 				var page = navi.getCurrent();
+
+				if (page === null) {
+					return;
+				}
 
 				menus.markActive(page.module, page.action);
 
 				$scope.backPossible = navi.isBackPossible();
+			};
 
-				if ($scope.$$phase === null) {
-					$scope.$digest();
-				}
+			navi.bind(navi.Event.STACK_CHANGED, function() {
+				$scope.updateActive();
 			});
 
-			$scope.$watch(function () {
-				return $location.absUrl();
-			}, function() {
-				var parameters = $location.search(),
-					current = navi.getCurrent();
-
-				if (current === null ||!util.isString(parameters.module) || !util.isString(parameters.action)) {
-					return;
-				}
-
-				if (parameters.module !== current.module || parameters.action !== current.action) {
-					navi.open(
-						parameters.module,
-						parameters.action
-					);
-				}
-			});
+			$scope.updateActive();
 		}
 	};
 });
