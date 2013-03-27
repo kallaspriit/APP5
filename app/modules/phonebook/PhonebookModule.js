@@ -24,7 +24,7 @@ function(phonebook) {
 			//$scope.setTitle('Contact List');
 
 			// test multiple errors
-			var i = window.setInterval(function() {
+			/*var i = window.setInterval(function() {
 				if (this.c++ === 3) {
 					window.clearInterval(i);
 
@@ -33,6 +33,8 @@ function(phonebook) {
 
 				window['foobar' + this.c]();
 			}.bind({c: 0}), 3000);
+
+			a();*/
 
 			$scope.phonebook = phonebook;
 			$scope.filter = '';
