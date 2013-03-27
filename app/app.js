@@ -3,6 +3,7 @@
  * TODO Timeouts & Intervals on deferred
  * TODO Router, /some/page URLs
  * TODO Consider http://jsfiddle.net/gVEq5/ for model design
+ * TODO Show multiple errors
  */
 
 // Configuration for RequireJS.

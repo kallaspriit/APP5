@@ -12,6 +12,7 @@ function($, dbg, resourceManager, util, moment, _) {
 	 */
 	var DebugRenderer = function() {
 		this.ui = null;
+		this._errorStack = [];
 	};
 
 	/**
@@ -44,27 +45,50 @@ function($, dbg, resourceManager, util, moment, _) {
 	 * @param {Array} stack Stack trace
 	 */
 	DebugRenderer.prototype.showError = function(title, message, location, stack) {
-		title = title || 'System Error Occured';
-		message = message || 'A system error occured, sorry for the inconvenience.';
-		location = location || '';
-
-		message = '<p><strong>' + message.replace('<', '&lt;').replace('>', '&gt;') + '</strong></p>';
-
-		var modal = $('#debug-renderer-error'),
+		var self = this,
+			modal = $('#debug-renderer-error'),
+			error,
 			stackTrace = '',
 			i;
 
-		if (util.isArray(stack) && stack.length > 0) {
-			for (i = 0; i < stack.length; i++) {
+		if (util.isString(title)) {
+			error = {
+				title: title,
+				message: message,
+				location: location,
+				stack: stack
+			};
+
+			this._errorStack.push(util.clone(error));
+		} else {
+			if (this._errorStack.length > 0) {
+				error = this._errorStack[this._errorStack.length - 1];
+			} else {
+				return;
+			}
+		}
+
+		error.title = error.title || 'System Error Occured';
+		error.message = error.message || 'A system error occured, sorry for the inconvenience.';
+		error.location = error.location || '';
+
+		error.message = '<p><strong>' + error.message.replace('<', '&lt;').replace('>', '&gt;') + '</strong></p>';
+
+		if (this._errorStack.length > 1) {
+			error.title += ' (' + (this._errorStack.length - 1) + ' more)';
+		}
+
+		if (util.isArray(error.stack) && error.stack.length > 0) {
+			for (i = 0; i < error.stack.length; i++) {
 				if (i > 0) {
 					stackTrace += '<br>';
 				}
 
-				stackTrace += '#' + (i + 1) + ' ' + stack[i].filename + ':' +
-					stack[i].line + ' - ' + stack[i].method;
+				stackTrace += '#' + (i + 1) + ' ' + error.stack[i].filename + ':' +
+					error.stack[i].line + ' - ' + error.stack[i].method;
 			}
 
-			message += '<p>' + stackTrace + '</p>';
+			error.message += '<p>' + stackTrace + '</p>';
 		}
 
 		if (modal.length === 0) {
@@ -72,9 +96,9 @@ function($, dbg, resourceManager, util, moment, _) {
 				'<div id="debug-renderer-error">' +
 				'	<div class="debug-renderer-error-inner">' +
 				'		<h1 class="debug-renderer-error-title"></h1>' +
-				'		<div class="debug-renderer-error-location"></div>' +
 				'		<div class="debug-renderer-error-close">&times;</div>' +
 				'		<div class="debug-renderer-error-content"></div>' +
+				'		<div class="debug-renderer-error-location"></div>' +
 				'	</div>' +
 				'</div>'
 			);
@@ -82,12 +106,24 @@ function($, dbg, resourceManager, util, moment, _) {
 			modal = $('#debug-renderer-error');
 		}
 
-		modal.find('.debug-renderer-error-title').html(title);
-		modal.find('.debug-renderer-error-content').html(message);
-		modal.find('.debug-renderer-error-location').html(location);
+		modal.find('.debug-renderer-error-title').html(error.title);
+		modal.find('.debug-renderer-error-content').html(error.message);
+
+		if (error.location.length > 0) {
+			modal.find('.debug-renderer-error-location').html(error.location);
+		} else {
+			modal.find('.debug-renderer-error-location').hide();
+		}
+
 		modal.find('.debug-renderer-error-close').click(function() {
 			modal.fadeOut(function() {
 				$(this).remove();
+
+				self._errorStack.pop();
+
+				if (self._errorStack.length > 0) {
+					self.showError();
+				}
 			});
 		});
 

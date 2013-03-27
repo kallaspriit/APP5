@@ -338,22 +338,26 @@ function(
 			app.broadcast(type, parameters);
 		};
 
-		app.compile(newWrap)(app.baseScope);
+		try {
+			app.compile(newWrap)(app.baseScope);
 
-		if (currentItem !== null && back !== true) {
-			currentItem.fire(this.Event.SLEEP);
+			if (currentItem !== null && back !== true) {
+				currentItem.fire(this.Event.SLEEP);
+			}
+
+			this.transitionView(currentWrap, newWrap, back, false, function() {
+				if (back) {
+					currentItem.fire(self.Event.EXIT);
+					currentItem.container.remove();
+				}
+
+				if (util.isFunction(doneCallback)) {
+					doneCallback();
+				}
+			});
+		} catch (e) {
+			dbg.error(e);
 		}
-
-		this.transitionView(currentWrap, newWrap, back, false, function() {
-			if (back) {
-				currentItem.fire(self.Event.EXIT);
-				currentItem.container.remove();
-			}
-
-			if (util.isFunction(doneCallback)) {
-				doneCallback();
-			}
-		});
 
 		return newItem;
 	};
@@ -497,6 +501,8 @@ function(
 
 		if (config.debug) {
 			debugRenderer.init(this);
+
+			window.app.debugRenderer = debugRenderer;
 		}
 
 		//$(document).bind('touchmove', false);
