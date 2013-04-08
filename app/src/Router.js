@@ -116,7 +116,21 @@ function(config, app, navi, util) {
 	 * @private
 	 */
 	Router.prototype._navigatePath = function(module, action, parameters) {
+		var path = '/' + module + '/' + action,
+			key;
 
+		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
+			for (key in parameters) {
+				if (parameters[key] === true) {
+					path += '/' + key;
+				} else {
+					path += '/' + key + '=' + parameters[key];
+				}
+			}
+		}
+
+		app.location.path(path);
+		app.validate();
 	};
 
 	/**
@@ -167,7 +181,7 @@ function(config, app, navi, util) {
 					|| parameters.args.module !== current.module
 					|| parameters.args.action !== current.action
 				)
-			) {
+		) {
 			navi._open(
 				parameters.args.module,
 				parameters.args.action,
@@ -186,11 +200,49 @@ function(config, app, navi, util) {
 	 * Path-based handler for URL change.
 	 *
 	 * @method _handleUrlChangePath
-	 * @param {Object} parameters URL parameters
+	 * @param {Object} urlParameters URL parameters
 	 * @private
 	 */
-	Router.prototype._handleUrlChangePath = function(parameters) {
+	Router.prototype._handleUrlChangePath = function(urlParameters) {
+		var path = urlParameters.path,
+			tokens = path.split('/'),
+			module = config.index.module,
+			action = config.index.action,
+			actionParameters = config.index.parameters,
+			i,
+			paramParts,
+			paramName,
+			paramValue;
 
+		if (tokens.length >= 2 && tokens[1].length > 0) {
+			module = tokens[1];
+			actionParameters = {};
+		}
+
+		if (tokens.length >= 3 && tokens[2].length > 0) {
+			action = tokens[2];
+		}
+
+		if (tokens.length >= 4) {
+			for (i = 3; i < tokens.length; i++) {
+				if (tokens[i].indexOf('=') !== -1) {
+					paramParts = tokens[i].split('=');
+					paramName = paramParts[0];
+					paramValue = util.normalizeType(paramParts[1]);
+				} else {
+					paramName = tokens[i];
+					paramValue = true;
+				}
+
+				actionParameters[paramName] = paramValue;
+			}
+		}
+
+		navi._open(
+			module,
+			action,
+			actionParameters
+		);
 	};
 
 	return new Router();

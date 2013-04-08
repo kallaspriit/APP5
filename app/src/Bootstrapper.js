@@ -188,6 +188,8 @@ function(
 	 * @private
 	 */
 	Bootstrapper.prototype._setupRouter = function($scope, $location) {
+		ui.setBasePath($location.path());
+
 		$scope.$watch(function () {
 			return $location.absUrl();
 		}, function() {

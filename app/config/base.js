@@ -83,7 +83,7 @@ define(function() {
 		navigation: {
 			html5Mode: true,
 			hashPrefix: '!',
-			mode: 'query'
+			mode: 'path' // see Router.Mode enumeration
 		},
 
 		/**
