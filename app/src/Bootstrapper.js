@@ -67,7 +67,7 @@ function(
 				config:             config,
 				dbg:                dbg.init(),
 				resourceManager:    resourceManager.init(),
-				router:             router.init(),
+				router:             router.init(config.navigation.mode),
 				keyboard:           keyboard.init(),
 				mouse:              mouse.init(),
 				ui:                 ui.init(),
@@ -104,8 +104,8 @@ function(
 
 				// configure HTML5 url-rewrite mode
 				$locationProvider
-					.html5Mode(config.useUrlHTML5)
-					.hashPrefix(config.urlHashPrefix);
+					.html5Mode(config.navigation.html5Mode)
+					.hashPrefix(config.navigation.hashPrefix);
 
 				// register the root-controller
 				app.registerController('RootController', RootController);

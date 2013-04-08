@@ -1,52 +1,122 @@
 define(
-['Bindable', 'config/main', 'Navi', 'Util'],
-function(Bindable, config, navi, util) {
+['config/main', 'App', 'Navi', 'Util'],
+function(config, app, navi, util) {
 	'use strict';
 
 	/**
 	 * Provides application routing functionality.
 	 *
-	 * Can fire the following events:
-	 *
-	 *	> URL_CHANGED - Triggered when url changes
-	 *		??? - ???
-	 *
 	 * @class Router
-	 * @extends Bindable
 	 * @constructor
 	 * @module Core
 	 */
 	var Router = function() {
-
+		this._mode = this.Mode.QUERY;
 	};
 
-	Router.prototype = new Bindable();
-
 	/**
-	 * Event types.
+	 * Routing modes.
 	 *
 	 * @event
-	 * @param {Object} Event
-	 * @param {String} Event.URL_CHANGED Triggered when url changes
+	 * @param {Object} Mode
+	 * @param {String} Mode.QUERY Query-based routing ?module=phonebook&action=contacts style
+	 * @param {String} Mode.PATH Path-based routing /phonebook/contacts style
 	 */
-	Router.prototype.Event = {
-		URL_CHANGED: 'url-changed'
+	Router.prototype.Mode = {
+		QUERY: 'query',
+		PATH: 'path'
+	};
+
+	/**
+	 * Sets navigation mode to use.
+	 *
+	 * @method setMode
+	 * @param {String} mode Navigation mode to use
+	 * @return {Router} Self
+	 */
+	Router.prototype.setMode = function(mode) {
+		this._mode = mode;
 	};
 
 	/**
 	 * Initiates the component.
 	 *
 	 * @method init
+	 * @param {String} [mode] Navigation mode to use
 	 * @return {Router} Self
 	 */
-	Router.prototype.init = function() {
+	Router.prototype.init = function(mode) {
 		var self = this;
 
 		navi.bind(navi.Event.URL_CHANGED, function(e) {
 			self._onUrlChanged(e.parameters);
 		});
 
+		if (util.isString(mode)) {
+			this.setMode(mode);
+		}
+
 		return this;
+	};
+
+	/**
+	 * Composes a URL that matches given module action.
+	 *
+	 * @method navigate
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
+	 * @param {Object} [parameters] Action parameters
+	 * @return {Router} Self
+	 */
+	Router.prototype.navigate = function(module, action, parameters) {
+		switch (this._mode) {
+			case this.Mode.QUERY:
+				return this._navigateQuery(module, action, parameters);
+
+			case this.Mode.PATH:
+				return this._navigatePath(module, action, parameters);
+
+			default:
+				throw new Error('Invalid router mode "' + this._mode + '"');
+		}
+	};
+
+	/**
+	 * Query-based navigation strategy.
+	 *
+	 * @method _navigateQuery
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
+	 * @param {Object} [parameters] Action parameters
+	 * @return {Router} Self
+	 * @private
+	 */
+	Router.prototype._navigateQuery = function(module, action, parameters) {
+		var urlArguments = {
+			module: module,
+			action: action
+		};
+
+		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
+			urlArguments.parameters = parameters;
+		}
+
+		app.location.search(urlArguments);
+		app.validate();
+	};
+
+	/**
+	 * Path-based navigation strategy.
+	 *
+	 * @method _navigatePath
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
+	 * @param {Object} [parameters] Action parameters
+	 * @return {Router} Self
+	 * @private
+	 */
+	Router.prototype._navigatePath = function(module, action, parameters) {
+
 	};
 
 	/**
@@ -67,17 +137,37 @@ function(Bindable, config, navi, util) {
 	 * @private
 	 */
 	Router.prototype._onUrlChanged = function(parameters) {
+		switch (this._mode) {
+			case this.Mode.QUERY:
+				return this._handleUrlChangeQuery(parameters);
+
+			case this.Mode.PATH:
+				return this._handleUrlChangePath(parameters);
+
+			default:
+				throw new Error('Invalid router mode "' + this._mode + '"');
+		}
+	};
+
+	/**
+	 * Query-based handler for URL change.
+	 *
+	 * @method _handleUrlChangeQuery
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	Router.prototype._handleUrlChangeQuery = function(parameters) {
 		var current = navi.getCurrent();
 
 		if (
 			util.isString(parameters.args.module)
-			&& util.isString(parameters.args.action)
-			&& (
+				&& util.isString(parameters.args.action)
+				&& (
 				current === null
-				|| parameters.args.module !== current.module
-				|| parameters.args.action !== current.action
-			)
-		) {
+					|| parameters.args.module !== current.module
+					|| parameters.args.action !== current.action
+				)
+			) {
 			navi._open(
 				parameters.args.module,
 				parameters.args.action,
@@ -90,6 +180,17 @@ function(Bindable, config, navi, util) {
 				config.index.parameters
 			);
 		}
+	};
+
+	/**
+	 * Path-based handler for URL change.
+	 *
+	 * @method _handleUrlChangePath
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	Router.prototype._handleUrlChangePath = function(parameters) {
+
 	};
 
 	return new Router();

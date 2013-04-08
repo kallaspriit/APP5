@@ -125,17 +125,9 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			return;
 		}
 
-		var urlArguments = {
-			module: module,
-			action: action
-		};
-
-		if (!_.isEmpty(parameters)) {
-			urlArguments.parameters = parameters;
-		}
-
-		app.location.search(urlArguments);
-		app.validate();
+		require(['Router'], function(router) {
+			router.navigate(module, action, parameters);
+		});
 	};
 
 	/**

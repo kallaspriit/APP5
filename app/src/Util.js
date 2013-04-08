@@ -257,6 +257,17 @@ function(Deferred, _) {
 		},
 
 		/**
+		 * Returns whether given argument is empty.
+		 *
+		 * @method isEmpty
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isEmpty: function(arg) {
+			return _.isEmpty(arg);
+		},
+
+		/**
 		 * Parses URL parameters from given path.
 		 *
 		 * @method parseUrlParameters
