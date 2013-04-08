@@ -14,7 +14,6 @@ define(
 	'Translator',
 	'Navi',
 	'Scheduler',
-	'TestClient',
 	'Util',
 	'Directives',
 	'Filters',
@@ -36,7 +35,6 @@ function(
 	translator,
 	navi,
 	scheduler,
-	testClient,
 	util,
 	directives,
 	filters,
@@ -74,7 +72,6 @@ function(
 				translator:         translator.init(translations, config.language),
 				navi:               navi.init(),
 				scheduler:          scheduler.init(),
-				testClient:         testClient.init(),
 				util:               util
 			},
 			directiveName,
@@ -172,13 +169,6 @@ function(
 		app.compile = $compile;
 
 		this._setupRouter($rootScope, $location);
-
-		if (config.testClient.active) {
-			testClient.open(
-				config.testClient.host,
-				config.testClient.port
-			);
-		}
 	};
 
 	/**

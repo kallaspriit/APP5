@@ -83,19 +83,7 @@ define(function() {
 		navigation: {
 			html5Mode: true,
 			hashPrefix: '!',
-			mode: 'path' // see Router.Mode enumeration
-		},
-
-		/**
-		 * Setup for the test client.
-		 *
-		 * @property testClient
-		 * @type Object
-		 */
-		testClient: {
-			active: true,
-			host: '127.0.0.1',
-			port: 10082
+			mode: 'query' // see Router.Mode enumeration
 		}
 	};
 });
