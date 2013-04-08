@@ -40,6 +40,8 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 *		parameters - action parameters
 	 *	> STACK_CHANGED - fired when navigation stack changes
 	 *		stack - updated navigation stack
+	 *  > URL_CHANGED - fired when the URL changes
+	 *		parameters - URL parameters (url, hash, path, query, args, host, port, protocol)
 	 *
 	 * @class Navi
 	 * @extends Bindable
@@ -75,6 +77,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 		PRE_PARTIAL: 'pre-partial',
 		POST_PARTIAL: 'post-partial',
 		STACK_CHANGED: 'stack-changed',
+		URL_CHANGED: 'url-changed',
 		SLEEP: 'sleep',
 		WAKEUP: 'wakeup',
 		EXIT: 'exit'
@@ -295,51 +298,6 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			config.index.action,
 			config.index.parameters
 		);
-
-		/*if (
-			previousItem === null
-			&& (currentItem.module !== config.index.module || currentItem.action !== config.index.action)
-		) {
-			this.open(
-				config.index.module,
-				config.index.action,
-				config.index.parameters
-			);
-
-			return;
-		}
-
-		this._stack.pop();
-
-		this.fire({
-			type: this.Event.STACK_CHANGED,
-			stack: this._stack
-		});
-
-		previousItem.fire(this.Event.WAKEUP);
-
-		this.fire({
-			type: this.Event.PRE_NAVIGATE,
-			module: previousItem.module,
-			action: previousItem.action,
-			parameters: previousItem.parameters
-		});
-
-		var currentWrapSelector = '#content-' + currentItem.id,
-			newWrapSelector = '#content-' + previousItem.id;
-
-		ui.transitionView(currentWrapSelector, newWrapSelector, true, true, function() {
-			currentItem.fire(self.Event.EXIT);
-
-			self.fire({
-				type: self.Event.POST_NAVIGATE,
-				module: previousItem.module,
-				action: previousItem.action,
-				parameters: previousItem.parameters
-			});
-
-			app.validate();
-		});*/
 	};
 
 	/**
@@ -425,6 +383,30 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 */
 	Navi.prototype.getStack = function() {
 		return this._stack;
+	};
+
+	/**
+	 * Called by the framework when URL changes.
+	 *
+	 * The parameters include:
+	 * - url
+	 * - hash
+	 * - path
+	 * - query
+	 * - args
+	 * - host
+	 * - port
+	 * - protocol
+	 *
+	 * @method _onUrlChanged
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	Navi.prototype._onUrlChanged = function(parameters) {
+		this.fire({
+			type: this.Event.URL_CHANGED,
+			parameters: parameters
+		});
 	};
 
 	/**

@@ -109,10 +109,6 @@ function(
 	) {
 		isReverse = util.isBoolean(isReverse) ? isReverse : false;
 
-		if (this._transitioning) {
-			alert('already transitioning');
-		}
-
 		this._transitioning = true;
 
 		var self = this,

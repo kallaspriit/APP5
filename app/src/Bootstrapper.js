@@ -7,6 +7,7 @@ define(
 	'config/main',
 	'App',
 	'ResourceManager',
+	'Router',
 	'Keyboard',
 	'Mouse',
 	'UI',
@@ -28,6 +29,7 @@ function(
 	config,
 	app,
 	resourceManager,
+	router,
 	keyboard,
 	mouse,
 	ui,
@@ -65,6 +67,7 @@ function(
 				config:             config,
 				dbg:                dbg.init(),
 				resourceManager:    resourceManager.init(),
+				router:             router.init(),
 				keyboard:           keyboard.init(),
 				mouse:              mouse.init(),
 				ui:                 ui.init(),
@@ -82,13 +85,15 @@ function(
 		app.module.config([
 			'$provide', '$locationProvider', '$controllerProvider',
 			function($provide, $locationProvider, $controllerProvider) {
+				app.provide = $provide;
+				app.controllerProvider = $controllerProvider;
+
 				// provide the components to module actions
 				for (var key in components) {
 					$provide.value(key, components[key]);
 				}
 
 				// listen for angular expections
-				// TODO Try to disable angular expection handling
 				$provide.factory('$exceptionHandler', function() {
 					return function(exception) {
 						dbg.error(exception);
@@ -97,13 +102,10 @@ function(
 					};
 				});
 
-				// use HTML5 url-rewrite mode
+				// configure HTML5 url-rewrite mode
 				$locationProvider
 					.html5Mode(config.useUrlHTML5)
 					.hashPrefix(config.urlHashPrefix);
-
-				app.provide = $provide;
-				app.controllerProvider = $controllerProvider;
 
 				// register the root-controller
 				app.registerController('RootController', RootController);
@@ -169,7 +171,7 @@ function(
 		app.location = $location;
 		app.compile = $compile;
 
-		this._setupUrlListener($rootScope, $location);
+		this._setupRouter($rootScope, $location);
 
 		if (config.testClient.active) {
 			testClient.open(
@@ -182,34 +184,25 @@ function(
 	/**
 	 * Sets up listener for URL changes.
 	 *
-	 * @method _setupUrlListener
+	 * @method _setupRouter
 	 * @private
 	 */
-	Bootstrapper.prototype._setupUrlListener = function($scope, $location) {
+	Bootstrapper.prototype._setupRouter = function($scope, $location) {
 		$scope.$watch(function () {
 			return $location.absUrl();
 		}, function() {
-			var parameters = $location.search(),
-				current = navi.getCurrent();
+			var parameters = {
+				url: $location.absUrl(),
+				hash: $location.hash(),
+				path: $location.path(),
+				query: $location.url(),
+				args: $location.search(),
+				host: $location.host(),
+				port: $location.port(),
+				protocol: $location.protocol()
+			};
 
-			// TODO Move to a seperate router
-			if (
-				util.isString(parameters.module)
-				&& util.isString(parameters.action)
-				&& (current === null || parameters.module !== current.module || parameters.action !== current.action)
-			) {
-				navi._open(
-					parameters.module,
-					parameters.action,
-					util.isObject(parameters.parameters) ? parameters.parameters : {}
-				);
-			} else {
-				navi._open(
-					config.index.module,
-					config.index.action,
-					config.index.parameters
-				);
-			}
+			navi._onUrlChanged(parameters);
 		});
 	};
 
