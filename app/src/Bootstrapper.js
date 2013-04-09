@@ -178,20 +178,18 @@ function(
 	 * @private
 	 */
 	Bootstrapper.prototype._setupRouter = function($scope, $location) {
-		ui.setBasePath($location.path());
-
 		$scope.$watch(function () {
 			return $location.absUrl();
 		}, function() {
 			var parameters = {
-				url: $location.absUrl(),
-				hash: $location.hash(),
-				path: $location.path(),
-				query: $location.url(),
-				args: $location.search(),
-				host: $location.host(),
-				port: $location.port(),
-				protocol: $location.protocol()
+				url:        $location.absUrl(),
+				hash:       $location.hash(),
+				path:       $location.path(),
+				query:      $location.url(),
+				args:       $location.search(),
+				host:       $location.host(),
+				port:       $location.port(),
+				protocol:   $location.protocol()
 			};
 
 			navi._onUrlChanged(parameters);

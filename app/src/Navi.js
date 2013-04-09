@@ -171,6 +171,10 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
+			if (!util.isFunction(moduleObj[actionName])) {
+				throw new Error('Invalid "' + module + '" module action "' + action + '" requested');
+			}
+
 			item = ui.showView(
 				module,
 				action,

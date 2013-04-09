@@ -487,19 +487,6 @@ function(
 	};
 
 	/**
-	 * Sets the base path to use.
-	 *
-	 * This is useful when using path-based routing so that resources such as images would be fetched from the right
-	 * location.
-	 *
-	 * @method confirm
-	 * @param {String} path Base path to use
-	 */
-	UI.prototype.setBasePath = function(path) {
-		$('head').append('<base href="' + path + '">');
-	};
-
-	/**
 	 * Called on document ready.
 	 *
 	 * @method _onDocumentReady

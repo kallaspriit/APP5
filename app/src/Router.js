@@ -17,6 +17,16 @@ function(config, app, navi, util) {
 	/**
 	 * Routing modes.
 	 *
+	 * When using the path mode, some additional webserver configuration is required so that when a user enters a url
+	 * directly, one would not get a 404 but the actual page. This can be achieved using URL rewrite to redirect any
+	 * non-existing files to index.html. This can be done in apache by adding a .htaccess file into "app" directory
+	 * with contents like:
+	 *
+	 * RewriteEngine On
+	 * RewriteCond %{REQUEST_FILENAME} !-d
+	 * RewriteCond %{REQUEST_FILENAME} !-f
+	 * RewriteRule ^.+$ index.html [QSA,L]
+	 *
 	 * @event
 	 * @param {Object} Mode
 	 * @param {String} Mode.QUERY Query-based routing ?module=phonebook&action=contacts style

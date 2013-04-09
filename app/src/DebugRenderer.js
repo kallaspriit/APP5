@@ -210,6 +210,40 @@ function($, dbg, resourceManager, util, moment, _) {
 			dbg.log('+ Loaded view ' + e.filename);
 		});
 
+		resourceManager.bind(resourceManager.Event.LOAD_ERROR, function(e) {
+			switch (e.resource) {
+				case resourceManager.ResourceType.REQUEST:
+					dbg.error('Requesting "' + e.url + '" failed: ' + e.message);
+				break;
+
+				case resourceManager.ResourceType.FILE:
+					if (!util.isUndefined(e.error) && util.isArray(e.error.requireModules)) {
+						dbg.error('Requiring modules failed: ' + JSON.stringify(e.error.requireModules));
+					} else {
+						dbg.error('Loading file failed', e);
+					}
+				break;
+
+				case resourceManager.ResourceType.MODULE:
+					dbg.error('Loading module "' + e.name + '" from "' + e.filename + '" failed, invalid return?');
+				break;
+
+				case resourceManager.ResourceType.MODULE_TRANSLATIONS:
+					dbg.error(
+						'Loading module "' + e.name + '" translations from "' + e.filename + '" failed, invalid return?'
+					);
+				break;
+
+				case resourceManager.ResourceType.VIEW:
+					dbg.error('Loading module "' + e.name + '" translations from "' + e.filename + '" failed');
+				break;
+
+				case resourceManager.ResourceType.CSS:
+					dbg.error('Loading css file "' + e.filename + '" failed');
+				break;
+			}
+		});
+
 		dbg.bind(dbg.Event.CONSOLE, function(e) {
 			var time = util.date(),
 				args = [moment(time).format('hh:mm:ss')],

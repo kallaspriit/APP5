@@ -14,6 +14,8 @@ function($, Bindable, Deferred, util, translator, config) {
 	 *	> VIEW_LOADED - fired when a application view is loaded
 	 *		filename - filename of the view
 	 *		content - view content
+	 *	> LOAD_ERROR - fired when loading a resource failed
+	 *		resource - type of resource
 	 *
 	 * @class ResourceManager
 	 * @extends Bindable
@@ -35,10 +37,33 @@ function($, Bindable, Deferred, util, translator, config) {
 	 * @param {Object} Event
 	 * @param {String} Event.MODULE_LOADED Application module was loaded
 	 * @param {String} Event.VIEW_LOADED Application view was loaded
+	 * @param {String} Event.LOAD_ERROR Loading a resource failed
 	 */
 	ResourceManager.prototype.Event = {
 		MODULE_LOADED: 'module-loaded',
-		VIEW_LOADED: 'view-loaded'
+		VIEW_LOADED: 'view-loaded',
+		LOAD_ERROR: 'load-error'
+	};
+
+	/**
+	 * Event types.
+	 *
+	 * @event
+	 * @param {Object} ResourceType
+	 * @param {String} ResourceType.FILE RequireJS file
+	 * @param {String} ResourceType.MODULE Application module
+	 * @param {String} ResourceType.MODULE_TRANSLATIONS Application module translations
+	 * @param {String} ResourceType.VIEW Action view
+	 * @param {String} ResourceType.CSS Css file
+	 * @param {String} ResourceType.REQUEST Http request
+	 */
+	ResourceManager.prototype.ResourceType = {
+		FILE: 'file',
+		MODULE: 'module',
+		MODULE_TRANSLATIONS: 'module-translations',
+		VIEW: 'view',
+		CSS: 'css',
+		REQUEST: 'request'
 	};
 
 	/**
@@ -61,6 +86,16 @@ function($, Bindable, Deferred, util, translator, config) {
 	 * @return {ResourceManager} Self
 	 */
 	ResourceManager.prototype.init = function() {
+		var self = this;
+
+		require.onError = function(error) {
+			self.fire({
+				type: self.Event.LOAD_ERROR,
+				resource: self.ResourceType.FILE,
+				error: error
+			});
+		};
+
 		return this;
 	};
 
@@ -84,6 +119,8 @@ function($, Bindable, Deferred, util, translator, config) {
 		callback,
 		dataType
 	) {
+		var self = this;
+
 		type = type || this.HTTP.GET;
 		dataType = dataType || 'json';
 		data = data || null;
@@ -105,10 +142,21 @@ function($, Bindable, Deferred, util, translator, config) {
 			if (util.isFunction(callback)) {
 				callback(data);
 			}
-		}).fail(function() {
+		}).fail(function(xhr, message, error) {
 			if (util.isFunction(callback)) {
 				callback(null);
 			}
+
+			self.fire({
+				type: self.Event.LOAD_ERROR,
+				resource: self.ResourceType.REQUEST,
+				url: url,
+				dataType: type,
+				data: data,
+				xhr: xhr,
+				message: message,
+				error: error
+			});
 		});
 	};
 
@@ -182,7 +230,9 @@ function($, Bindable, Deferred, util, translator, config) {
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(name) + 'Module',
-			translationsName = name + '-translations.js';
+			translationsName = name + '-translations.js',
+			moduleFilename = 'modules/' + name + '/' + className,
+			translationsFilename = 'modules/' + name + '/' + translationsName;
 
 		if (util.isObject(this._modules[name])) {
 			deferred.resolve(this._modules[name]);
@@ -195,8 +245,34 @@ function($, Bindable, Deferred, util, translator, config) {
 		}
 
 		require(
-			['modules/' + name + '/' + className, 'modules/' + name + '/' + translationsName],
+			[moduleFilename, translationsFilename],
 			function(module, translations) {
+				if (!util.isObject(module)) {
+					self.fire({
+						type: self.Event.LOAD_ERROR,
+						resource: self.ResourceType.MODULE,
+						name: name,
+						filename: moduleFilename
+					});
+
+					throw new Error(
+						'Loading module "' + name + '" from "' + moduleFilename + '" failed'
+					);
+				}
+
+				if (!util.isObject(translations)) {
+					self.fire({
+						type: self.Event.LOAD_ERROR,
+						resource: self.ResourceType.MODULE_TRANSLATIONS,
+						name: name,
+						filename: translationsFilename
+					});
+
+					throw new Error(
+						'Loading module "' + name + '" translations from "' + translationsFilename + '" failed'
+					);
+				}
+
 				var translationKey,
 					translationLanguage;
 
@@ -287,6 +363,12 @@ function($, Bindable, Deferred, util, translator, config) {
 					callback(html);
 				}
 			}).error(function() {
+				self.fire({
+					type: self.Event.LOAD_ERROR,
+					resource: self.ResourceType.VIEW,
+					filename: filename
+				});
+
 				deferred.reject('Loading view from ' + filename + ' failed');
 			});
 
@@ -385,6 +467,12 @@ function($, Bindable, Deferred, util, translator, config) {
 			clearTimeout(failTimeout);
 
 			head.removeChild(link);
+
+			self.fire({
+				type: self.Event.LOAD_ERROR,
+				resource: self.ResourceType.CSS,
+				filename: filename
+			});
 
 			deferred.reject('Loading css "' + filename + '" failed');
 
