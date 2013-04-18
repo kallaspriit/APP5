@@ -1,7 +1,5 @@
 /**
- * TODO Insert version number
  * TODO Combine CSS files
- * TODO Rename app.js to include version number
  */
 
 (function() {
@@ -12,10 +10,14 @@
 		wrench = require('wrench');
 
 	function cloneApp(from, to) {
+		console.log('  > cloning application from "' + from + '" to "' + to + '"');
+
 		wrench.copyDirSyncRecursive(from, to);
 	}
 
 	function annotateVersion(dir, readyCallback) {
+		console.log('  > annotating version in "' + dir + '"');
+
 		common.getVersion(function(versionInfo) {
 			common.getHostname(function(hostname) {
 				var versionStr = 'untagged';
@@ -27,7 +29,8 @@
 
 					console.log('  > annotating version ' + versionStr);
 				} else {
-					console.log('  ! Create a tag on the repository to get a version number');
+					console.log('  ! create a tag on the repository to get a version number');
+					console.log('    > git tag -a v1 -m "Version 1"');
 				}
 
 				var filename = dir + '/index.html',

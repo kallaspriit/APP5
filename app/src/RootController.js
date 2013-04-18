@@ -26,9 +26,6 @@ function(app) {
 			//$scope.title = 'APP5 :: ' + title;
 		};
 
-		// TODO This is legal
-		//$scope.setTitle('test');
-
 		// components accessible to all controllers
 		$scope.translator = translator;
 		$scope.navi = navi;

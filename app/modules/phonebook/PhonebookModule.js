@@ -20,22 +20,6 @@ function(phonebook) {
 		 * @param {UI} ui User interface
 		 */
 		contactsAction: function($scope, ui) {
-			// TODO Blows up
-			//$scope.setTitle('Contact List');
-
-			// test multiple errors
-			/*var i = window.setInterval(function() {
-				if (this.c++ === 3) {
-					window.clearInterval(i);
-
-					return;
-				}
-
-				window['foobar' + this.c]();
-			}.bind({c: 0}), 3000);
-
-			a();*/
-
 			$scope.phonebook = phonebook;
 			$scope.filter = '';
 			$scope.order = 'name';
@@ -52,8 +36,6 @@ function(phonebook) {
 						id : id,
 						callback: function() {
 							ui.hideModal();
-
-							//app.validate();
 						}
 					}
 				);

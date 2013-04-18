@@ -1,9 +1,18 @@
 (function() {
+	'use strict';
+
 	var common = require('./common.js'),
 		fs = require('fs');
 
 	function renameVersion(dir) {
 		common.getVersion(function(versionInfo) {
+			if (versionInfo === null) {
+				console.log('  @ create a tag on the repository to get a version number');
+				console.log('    > git tag -a v1 -m "Version 1"');
+
+				return;
+			}
+
 			var newAppFilename = 'app-' + versionInfo.major + '.' + versionInfo.minor + '.js',
 				filename = dir + '/index.html',
 				contents = fs.readFileSync(filename, 'utf-8'),

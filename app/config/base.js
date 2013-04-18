@@ -83,7 +83,7 @@ define(function() {
 		navigation: {
 			html5Mode: true,
 			hashPrefix: '!',
-			mode: 'path' // path/query, see Router.Mode enumeration
+			mode: 'query' // path/query, see Router.Mode enumeration
 		}
 	};
 });
