@@ -25,5 +25,5 @@
 	"maxlen": 120,
 	"laxbreak": true,
 	"loopfunc": true,
-	"predef": ["require", "define"]
+	"predef": ["require", "define", "module"]
 }

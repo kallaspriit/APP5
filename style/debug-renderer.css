@@ -85,10 +85,10 @@
 }
 #debug-renderer-error .debug-renderer-error-title {
 	display: block;
-	padding: 10px 20px;
+	padding: 0 20px;
 	margin: 0 0 20px 0;
-	height: 40px;
-	line-height: 40px;
+	height: 60px;
+	line-height: 60px;
 	font-size: 24px;
 	font-weight: normal;
 	border-bottom: 1px solid #EEE;
@@ -105,19 +105,24 @@
 	text-align: center;
 	background-color: #FFF;
 	border: 1px solid #CCC;
-	outline: 2px solid #FFF;
 	font-family: sans-serif;
+	font-size: 20px;
 	border-radius: 3px;
+	color: #CCC;
 	cursor: pointer;
 }
+#debug-renderer-error .debug-renderer-error-close:hover {
+	border: 1px solid #333;
+	color: #333;
+}
 #debug-renderer-error .debug-renderer-error-content {
-	padding: 0 20px 20px 20px;
+	padding: 0 20px 10px 20px;
 }
 #debug-renderer-error .debug-renderer-error-location {
-	padding: 0 8px 0 0;
-	margin: -40px 0 20px 0;
-	line-height: 14px;
+	padding: 0 20px;
+	line-height: 30px;
 	font-size: 14px;
-	font-style: italic;
-	text-align: right;
+	background-color: #F8F8F8;
+	border-top: 1px solid #EEE;
+	border-radius: 0 0 5px 5px;
 }

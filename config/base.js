@@ -1,1 +1,1 @@
-define([],function(){return{debug:!1,index:{module:"phonebook",action:"contacts",parameters:[]},viewSelector:"#pages",cssPrefix:"app5-",pageTransition:"slide",language:"en",useUrlHTML5:!0,urlHashPrefix:"!",urlMode:"query",testClient:{active:!0,host:"127.0.0.1",port:10082}}});
+define([],function(){return{debug:!1,index:{module:"phonebook",action:"contacts",parameters:[]},viewSelector:"#pages",cssPrefix:"app5-",pageTransition:"slide",language:"en",navigation:{html5Mode:!0,hashPrefix:"!",mode:"query"}}});
