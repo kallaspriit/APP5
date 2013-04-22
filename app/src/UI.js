@@ -325,8 +325,8 @@ function(
 			.html(viewContent)
 			.attr('ng-controller', className + '.' + actionName);
 
-		// TODO Find a better way to pass parameters
-		app.provide.value('parameters', parameters);
+		app.parameters = parameters;
+
 		app.registerController(className + '.' + actionName, moduleObj[actionName]);
 
 		newItem.container = newWrap;
@@ -402,10 +402,15 @@ function(
 			container.html(viewContent).attr('ng-controller', controllerName);
 		}
 
-		// TODO Find a better way to pass parameters
-		app.provide.value('parameters', parameters);
+		app.parameters = parameters;
+
 		app.registerController(controllerName, moduleObj[actionName]);
-		app.compile(container)(app.baseScope);
+
+		try {
+			app.compile(container)(app.baseScope);
+		} catch (e) {
+			dbg.error(e);
+		}
 	};
 
 	/**

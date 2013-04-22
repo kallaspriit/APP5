@@ -85,6 +85,16 @@ function(
 				app.provide = $provide;
 				app.controllerProvider = $controllerProvider;
 
+				// provide module action parameters
+				// TODO Can this be done without returning function, damn cache
+				$provide.provider('$parameters', {
+					$get: function() {
+						return function() {
+							return app.parameters;
+						};
+					}
+				});
+
 				// provide the components to module actions
 				for (var key in components) {
 					$provide.value(key, components[key]);

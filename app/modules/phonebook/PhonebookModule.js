@@ -76,18 +76,18 @@ function(phonebook) {
 		 *
 		 * @method addContactAction
 		 * @param {Scope} $scope Angular scope
-		 * @param {Object} parameters Action parameters
+		 * @param {Object} $parameters Action parameters
 		 * @param {Navi} navi Navigation
 		 * @param {Util} util Utilities
 		 */
-		editContactAction: function($scope, parameters, navi, util) {
-			$scope.contact = util.clone(phonebook.get(parameters.id));
+		editContactAction: function($scope, $parameters, navi, util) {
+			$scope.contact = util.clone(phonebook.get($parameters().id));
 
 			$scope.update = function(contact) {
 				phonebook.update(contact.id, contact);
 
-				if (util.isFunction(parameters.callback)) {
-					parameters.callback();
+				if (util.isFunction($parameters.callback)) {
+					$parameters.callback();
 				}
 			};
 		}

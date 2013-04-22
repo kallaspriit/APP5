@@ -19,6 +19,7 @@ function() {
 		this.controllerProvider = null;
 		this.models = {};
 		this.modules = {};
+		this.parameters = {};
 	};
 
 	/**
