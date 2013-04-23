@@ -149,6 +149,8 @@ function(
 
 		// register the core application components in global scope for debugging, never rely on this
 		if (config.debug) {
+			util.extend(app, components);
+
 			window.app = app;
 		}
 	};

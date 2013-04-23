@@ -81,13 +81,16 @@ function(phonebook) {
 		 * @param {Util} util Utilities
 		 */
 		editContactAction: function($scope, $parameters, navi, util) {
-			$scope.contact = util.clone(phonebook.get($parameters().id));
+			// TODO Find a better way
+			var params = $parameters();
+
+			$scope.contact = util.clone(phonebook.get(params.id));
 
 			$scope.update = function(contact) {
 				phonebook.update(contact.id, contact);
 
-				if (util.isFunction($parameters.callback)) {
-					$parameters.callback();
+				if (util.isFunction(params.callback)) {
+					params.callback();
 				}
 			};
 		}

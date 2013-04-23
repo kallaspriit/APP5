@@ -289,11 +289,19 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			return;
 		}
 
-		this.open(
-			config.index.module,
-			config.index.action,
-			config.index.parameters
-		);
+		if (previousItem !== null) {
+			this.open(
+				previousItem.module,
+				previousItem.action,
+				previousItem.parameters
+			);
+		} else {
+			this.open(
+				config.index.module,
+				config.index.action,
+				config.index.parameters
+			);
+		}
 	};
 
 	/**
@@ -408,7 +416,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	/**
 	 * Pops an item from the end of the navigation stack.
 	 *
-	 * @method popLastAction
+	 * @method _popLastAction
 	 * @param {Number} [steps=1] How many steps to jump back
 	 * @return {Object} Last action info
 	 * @private
@@ -432,6 +440,41 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 		} else {
 			return null;
 		}
+	};
+
+	/**
+	 * Peeks the last stack item without remocing it.
+	 *
+	 * @method peekLast
+	 * @return {Object} Last action info or null if not available
+	 */
+	Navi.prototype.peekLast = function() {
+		if (this._stack.length === 0) {
+			return null;
+		}
+
+		return this._stack[this._stack.length - 1];
+	};
+
+	/**
+	 * Pops and returns last stack item.
+	 *
+	 * @method popLast
+	 * @return {Object} Last action info or null if not available
+	 */
+	Navi.prototype.popLast = function() {
+		if (this._stack.length === 0) {
+			return null;
+		}
+
+		var item = this._stack.pop();
+
+		this.fire({
+			type: this.Event.STACK_CHANGED,
+			stack: this._stack
+		});
+
+		return item;
 	};
 
 	/**

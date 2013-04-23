@@ -293,21 +293,44 @@ function(
 			var stack = navi.getStack();
 
 			while (stack.length > 0) {
-				stackItem = stack.pop();
+				stackItem = navi.peekLast();
 
 				if (stackItem === currentItem) {
+					navi.popLast();
+
 					continue;
 				}
 
-				stackItem.fire(this.Event.EXIT);
-				stackItem.container.remove();
-
-				if (stackItem.module === module && stackItem.action === action) {
+				if (stackItem === existingItem) {
 					break;
 				}
+
+				navi.popLast();
+
+				stackItem.fire(this.Event.EXIT);
+				stackItem.container.remove();
 			}
 
 			back = true;
+		}
+
+		if (back) {
+			this.transitionView(
+				currentItem.container,
+				existingItem.container,
+				true,
+				false,
+				function() {
+					currentItem.fire(self.Event.EXIT);
+					currentItem.container.remove();
+
+					if (util.isFunction(doneCallback)) {
+						doneCallback();
+					}
+				}
+			);
+
+			return existingItem;
 		}
 
 		var newItem = navi.appendNavigation(module, action, parameters, moduleObj),
