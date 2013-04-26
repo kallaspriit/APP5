@@ -29,12 +29,7 @@ function(Bindable, util, _) {
 	 *
 	 * @event
 	 * @param {Object} Event
-	 * @param {String} Event.PRE_NAVIGATE Triggered just before navigation
-	 * @param {String} Event.POST_NAVIGATE Triggered just after navigation
-	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
-	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
-	 * @param {String} Event.WAKEUP Called on scope when action is awaken
-	 * @param {String} Event.EXIT Called on scope when action is killed
+	 * @param {String} Event.LANGUAGE_CHANGED Triggered when language changes
 	 */
 	Translator.prototype.Event = {
 		LANGUAGE_CHANGED: 'language-changed'

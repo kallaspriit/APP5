@@ -14,13 +14,13 @@ function() {
 		/**
 		 * Formats unit to millions/thousands.
 		 *
-		 * @method formatAmount
+		 * @method formatBytes
 		 * @param {Number} input Input number
 		 * @return {String}
 		 */
-		formatAmount: ['util', function(util) {
+		formatBytes: ['util', function(util) {
 			return function(input) {
-				return util.formatAmount(input);
+				return util.formatBytes(input);
 			};
 		}]
 	};

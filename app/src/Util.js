@@ -302,11 +302,11 @@ function(Deferred, _) {
 		/**
 		 * Formats unit to millions/thousands.
 		 *
-		 * @method formatAmount
+		 * @method formatBytes
 		 * @param {Number} amount Amount to format
 		 * @return {String}
 		 */
-		formatAmount: function(amount) {
+		formatBytes: function(amount) {
 			amount = parseFloat(amount);
 
 			if (isNaN(amount)) {
@@ -365,6 +365,81 @@ function(Deferred, _) {
 			}
 
 			return this.parseUrlParameters(hash.substr(paramPos + 1));
+		},
+
+		/**
+		 * Parses a URI into the following components:
+		 * - source
+		 * - protocol
+		 * - authority
+		 * - userInfo
+		 * - user
+		 * - password
+		 * - host
+		 * - port
+		 * - relative
+		 * - path
+		 * - directory
+		 * - file
+		 * - query
+		 * - anchor
+		 *
+		 * http://blog.stevenlevithan.com/archives/parseuri
+		 * (c) Steven Levithan <stevenlevithan.com>
+		 *
+		 * @method parseUri
+		 * @param {String} uri URI to parse
+		 * @return {Object}
+		 */
+		parseURI: function(uri) {
+			var	options = {
+				strictMode: false,
+				key: [
+					'source', 'protocol', 'authority', 'userInfo', 'user', 'password', 'host', 'port',
+					'relative', 'path', 'directory', 'file', 'query', 'anchor'
+				],
+				q: {
+					name: 'queryKey',
+					parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+				},
+				parser: {
+					/*jshint maxlen: 1024*/
+					strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+					loose: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+					/*jshint maxlen: 120*/
+				}
+			},
+			matches = options.parser[options.strictMode ? 'strict' : 'loose'].exec(uri),
+			result = {},
+			i = 14;
+
+			while (i--) {
+				result[options.key[i]] = matches[i] || '';
+			}
+
+			result[options.q.name] = {};
+			result[options.key[12]].replace(options.q.parser, function ($0, $1, $2) {
+				if ($1) {
+					result[options.q.name][$1] = $2;
+				}
+			});
+
+			return result;
+		},
+
+		/**
+		 * Returns base URL.
+		 *
+		 * For http://example.com/dir/file?params it returns http://example.com/dir/.
+		 *
+		 * @method getBaseUrl
+		 * @param {String} [uri] URI to use or window.location.href if not given
+		 * @return {String}
+		 */
+		getBaseUrl: function(uri) {
+			var tokens = this.parseURI(uri || window.location.href);
+
+			return tokens.protocol + '://' + tokens.host + tokens.directory;
 		},
 
 		/**
@@ -444,6 +519,24 @@ function(Deferred, _) {
 			}
 
 			return name;
+		},
+
+		/**
+		 * Converts names from some_var to someVar style.
+		 *
+		 * @method convertToCamelCase
+		 * @param {String} str String to process
+		 * @return {String}
+		 */
+		convertToCamelCase: function(str) {
+			var underscorePos;
+
+			while ((underscorePos = str.indexOf('_')) != -1) {
+				str = str.substr(0, underscorePos) +
+					(str.substr(underscorePos + 1, 1)).toUpperCase() + str.substr(underscorePos + 2);
+			}
+
+			return str;
 		},
 
 		/**
@@ -725,6 +818,30 @@ function(Deferred, _) {
 			/*jshint bitwise: true*/
 
 			return (S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4());
+		},
+
+		/**
+		 * Limits the given number to a range.
+		 *
+		 * If a single limit is given, limits maximum to given value. If both limits are given, limits the number
+		 * between a..b.
+		 *
+		 * @method limit
+		 * @param {Number} number Number to limit
+		 * @param {Number} a First limit, max for single argument, min for two
+		 * @param {Number} [b] Second max limit
+		 * @return {Number}
+		 */
+		limit: function(number, a, b) {
+			if (!this.isNumber(number)) {
+				return number;
+			}
+
+			if (this.isUndefined(b)) {
+				return Math.max(number, a);
+			} else {
+				return Math.min(Math.max(number, a), b);
+			}
 		},
 
 		/**

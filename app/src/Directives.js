@@ -10,6 +10,11 @@ define(function() {
 	 */
 	return {
 
+		/**
+		 * Displays self-updating date.
+		 *
+		 * @method liveDate
+		 */
 		liveDate: ['$timeout', 'dateFilter', function($timeout, dateFilter) {
 			// return the directive link function. (compile function not needed)
 			return function(scope, element, attrs) {
@@ -46,6 +51,11 @@ define(function() {
 			};
 		}],
 
+		/**
+		 * Translates string.
+		 *
+		 * @method translate
+		 */
 		translate: ['translator', 'util', '_', function(translator, util, _) {
 			return function(scope, element, attrs) {
 				var key = element.html(),

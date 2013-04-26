@@ -283,8 +283,7 @@ function(
 		viewContent,
 		doneCallback
 	) {
-		var self = this,
-			currentItem = navi.getCurrent(),
+		var currentItem = navi.getCurrent(),
 			existingItem = navi.getExistingItem(module, action),
 			back = false,
 			stackItem;
@@ -307,7 +306,7 @@ function(
 
 				navi.popLast();
 
-				stackItem.fire(this.Event.EXIT);
+				stackItem.fire(navi.Event.EXIT);
 				stackItem.container.remove();
 			}
 
@@ -315,13 +314,15 @@ function(
 		}
 
 		if (back) {
+			existingItem.fire(navi.Event.WAKEUP);
+
 			this.transitionView(
 				currentItem.container,
 				existingItem.container,
 				true,
 				false,
 				function() {
-					currentItem.fire(self.Event.EXIT);
+					currentItem.fire(navi.Event.EXIT);
 					currentItem.container.remove();
 
 					if (util.isFunction(doneCallback)) {
@@ -354,19 +355,19 @@ function(
 
 		newItem.container = newWrap;
 		newItem.fire = function(type, parameters) {
-			app.broadcast(type, parameters);
+			this.container.data('$scope').$broadcast(type, parameters);
 		};
 
 		try {
 			app.compile(newWrap)(app.baseScope);
 
 			if (currentItem !== null && back !== true) {
-				currentItem.fire(this.Event.SLEEP);
+				currentItem.fire(navi.Event.SLEEP);
 			}
 
 			this.transitionView(currentWrap, newWrap, back, false, function() {
 				if (back) {
-					currentItem.fire(self.Event.EXIT);
+					currentItem.fire(navi.Event.EXIT);
 					currentItem.container.remove();
 				}
 
