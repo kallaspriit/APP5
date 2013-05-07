@@ -125,9 +125,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			return;
 		}
 
-		require(['Router'], function(router) {
-			router.navigate(module, action, parameters);
-		});
+		app.router.navigate(module, action, parameters);
 	};
 
 	/**

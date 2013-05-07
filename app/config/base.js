@@ -82,8 +82,7 @@ define(function() {
 		 */
 		navigation: {
 			html5Mode: true,
-			hashPrefix: '!',
-			mode: 'query' // path/query, see Router.Mode enumeration
+			hashPrefix: '!'
 		}
 	};
 });

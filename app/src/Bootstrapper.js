@@ -7,7 +7,7 @@ define(
 	'config/main',
 	'App',
 	'ResourceManager',
-	'Router',
+	'router/PathRouter',
 	'Keyboard',
 	'Mouse',
 	'UI',
@@ -77,6 +77,7 @@ function(
 			directiveName,
 			filterName;
 
+		app.router = components.router;
 		app.module = angular.module('app', []);
 
 		app.module.config([

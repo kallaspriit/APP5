@@ -10,6 +10,7 @@ function() {
 	 * @module Core
 	 */
 	var App = function() {
+		this.router = null;
 		this.location = null;
 		this.injector = null;
 		this.provide = null;

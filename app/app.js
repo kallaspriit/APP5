@@ -1,4 +1,5 @@
 /*
+ * TODO Rename resources based on class/instance e.g. Navi > navi
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  * TODO Router, /some/page URLs
