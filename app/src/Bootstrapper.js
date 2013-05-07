@@ -7,7 +7,7 @@ define(
 	'config/main',
 	'App',
 	'ResourceManager',
-	'router/PathRouter',
+	'router/QueryRouter', // also try router/PathRouter
 	'Keyboard',
 	'Mouse',
 	'UI',
