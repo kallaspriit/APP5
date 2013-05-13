@@ -9,10 +9,9 @@ define(
 	'UI',
 	'ResourceManager',
 	'Keyboard',
-	'Mouse',
-	'config/main'
+	'Mouse'
 ],
-function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse, config) {
+function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse) {
 	'use strict';
 
 	/**
@@ -213,6 +212,12 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			stackItem,
 			newItemContainer = null;
 
+		if (currentItem !== null && currentItem === existingItem) {
+			currentItem.fire(this.Event.URL_CHANGED);
+
+			return;
+		}
+
 		if (existingItem !== null) {
 			while (this._stack.length > 0) {
 				stackItem = this.peekLast();
@@ -377,19 +382,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			return;
 		}
 
-		if (previousItem !== null) {
-			this.open(
-				previousItem.module,
-				previousItem.action,
-				previousItem.parameters
-			);
-		} else {
-			this.open(
-				config.index.module,
-				config.index.action,
-				config.index.parameters
-			);
-		}
+		window.history.back();
 	};
 
 	/**
