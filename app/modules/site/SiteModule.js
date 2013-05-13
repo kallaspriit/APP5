@@ -26,11 +26,14 @@ function(menus) {
 			$scope.backPossible = false;
 
 			$scope.open = function(index) {
-				navi.open(
+
+				/*navi.open(
 					menus[index].module,
 					menus[index].action || 'index',
 					menus[index].parameters || []
-				);
+				);*/
+
+				navi.open(menus[index].route, menus[index].parameters || {});
 			};
 
 			$scope.updateActive = function() {

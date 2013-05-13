@@ -97,15 +97,13 @@ function(
 	 * @param {String} currentWrapSelector Current page wrap selector
 	 * @param {String} newWrapSelector New page wrap selector
 	 * @param {Boolean} [isReverse=false] Should reverse (back) animation be displayed
-	 * @param {Boolean} [removeCurrent=false] Should the current wrap be removed on completion
-	 * @param {Function} [completeCallback] Called when transition is complete
+	 * @param {Function} [doneCallback] Called when transition is complete
 	 */
 	UI.prototype.transitionView = function(
 		currentWrapSelector,
 		newWrapSelector,
 		isReverse,
-		removeCurrent,
-		completeCallback
+		doneCallback
 	) {
 		isReverse = util.isBoolean(isReverse) ? isReverse : false;
 
@@ -156,14 +154,10 @@ function(
 				body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 				newWrap.unbind(animationEndEvents);
 
-				if (removeCurrent && currentWrap.length > 0) {
-					currentWrap.remove();
-				}
-
 				self._transitioning = false;
 
-				if (util.isFunction(completeCallback)) {
-					completeCallback();
+				if (util.isFunction(doneCallback)) {
+					doneCallback();
 				}
 			});
 		} else {
@@ -171,8 +165,8 @@ function(
 
 			this._transitioning = false;
 
-			if (util.isFunction(completeCallback)) {
-				completeCallback();
+			if (util.isFunction(doneCallback)) {
+				doneCallback();
 			}
 		}
 	};
@@ -270,7 +264,12 @@ function(
 	 * @param {Array} parameters Action parameters
 	 * @param {Object} moduleObj Module object
 	 * @param {String} viewContent View content to render
+	 * @param {DOMElement} currentContainer Current view container to animate to
+	 * @param {DOMElement} existingContainer Previous view container to animate from
+	 * @param {String} newItemId Identifier of the new item if created
+	 * @param {Boolean} isBack Is the navigation happening to a previous view
 	 * @param {Function} doneCallback Callback to call when done
+	 * @return {DOMElement|null} New item container or null if navigating back
 	 * @private
 	 */
 	UI.prototype.showView = function(
@@ -281,67 +280,25 @@ function(
 		parameters,
 		moduleObj,
 		viewContent,
+		currentContainer,
+		existingContainer,
+		newItemId,
+		isBack,
 		doneCallback
 	) {
-		var currentItem = navi.getCurrent(),
-			existingItem = navi.getExistingItem(module, action),
-			back = false,
-			stackItem;
+		if (isBack) {
+			this.transitionView(currentContainer, existingContainer, isBack, doneCallback);
 
-		if (existingItem !== null) {
-			var stack = navi.getStack();
-
-			while (stack.length > 0) {
-				stackItem = navi.peekLast();
-
-				if (stackItem === currentItem) {
-					navi.popLast();
-
-					continue;
-				}
-
-				if (stackItem === existingItem) {
-					break;
-				}
-
-				navi.popLast();
-
-				stackItem.fire(navi.Event.EXIT);
-				stackItem.container.remove();
-			}
-
-			back = true;
+			return null;
 		}
 
-		if (back) {
-			existingItem.fire(navi.Event.WAKEUP);
-
-			this.transitionView(
-				currentItem.container,
-				existingItem.container,
-				true,
-				false,
-				function() {
-					currentItem.fire(navi.Event.EXIT);
-					currentItem.container.remove();
-
-					if (util.isFunction(doneCallback)) {
-						doneCallback();
-					}
-				}
-			);
-
-			return existingItem;
-		}
-
-		var newItem = navi.appendNavigation(module, action, parameters, moduleObj),
-			prefix = config.cssPrefix,
-			newWrapId = 'content-' + newItem.id,
-			container = $(config.viewSelector),
-			currentWrap = container.find('.' + prefix + 'page-active'),
+		var prefix = config.cssPrefix,
+			newWrapId = 'content-' + newItemId,
+			parentWrap = $(config.viewSelector),
+			currentWrap = parentWrap.find('.' + prefix + 'page-active'),
 			newWrap;
 
-		container.append(
+		parentWrap.append(
 			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
 		);
 
@@ -349,37 +306,15 @@ function(
 			.html(viewContent)
 			.attr('ng-controller', className + '.' + actionName);
 
-		app.parameters = parameters;
-
-		app.registerController(className + '.' + actionName, moduleObj[actionName]);
-
-		newItem.container = newWrap;
-		newItem.fire = function(type, parameters) {
-			this.container.data('$scope').$broadcast(type, parameters);
-		};
-
 		try {
 			app.compile(newWrap)(app.baseScope);
 
-			if (currentItem !== null && back !== true) {
-				currentItem.fire(navi.Event.SLEEP);
-			}
-
-			this.transitionView(currentWrap, newWrap, back, false, function() {
-				if (back) {
-					currentItem.fire(navi.Event.EXIT);
-					currentItem.container.remove();
-				}
-
-				if (util.isFunction(doneCallback)) {
-					doneCallback();
-				}
-			});
+			this.transitionView(currentWrap, newWrap, isBack, doneCallback);
 		} catch (e) {
 			dbg.error(e);
 		}
 
-		return newItem;
+		return newWrap;
 	};
 
 	/**

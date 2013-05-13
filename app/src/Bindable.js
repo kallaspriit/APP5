@@ -62,11 +62,25 @@ function() {
 	/**
 	 * Removes listener of given type.
 	 *
+	 * If no type is given, all listeners are removed. If no listener is given, all listeners of given type are removed.
+	 *
 	 * @method unbind
-	 * @param {String} type Type of listener to remove
-	 * @param {Function} listener The listener function to remove
+	 * @param {String} [type] Type of listener to remove
+	 * @param {Function} [listener] The listener function to remove
 	 */
 	Bindable.prototype.unbind = function(type, listener) {
+		if (typeof(type) === 'undefined') {
+			this._listeners = {};
+
+			return;
+		}
+
+		if (typeof(listener) === 'undefined') {
+			this._listeners[type] = [];
+
+			return;
+		}
+
 		// give up if none or requested type exist
 		if (typeof(this._listeners[type]) === 'undefined') {
 			return false;

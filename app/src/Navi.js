@@ -126,6 +126,8 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 		}
 
 		app.router.navigate(module, action, parameters);
+
+		return this;
 	};
 
 	/**
@@ -137,15 +139,14 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters] Action parameters
-	 * @return {Navi} Self
+	 * @return {Deferred} Deferred promise
+	 * @private
 	 */
 	Navi.prototype._open = function(module, action, parameters) {
 		action = action || 'index';
 		parameters = parameters || [];
 
 		if (ui.isTransitioning()) {
-			dbg.log('! Already transitioning');
-
 			return;
 		}
 
@@ -154,8 +155,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			className = util.convertEntityName(module) + 'Module',
 			actionName = util.convertCallableName(action) + 'Action',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
-			item = null;
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
 
 		this.fire({
 			type: this.Event.PRE_NAVIGATE,
@@ -169,36 +169,126 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
-			if (!util.isFunction(moduleObj[actionName]) && !util.isArray(moduleObj[actionName])) {
-				throw new Error('Invalid "' + module + '" module action "' + action + '" requested');
-			}
-
-			item = ui.showView(
-				module,
-				action,
-				className,
-				actionName,
-				parameters,
-				moduleObj,
-				viewContent,
-				function() {
-					self.fire({
-						type: self.Event.POST_NAVIGATE,
-						module: module,
-						action: action,
-						parameters: parameters
-					});
-
-					deferred.resolve(item);
-
-					app.validate();
-				}
-			);
+			self._showAction(module, action, moduleObj, viewContent, className, actionName, deferred, parameters);
 		}).fail(function() {
 			throw new Error('Loading module "' + module + '" resources failed');
 		});
 
 		return deferred.promise();
+	};
+
+	/**
+	 * Shows module action once the resources have been loaded.
+	 *
+	 * @method _showAction
+	 * @param {String} module Module name
+	 * @param {String} action Module action name
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent Action view content
+	 * @param {String} className Name of the module class
+	 * @param {String} actionName Name of the module action
+	 * @param {Deferred} deferred Progress deferred
+	 * @param {Array} parameters List of parameters
+	 * @private
+	 */
+	Navi.prototype._showAction = function(
+		module,
+		action,
+		moduleObj,
+		viewContent,
+		className,
+		actionName,
+		deferred,
+		parameters
+	) {
+		if (!util.isFunction(moduleObj[actionName]) && !util.isArray(moduleObj[actionName])) {
+			throw new Error('Invalid "' + module + '" module action "' + action + '" requested');
+		}
+
+		var self = this,
+			currentItem = this.getCurrent(),
+			existingItem = this.getExistingItem(module, action),
+			newItem = null,
+			isBack = false,
+			stackItem,
+			newItemContainer = null;
+
+		if (existingItem !== null) {
+			while (this._stack.length > 0) {
+				stackItem = this.peekLast();
+
+				if (stackItem === currentItem) {
+					this.popLast();
+
+					continue;
+				}
+
+				if (stackItem === existingItem) {
+					break;
+				}
+
+				this.popLast();
+
+				stackItem.fire(this.Event.EXIT);
+				stackItem.container.remove();
+			}
+
+			isBack = true;
+
+			existingItem.fire(this.Event.WAKEUP);
+		}
+
+		if (isBack) {
+			currentItem.fire(this.Event.EXIT);
+		} else {
+			app.parameters = parameters;
+			app.registerController(className + '.' + actionName, moduleObj[actionName]);
+
+			newItem = this.appendNavigation(module, action, parameters, moduleObj);
+
+			newItem.fire = function(type, parameters) {
+				this.container.data('$scope').$broadcast(type, parameters);
+			};
+
+			if (currentItem !== null) {
+				currentItem.fire(this.Event.SLEEP);
+			}
+		}
+
+		newItemContainer = ui.showView(
+			module,
+			action,
+			className,
+			actionName,
+			parameters,
+			moduleObj,
+			viewContent,
+			currentItem !== null ? currentItem.container : null,
+			existingItem !== null ? existingItem.container : null,
+			newItem !== null ? newItem.id : null,
+			isBack,
+			function() {
+				if (isBack) {
+					currentItem.fire(self.Event.EXIT);
+					currentItem.container.remove();
+				}
+
+				self.fire({
+					type: self.Event.POST_NAVIGATE,
+					module: module,
+					action: action,
+					parameters: parameters
+				});
+
+				deferred.resolve();
+
+				app.validate();
+			}
+		);
+
+		if (newItem !== null) {
+			newItem.container = newItemContainer;
+		}
 	};
 
 	/**
@@ -212,7 +302,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Object} [parameters] Action parameters
 	 * @param {Boolean} [append=false] Should the content be appended instead of replaced
-	 * @return {Navi} Self
+	 * @return {Deferred} Deferred promise
 	 */
 	Navi.prototype.partial = function(containerSelector, module, action, parameters, append) {
 		action = action || 'index';

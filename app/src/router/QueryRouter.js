@@ -38,7 +38,6 @@ function(RouterBase, config, navi, app, util) {
 	 * @param {String} module Module name
 	 * @param {String} [action=index] Action name
 	 * @param {Object} [parameters] Action parameters
-	 * @return {Router} Self
 	 */
 	QueryRouter.prototype.navigate = function(module, action, parameters) {
 		var urlArguments = {

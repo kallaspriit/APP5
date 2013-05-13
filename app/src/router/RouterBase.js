@@ -29,7 +29,6 @@ function() {
 	 * @param {String} module Module name
 	 * @param {String} [action=index] Action name
 	 * @param {Object} [parameters] Action parameters
-	 * @return {Router} Self
 	 */
 	RouterBase.prototype.navigate = function(/*module, action, parameters*/) {
 		throw new Error('RouterBase::navigate() should be implemented in child class');
