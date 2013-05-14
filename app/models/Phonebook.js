@@ -37,6 +37,15 @@ function($, _, util, app) {
 		util.remove(contact, this);
 	};
 
+	/*app.injector.invoke(['$http', function($http) {
+		$http
+			.get('data/contacts.json')
+			.success(function(data) {
+				console.log('phonebook data', data);
+				util.extend(Phonebook, data);
+			});
+	}]);*/
+
 	$.ajax({
 		url: 'data/contacts.json',
 		type: 'GET',
@@ -45,6 +54,12 @@ function($, _, util, app) {
 		util.extend(Phonebook, data);
 
 		app.validate();
+
+		/*window.setTimeout(function() {
+			Phonebook = [1, 2, 3];
+
+			app.validate();
+		}, 1000);*/
 	}).fail(function() {
 
 	});

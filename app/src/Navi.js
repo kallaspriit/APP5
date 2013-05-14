@@ -41,6 +41,10 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 *		stack - updated navigation stack
 	 *  > URL_CHANGED - fired when the URL changes
 	 *		parameters - URL parameters (url, hash, path, query, args, host, port, protocol)
+	 * > PARAMETERS_CHANGED - fired when current action parameters change
+	 *		module - name of the module
+	 *		action - name of the action
+	 *		parameters - new parameters values
 	 *
 	 * @class Navi
 	 * @extends Bindable
@@ -48,6 +52,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @module Core
 	 */
 	var Navi = function() {
+		this.router = null;
 		this.backPossible = false;
 		this._stack = [];
 		this._naviCounter = 0;
@@ -66,6 +71,8 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @param {String} Event.PRE_PARTIAL Triggered just before opening partial
 	 * @param {String} Event.POST_PARTIAL Triggered just after opening partial
 	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
+	 * @param {String} Event.URL_CHANGED Called when URL changes
+	 * @param {String} Event.PARAMETERS_CHANGED Called when current action parameters change
 	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
 	 * @param {String} Event.WAKEUP Called on scope when action is awaken
 	 * @param {String} Event.EXIT Called on scope when action is killed
@@ -77,6 +84,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 		POST_PARTIAL: 'post-partial',
 		STACK_CHANGED: 'stack-changed',
 		URL_CHANGED: 'url-changed',
+		PARAMETERS_CHANGED: 'parameters-changed',
 		SLEEP: 'sleep',
 		WAKEUP: 'wakeup',
 		EXIT: 'exit'
@@ -115,18 +123,13 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters] Action parameters
-	 * @return {Navi} Self
 	 */
 	Navi.prototype.open = function(module, action, parameters) {
 		if (ui.isTransitioning()) {
-			dbg.log('! Already transitioning');
-
 			return;
 		}
 
-		app.router.navigate(module, action, parameters);
-
-		return this;
+		this.router.navigate(module, action, parameters);
 	};
 
 	/**
@@ -214,6 +217,13 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 
 		if (currentItem !== null && currentItem === existingItem) {
 			currentItem.fire(this.Event.URL_CHANGED);
+
+			this.fire({
+				type: this.Event.PARAMETERS_CHANGED,
+				module: module,
+				action: action,
+				parameters: parameters
+			});
 
 			return;
 		}

@@ -144,8 +144,6 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * @private
 	 */
 	ConfigRouter.prototype._onUrlChanged = function(parameters) {
-		console.log('url changed', parameters);
-
 		var path = parameters.path,
 			routeName,
 			route,
@@ -155,15 +153,11 @@ function(RouterBase, config, routes, navi, app, util) {
 			route = this._parseRoute(routes[routeName]);
 			route.name = routeName;
 
-			console.log('matching route', route, path);
-
 			matchParameters = this._matchRoute(route, path);
 
 			if (matchParameters === null) {
 				continue;
 			}
-
-			console.log('match found', route, path, matchParameters);
 
 			navi._open(
 				route.module,
@@ -206,6 +200,8 @@ function(RouterBase, config, routes, navi, app, util) {
 				actionParameters[paramName] = paramValue;
 			}
 		}
+
+		util.normalizeType(actionParameters);
 
 		navi._open(
 			module,
@@ -316,6 +312,8 @@ function(RouterBase, config, routes, navi, app, util) {
 			}
 		}
 
+		util.normalizeType(parameters);
+
 		if (match) {
 			return parameters;
 		} else {
@@ -324,8 +322,6 @@ function(RouterBase, config, routes, navi, app, util) {
 	};
 
 	ConfigRouter.prototype._matchTokens = function(pathToken, routeToken) {
-		console.log('match token', pathToken, routeToken);
-
 		if (routeToken.type === 'static') {
 			if (pathToken !== routeToken.name) {
 				return false;

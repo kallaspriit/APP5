@@ -77,7 +77,7 @@ function(
 			directiveName,
 			filterName;
 
-		app.router = components.router;
+		navi.router = components.router;
 		app.module = angular.module('app', []);
 
 		app.module.config([

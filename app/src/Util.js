@@ -147,6 +147,29 @@ function(Deferred, _) {
 		})(this),
 
 		/**
+		 * Returns the size of an array or object or string.
+		 *
+		 * @param {Array|Object|String} item Item to get size of
+		 * @returns {Number} Size/length of the item
+		 */
+		sizeOf: function(item) {
+			if (this.isArray(item) || this.isString(item)) {
+				return item.length;
+			} else if (this.isObject(item)) {
+				var size = 0,
+					key;
+
+				for (key in item) {
+					size++;
+				}
+
+				return size;
+			} else {
+				return 0;
+			}
+		},
+
+		/**
 		 * Returns whether given argument is a function.
 		 *
 		 * @method isFunction

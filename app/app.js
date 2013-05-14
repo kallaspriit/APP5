@@ -20,6 +20,7 @@ require.config({
 		modules:            '../modules',
 		models:             '../models',
 		config:             '../config',
+		directives:         '../directives',
 		translations:       '../translations/core-translations',
 
 		// individual components

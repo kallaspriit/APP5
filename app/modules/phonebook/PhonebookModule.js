@@ -1,6 +1,6 @@
 define(
-['models/Phonebook'],
-function(phonebook) {
+['models/Phonebook', 'Navi'],
+function(phonebook, navi) {
 	'use strict';
 
 	/**
@@ -17,9 +17,10 @@ function(phonebook) {
 		 *
 		 * @method contactsAction
 		 * @param {Scope} $scope Angular scope
+		 * @param {Function} $parameters Action parameters
 		 * @param {UI} ui User interface
 		 */
-		contactsAction: function($scope, ui) {
+		contactsAction: function($scope, $parameters, ui) {
 			$scope.phonebook = phonebook;
 			$scope.filter = '';
 			$scope.order = 'name';
@@ -67,7 +68,8 @@ function(phonebook) {
 			$scope.addContact = function(name, number) {
 				phonebook.add(name, number);
 
-				navi.open('phonebook', 'contacts');
+				//navi.open('phonebook', 'contacts');
+				navi.open('contacts'); // ConfigRouter
 			};
 		},
 
