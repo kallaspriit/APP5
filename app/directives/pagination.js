@@ -34,7 +34,7 @@ function(util, navi, keyboard) {
 				}
 			}
 
-			$scope.$watch($attrs.data, function(data) {
+			var unwatchData = $scope.$watch($attrs.data, function(data) {
 				$scope.data = data;
 				$scope.pageCount = Math.ceil(util.sizeOf(data) / $scope.itemsPerPage);
 
@@ -82,8 +82,7 @@ function(util, navi, keyboard) {
 				});
 
 			$element.bind('$destroy', function() {
-				console.log('ELEMENT DESTROYED');
-
+				unwatchData();
 				naviBind.unbind();
 				keyboardBind.unbind();
 			});
