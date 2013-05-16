@@ -35,7 +35,7 @@ function(util, navi) {
 			$scope.pageCount = 0;
 			$scope.pageNumbers = [];
 			$scope.data = null;
-			$scope.routeName = 'contacts'; // TODO Where to get it, what if using other routers?
+			$scope.routeName = 'contacts'; // TODO Where to get it and what if using other routers?
 
 			$scope.$parent.pagination = [];
 
@@ -51,15 +51,12 @@ function(util, navi) {
 					($scope.currentPage - 1) * $scope.itemsPerPage,
 					$scope.currentPage * $scope.itemsPerPage
 				);
-				//$scope.pagination = data.slice(0, 5);
 
 				$scope.pageNumbers = [];
 
 				for (var i = 1; i <= $scope.pageCount; i++) {
 					$scope.pageNumbers.push(i);
 				}
-
-				console.log('DATA', data, $scope.$parent.pagination);
 			}, true);
 
 			$scope.showNextPage = function() {
