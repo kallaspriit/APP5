@@ -57,13 +57,13 @@ function(util, navi, keyboard) {
 			$scope.showNextPage = function() {
 				var nextPage = Math.min($scope.currentPage + 1, $scope.pageCount);
 
-				navi.setUrlParameter('page', nextPage);
+				navi.setUrlParameter('page', nextPage, true);
 			};
 
 			$scope.showPreviousPage = function() {
 				var previousPage = Math.max($scope.currentPage - 1, 1);
 
-				navi.setUrlParameter('page', previousPage);
+				navi.setUrlParameter('page', previousPage, true);
 			};
 
 			var naviBind = navi.bind(navi.Event.PARAMETERS_CHANGED, function(e) {

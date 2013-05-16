@@ -401,11 +401,12 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @method setUrlParameter
 	 * @param {String} name Name of the parameter
 	 * @param {String} value Parameter value
+	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
 	 * @return {Boolean} Was setting the parameter successful
 	 */
-	Navi.prototype.setUrlParameter = function(name, value) {
+	Navi.prototype.setUrlParameter = function(name, value, replace) {
 		if (util.isFunction(this.router.setUrlParameter)) {
-			return this.router.setUrlParameter(name, value);
+			return this.router.setUrlParameter(name, value, replace);
 		}
 
 		var currentItem = this.getCurrent(),

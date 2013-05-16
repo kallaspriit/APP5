@@ -19,11 +19,11 @@ function(config) {
 			action: 'add-contact'
 		},
 		'contacts': {
-			path: 'contacts/:filter/:page[+int]',
+			path: 'contacts/:page[+int]',
 			module: 'phonebook',
 			action: 'contacts',
 			parameters: {
-				filter: 'all'
+				page: 1 // +int actually defaults to 1 so not needed
 			}
 		}
 	};

@@ -67,7 +67,11 @@ function(RouterBase, config, routes, navi, app, util) {
 	 */
 	ConfigRouter.prototype.navigate = function(module, action, parameters) {
 		if (util.isUndefined(action) || util.isObject(action)) {
-			this.open(module, action); // actually routeName, parameters
+			var routeName = module,
+				routeParameters = action,
+				replaceUrl = parameters;
+
+			this.open(routeName, routeParameters, replaceUrl);
 
 			return;
 		}
@@ -95,8 +99,9 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * @method navigate
 	 * @param {String} routeName Name of the route
 	 * @param {Object} [parameters] Route parameters
+	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
 	 */
-	ConfigRouter.prototype.open = function(routeName, parameters) {
+	ConfigRouter.prototype.open = function(routeName, parameters, replace) {
 		if (!util.isObject(routes[routeName])) {
 			throw new Error('Route "' + routeName + '" not found');
 		}
@@ -125,6 +130,11 @@ function(RouterBase, config, routes, navi, app, util) {
 		}
 
 		app.location.path('/' + path);
+
+		if (replace) {
+			app.location.replace();
+		}
+
 		app.validate();
 	};
 
@@ -134,9 +144,10 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * @method setUrlParameter
 	 * @param {String} name Name of the parameter
 	 * @param {String} value Parameter value
+	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
 	 * @return {Boolean} Was setting the parameter successful
 	 */
-	ConfigRouter.prototype.setUrlParameter = function(name, value) {
+	ConfigRouter.prototype.setUrlParameter = function(name, value, replace) {
 		var currentItem = navi.getCurrent(),
 			newItem;
 
@@ -150,7 +161,8 @@ function(RouterBase, config, routes, navi, app, util) {
 		if (this._currentRouteName !== null) {
 			navi.open(
 				this._currentRouteName,
-				newItem.parameters
+				newItem.parameters,
+				replace
 			);
 		} else {
 			navi.open(
