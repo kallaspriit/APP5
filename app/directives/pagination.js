@@ -1,20 +1,9 @@
-// Research
-// http://jsfiddle.net/kelvo/zZURe/17/
-// http://jsfiddle.net/SAWsA/11/
-// http://jsfiddle.net/xncuF/
-
 define(
-['Util', 'Navi'],
-function(util, navi) {
+['Util', 'Navi', 'Keyboard'],
+function(util, navi, keyboard) {
 	'use strict';
 
-	var controller = [
-		'$scope', '$element', '$attrs',
-		function(/*$scope, $element, $attrs*/) {
-			//console.log('CONTROLLER', $scope, $element, $attrs);
-		}],
-
-		link = function($scope, $element, $attrs/*, $controller*/) {
+	var link = function($scope, $element, $attrs/*, $controller*/) {
 			var currentAction = navi.getCurrent(),
 				page = 1;
 
@@ -31,16 +20,23 @@ function(util, navi) {
 			}
 
 			$scope.currentPage = page;
-			$scope.itemsPerPage = 4;
+			$scope.itemsPerPage = 10;
 			$scope.pageCount = 0;
 			$scope.pageNumbers = [];
 			$scope.data = null;
-
 			$scope.$parent.pagination = [];
+
+			if (!util.isUndefined($attrs.itemsPerPage)) {
+				var itemsPerPage = parseInt($attrs.itemsPerPage, 10);
+
+				if (itemsPerPage >= 1) {
+					$scope.itemsPerPage = itemsPerPage;
+				}
+			}
 
 			$scope.$watch($attrs.data, function(data) {
 				$scope.data = data;
-				$scope.pageCount = Math.ceil(util.sizeOf(data)) / $scope.itemsPerPage;
+				$scope.pageCount = Math.ceil(util.sizeOf(data) / $scope.itemsPerPage);
 
 				if ($scope.currentPage > $scope.pageCount) {
 					$scope.currentPage = 1;
@@ -70,19 +66,27 @@ function(util, navi) {
 				navi.setUrlParameter('page', previousPage);
 			};
 
-			navi.bind(navi.Event.PARAMETERS_CHANGED, function(e) {
-				$scope.currentPage = e.parameters.page;
-				$scope.$parent.pagination = $scope.data.slice(
-					($scope.currentPage - 1) * $scope.itemsPerPage,
-					$scope.currentPage * $scope.itemsPerPage
-				);
-			});
+			var naviBind = navi.bind(navi.Event.PARAMETERS_CHANGED, function(e) {
+					$scope.currentPage = e.parameters.page;
+					$scope.$parent.pagination = $scope.data.slice(
+						($scope.currentPage - 1) * $scope.itemsPerPage,
+						$scope.currentPage * $scope.itemsPerPage
+					);
+				}),
+				keyboardBind = keyboard.bind(keyboard.Event.KEYDOWN, function(e) {
+					if (e.info.name === 'RIGHT') {
+						$scope.showNextPage();
+					} else if (e.info.name === 'LEFT') {
+						$scope.showPreviousPage();
+					}
+				});
 
 			$element.bind('$destroy', function() {
 				console.log('ELEMENT DESTROYED');
-			});
 
-			//console.log('LINK', $scope, $element, $attrs, $controller);
+				naviBind.unbind();
+				keyboardBind.unbind();
+			});
 		};
 
 	/**
@@ -98,7 +102,6 @@ function(util, navi) {
 			restrict: 'E',      // restrict to elements
 			transclude: true,   // we need the contents of the tag
 			replace: true,      // replace the <pagination> tag
-			controller: controller,
 			link: link,
 			templateUrl: 'partials/pagination.html'
 		};

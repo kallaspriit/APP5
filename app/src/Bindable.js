@@ -19,14 +19,17 @@ function() {
 	 * @method bind
 	 * @param {String|Array} type Type of listener to add (or array of them)
 	 * @param {Function} listener The listener function to add
-	 * @return {Function} The added listener
+	 * @return {Object} Containing the type, listener and unbind method
 	 */
 	Bindable.prototype.bind = function(type, listener) {
 		if (typeof(type) === 'string') {
 			type = [type];
 		}
 
-		for (var i = 0; i < type.length; i++) {
+		var self = this,
+			i;
+
+		for (i = 0; i < type.length; i++) {
 			// first of given type, create array
 			if (typeof(this._listeners[type[i]]) === 'undefined') {
 				this._listeners[type[i]] = [];
@@ -44,7 +47,13 @@ function() {
 
 		this._onBind(type, listener);
 
-		return listener;
+		return {
+			type: type,
+			listener: listener,
+			unbind: function() {
+				self.unbind(type, listener);
+			}
+		};
 	};
 
 	/**

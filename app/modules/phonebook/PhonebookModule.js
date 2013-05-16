@@ -1,6 +1,6 @@
 define(
-['models/Phonebook', 'Navi'],
-function(phonebook, navi) {
+['models/Phonebook'],
+function(phonebook) {
 	'use strict';
 
 	/**
