@@ -65,6 +65,8 @@ function(phonebook) {
 		addContactAction: function($scope, navi) {
 			$scope.setTitle('Add Contact');
 
+			//$scope.birthdate = '01.01.1990';
+
 			$scope.addContact = function(name, number, birthdate) {
 				phonebook.add(name, number, birthdate);
 
