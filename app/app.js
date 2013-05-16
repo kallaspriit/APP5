@@ -21,6 +21,7 @@ require.config({
 		models:             '../models',
 		config:             '../config',
 		directives:         '../directives',
+		addons:             '../addons',
 		translations:       '../translations/core-translations',
 
 		// individual components

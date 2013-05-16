@@ -24,8 +24,15 @@
 				<input type="tel" id="contact-number" ng-model="number">
 			</div>
 		</div>
+		<div class="control-group">
+			<label class="control-label" for="contact-birthdate" translate>phonebook.birthdate</label>
+			<div class="controls">
+				<!--input type="date" id="contact-birthdate" ng-model="birthdate"-->
+				<datepicker></datepicker>
+			</div>
+		</div>
 		<div class="form-actions">
-			<button type="submit" class="btn btn-primary" ng-tap="addContact(name, number)" translate>save</button>
+			<button type="submit" class="btn btn-primary" ng-tap="addContact(name, number, birthdate)" translate>save</button>
 			<button type="button" class="btn" ng-tap="navi.back()" translate>cancel</button>
 		</div>
 	</form>

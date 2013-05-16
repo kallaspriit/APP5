@@ -39,6 +39,10 @@ function() {
 			'en': 'Phone number',
 			'et': 'Telefoninumber'
 		},
+		'birthdate': {
+			'en': 'Date of birth',
+			'et': 'Sünnikuupäev'
+		},
 		'edit-contact': {
 			'en': 'Edit Contact',
 			'et': 'Muuda Kontakti'

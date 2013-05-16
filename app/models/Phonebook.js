@@ -16,11 +16,12 @@ function($, _, util, app) {
 		return _.find(this, function(contact) { return contact.id === id; });
 	};
 
-	Phonebook.add = function(name, number) {
+	Phonebook.add = function(name, number, birthdate) {
 		this.push({
 			id: this.length + 1,
 			name: name,
 			number: number,
+			birthdate: birthdate,
 			image: ((this.length % 6) + 1) + '.png'
 		});
 	};

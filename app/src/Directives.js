@@ -1,6 +1,16 @@
 define(
-['directives/translate', 'directives/ngTap', 'directives/pagination'],
-function(translate, ngTap, pagination) {
+[
+	'directives/translate',
+	'directives/ngTap',
+	'directives/pagination',
+	'addons/datepicker/datepicker'
+],
+function(
+	translate,
+	ngTap,
+	pagination,
+    datepicker
+) {
 	'use strict';
 
 	/*
@@ -9,6 +19,7 @@ function(translate, ngTap, pagination) {
 	return {
 		translate: translate,
 		ngTap: ngTap,
-		pagination: pagination
+		pagination: pagination,
+		datepicker: datepicker
 	};
 });

@@ -65,8 +65,8 @@ function(phonebook) {
 		addContactAction: function($scope, navi) {
 			$scope.setTitle('Add Contact');
 
-			$scope.addContact = function(name, number) {
-				phonebook.add(name, number);
+			$scope.addContact = function(name, number, birthdate) {
+				phonebook.add(name, number, birthdate);
 
 				//navi.open('phonebook', 'contacts');
 				navi.open('contacts'); // ConfigRouter
