@@ -74,20 +74,33 @@ function() {
 	 * If no type is given, all listeners are removed. If no listener is given, all listeners of given type are removed.
 	 *
 	 * @method unbind
-	 * @param {String} [type] Type of listener to remove
+	 * @param {String|Array} [type] Type of listener to remove (or array of them)
 	 * @param {Function} [listener] The listener function to remove
+	 * @return {Boolean} Was unbinding the event successful
 	 */
 	Bindable.prototype.unbind = function(type, listener) {
+		var i;
+
 		if (typeof(type) === 'undefined') {
 			this._listeners = {};
 
-			return;
+			return true;
+		} else if (typeof(type) === 'object' && typeof(type.length) === 'number') {
+			var result = true;
+
+			for (i = 0; i < type.length; i++) {
+				if (!this.unbind(type[i], listener)) {
+					result = false;
+				}
+			}
+
+			return result;
 		}
 
 		if (typeof(listener) === 'undefined') {
 			this._listeners[type] = [];
 
-			return;
+			return true;
 		}
 
 		// give up if none or requested type exist
@@ -96,7 +109,7 @@ function() {
 		}
 
 		// find it
-		for (var i = 0; i < this._listeners[type].length; i++) {
+		for (i = 0; i < this._listeners[type].length; i++) {
 			if (this._listeners[type][i] === listener) {
 				// splice it out of the array
 				this._listeners[type].splice(i, 1);
