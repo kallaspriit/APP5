@@ -35,7 +35,6 @@ function(util, navi) {
 			$scope.pageCount = 0;
 			$scope.pageNumbers = [];
 			$scope.data = null;
-			$scope.routeName = 'contacts'; // TODO Where to get it and what if using other routers?
 
 			$scope.$parent.pagination = [];
 
@@ -62,13 +61,13 @@ function(util, navi) {
 			$scope.showNextPage = function() {
 				var nextPage = Math.min($scope.currentPage + 1, $scope.pageCount);
 
-				navi.open($scope.routeName, {page: nextPage});
+				navi.setUrlParameter('page', nextPage);
 			};
 
 			$scope.showPreviousPage = function() {
 				var previousPage = Math.max($scope.currentPage - 1, 1);
 
-				navi.open($scope.routeName, {page: previousPage});
+				navi.setUrlParameter('page', previousPage);
 			};
 
 			navi.bind(navi.Event.PARAMETERS_CHANGED, function(e) {

@@ -396,6 +396,36 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	};
 
 	/**
+	 * Changes a parameter of the current URL.
+	 *
+	 * @method setUrlParameter
+	 * @param {String} name Name of the parameter
+	 * @param {String} value Parameter value
+	 * @return {Boolean} Was setting the parameter successful
+	 */
+	Navi.prototype.setUrlParameter = function(name, value) {
+		if (util.isFunction(this.router.setUrlParameter)) {
+			return this.router.setUrlParameter(name, value);
+		}
+
+		var currentItem = this.getCurrent(),
+			newItem;
+
+		if (currentItem === null) {
+			return false;
+		}
+
+		newItem = util.clone(currentItem);
+		newItem.parameters[name] = value;
+
+		this.open(
+			newItem.module,
+			newItem.action,
+			newItem.parameters
+		);
+	};
+
+	/**
 	 * Returns currently active action info.
 	 *
 	 * @method getCurrent

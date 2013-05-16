@@ -11,7 +11,9 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * @constructor
 	 * @module Core
 	 */
-	var ConfigRouter = function() {};
+	var ConfigRouter = function() {
+		this._currentRouteName = null;
+	};
 
 	ConfigRouter.prototype = new RouterBase();
 
@@ -59,13 +61,13 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * Composes a URL that matches given module action.
 	 *
 	 * @method navigate
-	 * @param {String} module Module name
-	 * @param {String} [action=index] Action name
+	 * @param {String} module Module name or route name
+	 * @param {String} [action=index] Action name or route parameters
 	 * @param {Object} [parameters] Action parameters
 	 */
 	ConfigRouter.prototype.navigate = function(module, action, parameters) {
 		if (util.isUndefined(action) || util.isObject(action)) {
-			this.open(module, action);
+			this.open(module, action); // actually routeName, parameters
 
 			return;
 		}
@@ -127,6 +129,39 @@ function(RouterBase, config, routes, navi, app, util) {
 	};
 
 	/**
+	 * Changes a parameter of the current URL.
+	 *
+	 * @method setUrlParameter
+	 * @param {String} name Name of the parameter
+	 * @param {String} value Parameter value
+	 * @return {Boolean} Was setting the parameter successful
+	 */
+	ConfigRouter.prototype.setUrlParameter = function(name, value) {
+		var currentItem = navi.getCurrent(),
+			newItem;
+
+		if (currentItem === null) {
+			return false;
+		}
+
+		newItem = util.clone(currentItem);
+		newItem.parameters[name] = value;
+
+		if (this._currentRouteName !== null) {
+			navi.open(
+				this._currentRouteName,
+				newItem.parameters
+			);
+		} else {
+			navi.open(
+				newItem.module,
+				newItem.action,
+				newItem.parameters
+			);
+		}
+	},
+
+	/**
 	 * Called when application URL changes.
 	 *
 	 * The parameters include:
@@ -159,6 +194,8 @@ function(RouterBase, config, routes, navi, app, util) {
 				continue;
 			}
 
+			this._currentRouteName = routeName;
+
 			navi._open(
 				route.module,
 				route.action,
@@ -168,10 +205,13 @@ function(RouterBase, config, routes, navi, app, util) {
 			return;
 		}
 
+		this._currentRouteName = null;
+
 		var tokens = path.split('/'),
 			module = config.index.module,
 			action = config.index.action,
 			actionParameters = config.index.parameters,
+			isDefault = true,
 			i,
 			paramParts,
 			paramName,
@@ -180,10 +220,12 @@ function(RouterBase, config, routes, navi, app, util) {
 		if (tokens.length >= 2 && tokens[1].length > 0) {
 			module = tokens[1];
 			actionParameters = {};
+			isDefault = false;
 		}
 
 		if (tokens.length >= 3 && tokens[2].length > 0) {
 			action = tokens[2];
+			isDefault = false;
 		}
 
 		if (tokens.length >= 4) {
@@ -199,6 +241,12 @@ function(RouterBase, config, routes, navi, app, util) {
 
 				actionParameters[paramName] = paramValue;
 			}
+
+			isDefault = false;
+		}
+
+		if (isDefault && util.isString(config.index.route)) {
+			this._currentRouteName = config.index.route;
 		}
 
 		util.normalizeType(actionParameters);
