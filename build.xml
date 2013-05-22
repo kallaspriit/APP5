@@ -6,6 +6,7 @@
 		<jshint dir="${basedir}" optionsFile="${basedir}/tools/jshint/options.properties" globals="require:true,define:true">
 			<include name="app/**/*.js"/>
 			<exclude name="app/lib/**"/>
+			<exclude name="app/addons/**"/>
 		</jshint>
 	</target>
 
