@@ -1,1 +1,0 @@
-define([],function(){return{formatAmount:["util",function(t){return function(e){return t.formatAmount(e)}}]}});
