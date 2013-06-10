@@ -262,7 +262,11 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			newItem = this.appendNavigation(module, action, parameters, moduleObj);
 
 			newItem.fire = function(type, parameters) {
-				this.container.data('$scope').$broadcast(type, parameters);
+				var scope = this.container.data('$scope');
+
+				if (util.isObject(scope) && util.isFunction(scope.$broadcast)) {
+					scope.$broadcast(type, parameters);
+				}
 			};
 
 			if (currentItem !== null) {
