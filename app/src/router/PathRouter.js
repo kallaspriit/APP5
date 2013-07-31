@@ -11,9 +11,11 @@ function(RouterBase, config, navi, app, util) {
 	 * @constructor
 	 * @module Core
 	 */
-	var PathRouter = function() {};
+	var PathRouter = function() {
+		RouterBase.call(this);
+	};
 
-	PathRouter.prototype = new RouterBase();
+	PathRouter.prototype = Object.create(RouterBase.prototype);
 
 	/**
 	 * Initiates the component.
@@ -24,7 +26,7 @@ function(RouterBase, config, navi, app, util) {
 	PathRouter.prototype.init = function() {
 		var self = this;
 
-		navi.bind(navi.Event.URL_CHANGED, function(e) {
+		navi.on(navi.Event.URL_CHANGED, function(e) {
 			self._onUrlChanged(e.parameters);
 		});
 

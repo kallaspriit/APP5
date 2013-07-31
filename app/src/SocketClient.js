@@ -1,6 +1,6 @@
 define(
-['Bindable'],
-function(Bindable) {
+['EventEmitter'],
+function(EventEmitter) {
 	'use strict';
 
 	/**
@@ -23,11 +23,13 @@ function(Bindable) {
 	 *		data - the sent data
 	 *
 	 * @class SocketClient
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var SocketClient = function() {
+		EventEmitter.call(this);
+
 		this.connected = false;
 		this._host = null;
 		this._port = null;
@@ -38,12 +40,12 @@ function(Bindable) {
 		this._reconnectAttemptsLeft = null;
 	};
 
-	SocketClient.prototype = new Bindable();
+	SocketClient.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.OPEN_REQUESTED Triggered when connection is requested
 	 * @param {String} Event.OPENED Triggered when connection is opened
@@ -64,7 +66,7 @@ function(Bindable) {
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} State
 	 * @param {String} Event.UNINITIATED Connection has not been established
 	 * @param {String} Event.OPEN Connection is ready for communication
@@ -111,7 +113,7 @@ function(Bindable) {
 		this._host = host;
 		this._port = port;
 
-		this.fire({
+		this.emit({
 			type: this.Event.OPEN_REQUESTED,
 			config: {
 				host: host,
@@ -151,16 +153,20 @@ function(Bindable) {
 	 * Sends a message
 	 *
 	 * @method send
-	 * @param {String} message Message to send
+	 * @param {String|Object} message Message to send
 	 */
 	SocketClient.prototype.send = function(message) {
 		if (!this.valid()) {
 			throw new Error('Unable to send socket data, connection not established (' + message + ')');
 		}
 
+		if (typeof(message) === 'object') {
+			message = JSON.stringify(message);
+		}
+
 		this._ws.send(message);
 
-		this.fire({
+		this.emit({
 			type: this.Event.MESSAGE_SENT,
 			data: message
 		});
@@ -245,10 +251,10 @@ function(Bindable) {
 		this._everOpened = true;
 		this._reconnectAttemptsLeft = this._reconnectAttempts;
 
-		this.fire({
+		this.emit({
 			type: this.Event.OPENED,
 			event: event,
-			ws: this
+			client: this
 		});
 	};
 
@@ -262,10 +268,10 @@ function(Bindable) {
 	SocketClient.prototype._onClose = function(event) {
 		this.connected = false;
 
-		this.fire({
+		this.emit({
 			type: this.Event.CLOSED,
 			event: event,
-			ws: this
+			client: this
 		});
 
 		if (this._everOpened) {
@@ -281,10 +287,10 @@ function(Bindable) {
 	 * @private
 	 */
 	SocketClient.prototype._onError = function(event) {
-		this.fire({
+		this.emit({
 			type: this.Event.ERROR,
 			event: event,
-			ws: this
+			client: this
 		});
 	};
 
@@ -296,11 +302,11 @@ function(Bindable) {
 	 * @private
 	 */
 	SocketClient.prototype._onMessage = function(event) {
-		this.fire({
+		this.emit({
 			type: this.Event.MESSAGE_RECEIVED,
 			event: event,
 			data: event.data,
-			ws: this
+			client: this
 		});
 	};
 

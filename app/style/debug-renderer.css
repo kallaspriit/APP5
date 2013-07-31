@@ -17,6 +17,11 @@
 	transition: width 300ms ease-in;
 	z-index: 100;
 }
+@media screen and (max-width: 480px) {
+	#debug-renderer {
+		display: none;
+	}
+}
 .no-touch #debug-renderer:hover,
 #debug-renderer.visible {
 	width: 600px;
@@ -65,6 +70,12 @@
 }
 #debug-renderer .success {
 	background-image: url(../images/debug-renderer/success-bg.png);
+}
+#debug-renderer .rx {
+	background-image: url(../images/debug-renderer/rx-bg.png);
+}
+#debug-renderer .tx {
+	background-image: url(../images/debug-renderer/tx-bg.png);
 }
 
 /* Error modal */

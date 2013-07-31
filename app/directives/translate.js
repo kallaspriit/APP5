@@ -44,7 +44,7 @@ define(function() {
 									$element.html(translator.translate.apply(translator, args));
 								} catch (e) { util.noop(e); }
 
-								translator.bind(translator.Event.LANGUAGE_CHANGED, function() {
+								translator.on(translator.Event.LANGUAGE_CHANGED, function() {
 									this.element.html(translator.translate.apply(translator, this.args));
 								}.bind({args: args, element: $element}));
 							}
@@ -53,7 +53,7 @@ define(function() {
 				} else {
 					$element.html(translator.translate(key));
 
-					translator.bind(translator.Event.LANGUAGE_CHANGED, function() {
+					translator.on(translator.Event.LANGUAGE_CHANGED, function() {
 						this.element.html(translator.translate(this.key));
 					}.bind({key: key, element: $element}));
 				}

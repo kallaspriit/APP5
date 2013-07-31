@@ -15,8 +15,6 @@ function($) {
 	 */
 	var Deferred = $.Deferred;
 
-	//Deferred.prototype = new $.Deferred();
-
 	/**
 	 * Provides a way to execute callback functions based on one or more objects, usually Deferred objects that
 	 * represent asynchronous events.
@@ -27,6 +25,6 @@ function($) {
 	Deferred.when = function() {
 		return $.when.apply(window, arguments);
 	};
-	
+
 	return Deferred;
 });

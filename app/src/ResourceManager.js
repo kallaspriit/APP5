@@ -1,6 +1,6 @@
 define(
-['jquery', 'Bindable', 'Deferred', 'Util', 'Translator', 'config/main'],
-function($, Bindable, Deferred, util, translator, config) {
+['jquery', 'EventEmitter', 'Deferred', 'Util', 'Translator', 'config/main'],
+function($, EventEmitter, Deferred, util, translator, config) {
 	'use strict';
 
 	/**
@@ -18,22 +18,24 @@ function($, Bindable, Deferred, util, translator, config) {
 	 *		resource - type of resource
 	 *
 	 * @class ResourceManager
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var ResourceManager = function() {
+		EventEmitter.call(this);
+
 		this._modules = {};
 		this._views = {};
 		this._loadedCssFiles = {};
 	};
 
-	ResourceManager.prototype = new Bindable();
+	ResourceManager.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.MODULE_LOADED Application module was loaded
 	 * @param {String} Event.VIEW_LOADED Application view was loaded
@@ -48,7 +50,7 @@ function($, Bindable, Deferred, util, translator, config) {
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} ResourceType
 	 * @param {String} ResourceType.FILE RequireJS file
 	 * @param {String} ResourceType.MODULE Application module
@@ -89,7 +91,7 @@ function($, Bindable, Deferred, util, translator, config) {
 		var self = this;
 
 		require.onError = function(error) {
-			self.fire({
+			self.emit({
 				type: self.Event.LOAD_ERROR,
 				resource: self.ResourceType.FILE,
 				error: error
@@ -147,7 +149,7 @@ function($, Bindable, Deferred, util, translator, config) {
 				callback(null);
 			}
 
-			self.fire({
+			self.emit({
 				type: self.Event.LOAD_ERROR,
 				resource: self.ResourceType.REQUEST,
 				url: url,
@@ -248,7 +250,7 @@ function($, Bindable, Deferred, util, translator, config) {
 			[moduleFilename, translationsFilename],
 			function(module, translations) {
 				if (!util.isObject(module)) {
-					self.fire({
+					self.emit({
 						type: self.Event.LOAD_ERROR,
 						resource: self.ResourceType.MODULE,
 						name: name,
@@ -261,7 +263,7 @@ function($, Bindable, Deferred, util, translator, config) {
 				}
 
 				if (!util.isObject(translations)) {
-					self.fire({
+					self.emit({
 						type: self.Event.LOAD_ERROR,
 						resource: self.ResourceType.MODULE_TRANSLATIONS,
 						name: name,
@@ -302,7 +304,7 @@ function($, Bindable, Deferred, util, translator, config) {
 					window.app.modules[className] = module;
 				}
 
-				self.fire({
+				self.emit({
 					type: self.Event.MODULE_LOADED,
 					name: name,
 					module: module
@@ -349,7 +351,7 @@ function($, Bindable, Deferred, util, translator, config) {
 
 		this.get(filename)
 			.success(function(html) {
-				self.fire({
+				self.emit({
 					type: self.Event.VIEW_LOADED,
 					filename: filename,
 					content: html
@@ -363,7 +365,7 @@ function($, Bindable, Deferred, util, translator, config) {
 					callback(html);
 				}
 			}).error(function() {
-				self.fire({
+				self.emit({
 					type: self.Event.LOAD_ERROR,
 					resource: self.ResourceType.VIEW,
 					filename: filename
@@ -468,7 +470,7 @@ function($, Bindable, Deferred, util, translator, config) {
 
 			head.removeChild(link);
 
-			self.fire({
+			self.emit({
 				type: self.Event.LOAD_ERROR,
 				resource: self.ResourceType.CSS,
 				filename: filename

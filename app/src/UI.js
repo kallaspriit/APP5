@@ -3,7 +3,7 @@ define(
 	'jquery',
 	'underscore',
 	'config/main',
-	'Bindable',
+	'EventEmitter',
 	'App',
 	'ResourceManager',
 	'Debug',
@@ -15,7 +15,7 @@ function(
 	$,
 	_,
 	config,
-	Bindable,
+	EventEmitter,
 	app,
 	resourceManager,
 	dbg,
@@ -43,20 +43,22 @@ function(
 	 *		endPosition	- end x, y
 	 *
 	 * @class UI
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var UI = function() {
+		EventEmitter.call(this);
+
 		this._transitioning = false;
 	};
 
-	UI.prototype = new Bindable();
+	UI.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.READY UI is ready
 	 * @param {String} Event.MODAL_SHOWN A modal window is displayed
@@ -222,7 +224,7 @@ function(
 					.html(content)
 					.modal(util.isObject(options) ? options : {})
 					.on('shown', function() {
-						self.fire({
+						self.emit({
 							type: self.Event.MODAL_SHOWN,
 							modal: $(this)
 						});
@@ -230,7 +232,7 @@ function(
 					.on('hidden', function() {
 						$(this).remove();
 
-						self.fire({
+						self.emit({
 							type: self.Event.MODAL_HIDDEN
 						});
 					});
@@ -428,7 +430,7 @@ function(
 				$('#confirm')
 					.modal()
 					.on('shown', function() {
-						self.fire({
+						self.emit({
 							type: self.Event.MODAL_SHOWN,
 							modal: $(this)
 						});
@@ -438,7 +440,7 @@ function(
 					.on('hidden', function() {
 						$(this).remove();
 
-						self.fire({
+						self.emit({
 							type: self.Event.MODAL_HIDDEN
 						});
 
@@ -478,13 +480,13 @@ function(
 			$(document.body).removeClass('no-touch').addClass('with-touch');
 		}
 
-		this.fire({
+		this.emit({
 			type: this.Event.READY
 		});
 	};
 
 	UI.prototype._onSwipe = function(direction, distance, startPosition, endPosition) {
-		this.fire({
+		this.emit({
 			type: this.Event.SWIPE,
 			direction: direction,
 			distance: distance,

@@ -3,6 +3,8 @@ define(
 function(Deferred, _) {
 	'use strict';
 
+	var delayedTasks = {};
+
 	/**
 	 * Provides generic utility methods.
 	 *
@@ -113,6 +115,20 @@ function(Deferred, _) {
 		 */
 		bool: function(arg) {
 			return arg ? true : false;
+		},
+
+		/**
+		 * Converts a list into an array.
+		 *
+		 * Converts the list (anything that can be iterated over), into a real Array. Useful for transmuting the
+		 * arguments object.
+		 *
+		 * @method toArray
+		 * @param {*} arg Argument to convert
+		 * @return {Array}
+		 */
+		toArray: function(arg) {
+			return _.toArray(arg);
 		},
 
 		/**
@@ -816,6 +832,34 @@ function(Deferred, _) {
 			argv.unshift(fmt);
 
 			return this.sprintf.apply(null, argv);
+		},
+
+		/**
+		 * Performs some action delayed by given amount.
+		 *
+		 * If the method is called several times with the same name, the action is executed only once after the time
+		 * has passed from the last call.
+		 *
+		 * @param {String} name Name of the action
+		 * @param {Function} callback Action function to call
+		 * @param {Number} [delay=1000] The delay, default to 1000 ms
+		 */
+		performDelayed: function(name, callback, delay) {
+			if (!this.isFunction(callback)) {
+				throw new Error('Expected function as callback parameter');
+			}
+
+			delay = delay || 1000;
+
+			if (!this.isUndefined(delayedTasks[name]) && delayedTasks[name] !== null) {
+				window.clearTimeout(delayedTasks[name]);
+				delayedTasks[name] = null;
+			}
+
+			delayedTasks[name] = window.setTimeout(function() {
+				delayedTasks[this.name] = null;
+				callback();
+			}.bind({ name: name }), delay);
 		},
 
 		/**

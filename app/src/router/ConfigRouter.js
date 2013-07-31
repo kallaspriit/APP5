@@ -12,10 +12,12 @@ function(RouterBase, config, routes, navi, app, util) {
 	 * @module Core
 	 */
 	var ConfigRouter = function() {
+		RouterBase.call(this);
+
 		this._currentRouteName = null;
 	};
 
-	ConfigRouter.prototype = new RouterBase();
+	ConfigRouter.prototype = Object.create(RouterBase.prototype);
 
 	/**
 	 * Parameter types.
@@ -50,7 +52,7 @@ function(RouterBase, config, routes, navi, app, util) {
 	ConfigRouter.prototype.init = function() {
 		var self = this;
 
-		navi.bind(navi.Event.URL_CHANGED, function(e) {
+		navi.on(navi.Event.URL_CHANGED, function(e) {
 			self._onUrlChanged(e.parameters);
 		});
 

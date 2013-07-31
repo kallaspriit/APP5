@@ -11,9 +11,11 @@ function(RouterBase, config, navi, app, util) {
 	 * @constructor
 	 * @module Core
 	 */
-	var QueryRouter = function() {};
+	var QueryRouter = function() {
+		RouterBase.call(this);
+	};
 
-	QueryRouter.prototype = new RouterBase();
+	QueryRouter.prototype = Object.create(RouterBase.prototype);
 
 	/**
 	 * Initiates the component.
@@ -24,7 +26,7 @@ function(RouterBase, config, navi, app, util) {
 	QueryRouter.prototype.init = function() {
 		var self = this;
 
-		navi.bind(navi.Event.URL_CHANGED, function(e) {
+		navi.on(navi.Event.URL_CHANGED, function(e) {
 			self._onUrlChanged(e.parameters);
 		});
 

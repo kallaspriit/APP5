@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util', 'jquery'],
-function(Bindable, util, $) {
+['EventEmitter', 'Util', 'jquery'],
+function(EventEmitter, util, $) {
 	'use strict';
 
 	/**
@@ -14,20 +14,22 @@ function(Bindable, util, $) {
 	 *		info - Keyboard.KeyEvent info
 	 *
 	 * @class Keyboard
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var Keyboard = function() {
+		EventEmitter.call(this);
+
 		this._keyDown = [];
 	};
 
-	Keyboard.prototype = new Bindable();
+	Keyboard.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.KEY_DOWN Triggered on key down
 	 * @param {String} Event.KEY_UP Triggered on key up
@@ -289,7 +291,7 @@ function(Bindable, util, $) {
 			throw new Error('Unexpected key event type "' + event.type + '"');
 		}
 
-		return this.fire({
+		return this.emit({
 			type: event.type,
 			info: event
 		});
