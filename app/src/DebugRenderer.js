@@ -1,6 +1,6 @@
 define(
-['jquery', 'Debug', 'ResourceManager', 'Util', 'moment', 'underscore'],
-function($, dbg, resourceManager, util, moment, _) {
+['jquery', 'Debug', 'ResourceManager', 'Util', 'underscore'],
+function($, dbg, resourceManager, util, _) {
 	'use strict';
 
 	/**
@@ -156,25 +156,6 @@ function($, dbg, resourceManager, util, moment, _) {
 		$('#debug-renderer').click(function() {
 			$(this).toggleClass('visible');
 		});
-
-		/*$('#debug-renderer')
-			.hammer()
-			.bind('swipe', function(e) {
-				switch (e.direction) {
-					case 'left':
-						$(this).addClass('visible');
-
-						return false;
-
-					case 'right':
-						$(this).removeClass('visible');
-
-						return false;
-				}
-			})
-			.bind('hold', function() {
-				$(this).empty();
-			});*/
 	};
 
 	/**
@@ -240,8 +221,7 @@ function($, dbg, resourceManager, util, moment, _) {
 		});
 
 		dbg.on(dbg.Event.CONSOLE, function(e) {
-			var time = util.date(),
-				args = [moment(time).format('hh:mm:ss')],
+			var args = [],
 				i;
 
 			if (util.isObject(e.source)) {

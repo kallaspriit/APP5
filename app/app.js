@@ -25,13 +25,9 @@ require.config({
 		translations:       '../translations/core-translations',
 
 		// individual components
-		es5Shim:            '../lib/es5-shim/es5-shim',
 		underscore:         '../lib/underscore/underscore',
 		angular:            '../lib/angular/angular',
-		moment:             '../lib/moment/moment',
 		jquery:             '../lib/jquery/jquery',
-		hammer:             '../lib/hammer/hammer',
-		hammerjQuery:       '../lib/hammer/jquery.hammer',
 		twitterBootstrap:   '../lib/bootstrap/js/bootstrap'
 	},
 
@@ -43,15 +39,6 @@ require.config({
         angular: {
             exports: 'angular'
         },
-		moment: {
-			exports: 'moment'
-		},
-		hammer: {
-			deps: ['jquery']
-		},
-		hammerjQuery: {
-			deps: ['hammer']
-		},
 		twitterBootstrap: {
 			deps: ['jquery']
 		}
@@ -62,9 +49,6 @@ require.config({
 require(
 	[
 		'Bootstrapper',
-		'es5Shim',
-		'hammer',
-		'hammerjQuery',
 		'twitterBootstrap'
 	],
 	function(bootstrapper) {

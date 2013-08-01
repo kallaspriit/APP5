@@ -36,11 +36,6 @@ function(
 	 *	> MODAL_SHOWN - fired when modal window is displayed
 	 *		modal - the modal that was shown
 	 *	> MODAL_HIDDEN - fired when modal window is hidden
-	 *	> SWIPE - fired when document is swiped
-	 *		direction - direction of the swipe, one of left, right, top, bottom
-	 *		distance - x and y of swipe direction
-	 *		startPosition - start x, y
-	 *		endPosition	- end x, y
 	 *
 	 * @class UI
 	 * @extends EventEmitter
@@ -63,13 +58,11 @@ function(
 	 * @param {String} Event.READY UI is ready
 	 * @param {String} Event.MODAL_SHOWN A modal window is displayed
 	 * @param {String} Event.MODAL_HIDDEN A modal window is hidden
-	 * @param {String} Event.SWIPE Document is swiped
 	 */
 	UI.prototype.Event = {
 		READY: 'ready',
 		MODAL_SHOWN: 'modal-shown',
-		MODAL_HIDDEN: 'modal-hidden',
-		SWIPE: 'swipe'
+		MODAL_HIDDEN: 'modal-hidden'
 	};
 
 	/**
@@ -467,15 +460,6 @@ function(
 			window.app.debugRenderer = debugRenderer;
 		}
 
-		//$(document).bind('touchmove', false);
-
-		$(document.body).hammer().bind('swipe', function(e) {
-			var startX = e.position.x - e.distanceX,
-				startY = e.position.y - e.distanceY;
-
-			self._onSwipe(e.direction, {x: e.distanceX, y: e.distanceY}, {x: startX, y: startY}, e.position);
-		});
-
 		if ('ontouchstart' in document) {
 			$(document.body).removeClass('no-touch').addClass('with-touch');
 		}
@@ -483,24 +467,6 @@ function(
 		this.emit({
 			type: this.Event.READY
 		});
-	};
-
-	UI.prototype._onSwipe = function(direction, distance, startPosition, endPosition) {
-		this.emit({
-			type: this.Event.SWIPE,
-			direction: direction,
-			distance: distance,
-			startPosition: startPosition,
-			endPosition: endPosition
-		});
-
-		if (direction === 'right' && Math.abs(distance.x) >= 100) {
-			require(['Navi'], function(navi) {
-				navi.back();
-			});
-
-			return false;
-		}
 	};
 
 	return new UI();
