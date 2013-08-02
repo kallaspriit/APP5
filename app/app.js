@@ -28,7 +28,8 @@ require.config({
 		underscore:         '../lib/underscore/underscore',
 		angular:            '../lib/angular/angular',
 		jquery:             '../lib/jquery/jquery',
-		twitterBootstrap:   '../lib/bootstrap/js/bootstrap'
+		twitterBootstrap:   '../lib/bootstrap/js/bootstrap',
+		twitterBootstrapUI:   '../lib/bootstrap/js/ui-bootstrap-tpls-0.4.0'
 	},
 
 	// shim configuration for external non-requirejs dependencies
