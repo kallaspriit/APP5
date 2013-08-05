@@ -7,6 +7,8 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
+
+/*transitions*/
 .app5-in {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-out;
@@ -18,6 +20,7 @@
 	animation-timing-function: ease-out;
 	animation-duration: 350ms;
 }
+
 .app5-out {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-in;
@@ -29,6 +32,7 @@
 	animation-timing-function: ease-in;
 	animation-duration: 225ms;
 }
+
 @-webkit-keyframes fadein {
 	from {
 		opacity: 0;
@@ -37,6 +41,7 @@
 		opacity: 1;
 	}
 }
+
 @-moz-keyframes fadein {
 	from {
 		opacity: 0;
@@ -45,6 +50,7 @@
 		opacity: 1;
 	}
 }
+
 @keyframes fadein {
 	from {
 		opacity: 0;
@@ -53,6 +59,7 @@
 		opacity: 1;
 	}
 }
+
 @-webkit-keyframes fadeout {
 	from {
 		opacity: 1;
@@ -61,6 +68,7 @@
 		opacity: 0;
 	}
 }
+
 @-moz-keyframes fadeout {
 	from {
 		opacity: 1;
@@ -69,6 +77,7 @@
 		opacity: 0;
 	}
 }
+
 @keyframes fadeout {
 	from {
 		opacity: 1;
@@ -77,6 +86,7 @@
 		opacity: 0;
 	}
 }
+
 .app5-fade.app5-out {
 	opacity: 0;
 	-webkit-animation-duration: 125ms;
@@ -86,6 +96,7 @@
 	animation-duration: 125ms;
 	animation-name: fadeout;
 }
+
 .app5-fade.app5-in {
 	opacity: 1;
 	-webkit-animation-duration: 225ms;
@@ -95,11 +106,13 @@
 	animation-duration: 225ms;
 	animation-name: fadein;
 }
+
 .app5-pop {
 	-webkit-transform-origin: 50% 50%;
 	-moz-transform-origin: 50% 50%;
 	transform-origin: 50% 50%;
 }
+
 .app5-pop.app5-in {
 	-webkit-transform: scale(1);
 	-webkit-animation-name: popin;
@@ -112,6 +125,7 @@
 	animation-duration: 350ms;
 	opacity: 1;
 }
+
 .app5-pop.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
@@ -121,11 +135,13 @@
 	animation-duration: 100ms;
 	opacity: 0;
 }
+
 .app5-pop.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-moz-animation-name: fadein;
 	animation-name: fadein;
 }
+
 .app5-pop.app5-out.app5-reverse {
 	-webkit-transform: scale(.8);
 	-webkit-animation-name: popout;
@@ -134,6 +150,7 @@
 	transform: scale(.8);
 	animation-name: popout;
 }
+
 @-webkit-keyframes popin {
 	from {
 		-webkit-transform: scale(.8);
@@ -144,6 +161,7 @@
 		opacity: 1;
 	}
 }
+
 @-moz-keyframes popin {
 	from {
 		-moz-transform: scale(.8);
@@ -154,6 +172,7 @@
 		opacity: 1;
 	}
 }
+
 @keyframes popin {
 	from {
 		transform: scale(.8);
@@ -164,6 +183,7 @@
 		opacity: 1;
 	}
 }
+
 @-webkit-keyframes popout {
 	from {
 		-webkit-transform: scale(1);
@@ -174,6 +194,7 @@
 		opacity: 0;
 	}
 }
+
 @-moz-keyframes popout {
 	from {
 		-moz-transform: scale(1);
@@ -184,6 +205,7 @@
 		opacity: 0;
 	}
 }
+
 @keyframes popout {
 	from {
 		transform: scale(1);
@@ -194,6 +216,8 @@
 		opacity: 0;
 	}
 }
+
+/* keyframes for slidein from sides */
 @-webkit-keyframes slideinfromright {
 	from {
 		-webkit-transform: translate3d(100%, 0, 0);
@@ -202,6 +226,7 @@
 		-webkit-transform: translate3d(0, 0, 0);
 	}
 }
+
 @-moz-keyframes slideinfromright {
 	from {
 		-moz-transform: translateX(100%);
@@ -210,6 +235,7 @@
 		-moz-transform: translateX(0);
 	}
 }
+
 @keyframes slideinfromright {
 	from {
 		transform: translateX(100%);
@@ -218,6 +244,7 @@
 		transform: translateX(0);
 	}
 }
+
 @-webkit-keyframes slideinfromleft {
 	from {
 		-webkit-transform: translate3d(-100%, 0, 0);
@@ -226,6 +253,7 @@
 		-webkit-transform: translate3d(0, 0, 0);
 	}
 }
+
 @-moz-keyframes slideinfromleft {
 	from {
 		-moz-transform: translateX(-100%);
@@ -234,6 +262,7 @@
 		-moz-transform: translateX(0);
 	}
 }
+
 @keyframes slideinfromleft {
 	from {
 		transform: translateX(-100%);
@@ -242,6 +271,8 @@
 		transform: translateX(0);
 	}
 }
+
+/* keyframes for slideout to sides */
 @-webkit-keyframes slideouttoleft {
 	from {
 		-webkit-transform: translate3d(0, 0, 0);
@@ -250,6 +281,7 @@
 		-webkit-transform: translate3d(-100%, 0, 0);
 	}
 }
+
 @-moz-keyframes slideouttoleft {
 	from {
 		-moz-transform: translateX(0);
@@ -258,6 +290,7 @@
 		-moz-transform: translateX(-100%);
 	}
 }
+
 @keyframes slideouttoleft {
 	from {
 		transform: translateX(0);
@@ -266,6 +299,7 @@
 		transform: translateX(-100%);
 	}
 }
+
 @-webkit-keyframes slideouttoright {
 	from {
 		-webkit-transform: translate3d(0, 0, 0);
@@ -274,6 +308,7 @@
 		-webkit-transform: translate3d(100%, 0, 0);
 	}
 }
+
 @-moz-keyframes slideouttoright {
 	from {
 		-moz-transform: translateX(0);
@@ -282,6 +317,7 @@
 		-moz-transform: translateX(100%);
 	}
 }
+
 @keyframes slideouttoright {
 	from {
 		transform: translateX(0);
@@ -290,6 +326,7 @@
 		transform: translateX(100%);
 	}
 }
+
 .app5-slide.app5-out, .app5-slide.app5-in {
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
@@ -298,6 +335,7 @@
 	animation-timing-function: ease-out;
 	animation-duration: 350ms;
 }
+
 .app5-slide.app5-out {
 	-webkit-transform: translate3d(-100%, 0, 0);
 	-webkit-animation-name: slideouttoleft;
@@ -306,6 +344,7 @@
 	transform: translateX(-100%);
 	animation-name: slideouttoleft;
 }
+
 .app5-slide.app5-in {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: slideinfromright;
@@ -314,6 +353,7 @@
 	transform: translateX(0);
 	animation-name: slideinfromright;
 }
+
 .app5-slide.app5-out.app5-reverse {
 	-webkit-transform: translate3d(100%, 0, 0);
 	-webkit-animation-name: slideouttoright;
@@ -322,6 +362,7 @@
 	transform: translateX(100%);
 	animation-name: slideouttoright;
 }
+
 .app5-slide.app5-in.app5-reverse {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: slideinfromleft;
@@ -330,6 +371,7 @@
 	transform: translateX(0);
 	animation-name: slideinfromleft;
 }
+
 .app5-slidefade.app5-out {
 	-webkit-transform: translate3d(-100%, 0, 0);
 	-webkit-animation-name: slideouttoleft;
@@ -341,6 +383,7 @@
 	animation-name: slideouttoleft;
 	animation-duration: 225ms;
 }
+
 .app5-slidefade.app5-in {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: fadein;
@@ -352,6 +395,7 @@
 	animation-name: fadein;
 	animation-duration: 200ms;
 }
+
 .app5-slidefade.app5-out.app5-reverse {
 	-webkit-transform: translate3d(100%, 0, 0);
 	-webkit-animation-name: slideouttoright;
@@ -363,6 +407,7 @@
 	animation-name: slideouttoright;
 	animation-duration: 200ms;
 }
+
 .app5-slidefade.app5-in.app5-reverse {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: fadein;
@@ -372,6 +417,8 @@
 	transform: translateX(0);
 	animation-name: fadein animation-duration : 200 ms;
 }
+
+/* slide down */
 .app5-slidedown.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
@@ -380,6 +427,7 @@
 	animation-name: fadeout;
 	animation-duration: 100ms;
 }
+
 .app5-slidedown.app5-in {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: slideinfromtop;
@@ -391,6 +439,7 @@
 	animation-name: slideinfromtop;
 	animation-duration: 250ms;
 }
+
 .app5-slidedown.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 150ms;
@@ -399,6 +448,7 @@
 	animation-name: fadein;
 	animation-duration: 150ms;
 }
+
 .app5-slidedown.app5-out.app5-reverse {
 	-webkit-transform: translate3d(0, -100%, 0);
 	-webkit-animation-name: slideouttotop;
@@ -410,6 +460,7 @@
 	animation-name: slideouttotop;
 	animation-duration: 200ms;
 }
+
 @-webkit-keyframes slideinfromtop {
 	from {
 		-webkit-transform: translate3d(0, -100%, 0);
@@ -418,6 +469,7 @@
 		-webkit-transform: translate3d(0, 0, 0);;
 	}
 }
+
 @-moz-keyframes slideinfromtop {
 	from {
 		-moz-transform: translateY(-100%);
@@ -426,6 +478,7 @@
 		-moz-transform: translateY(0);
 	}
 }
+
 @keyframes slideinfromtop {
 	from {
 		transform: translateY(-100%);
@@ -434,6 +487,7 @@
 		transform: translateY(0);
 	}
 }
+
 @-webkit-keyframes slideouttotop {
 	from {
 		-webkit-transform: translate3d(0, 0, 0);;
@@ -442,6 +496,7 @@
 		-webkit-transform: translate3d(0, -100%, 0);
 	}
 }
+
 @-moz-keyframes slideouttotop {
 	from {
 		-moz-transform: translateY(0);
@@ -450,6 +505,7 @@
 		-moz-transform: translateY(-100%);
 	}
 }
+
 @keyframes slideouttotop {
 	from {
 		transform: translateY(0);
@@ -458,6 +514,8 @@
 		transform: translateY(-100%);
 	}
 }
+
+/* slide up */
 .app5-slideup.app5-out {
 	-webkit-animation-name: fadeout;
 	-webkit-animation-duration: 100ms;
@@ -466,6 +524,7 @@
 	animation-name: fadeout;
 	animation-duration: 100ms;
 }
+
 .app5-slideup.app5-in {
 	-webkit-transform: translate3d(0, 0, 0);;
 	-webkit-animation-name: slideinfrombottom;
@@ -477,6 +536,7 @@
 	animation-name: slideinfrombottom;
 	animation-duration: 250ms;
 }
+
 .app5-slideup.app5-in.app5-reverse {
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 150ms;
@@ -485,6 +545,7 @@
 	animation-name: fadein;
 	animation-duration: 150ms;
 }
+
 .app5-slideup.app5-out.app5-reverse {
 	-webkit-transform: translate3d(0, 100%, 0);
 	-webkit-animation-name: slideouttobottom;
@@ -496,6 +557,7 @@
 	animation-name: slideouttobottom;
 	animation-duration: 200ms;
 }
+
 @-webkit-keyframes slideinfrombottom {
 	from {
 		-webkit-transform: translate3d(0, 100%, 0);
@@ -504,6 +566,7 @@
 		-webkit-transform: translate3d(0, 0, 0);;
 	}
 }
+
 @-moz-keyframes slideinfrombottom {
 	from {
 		-moz-transform: translateY(100%);
@@ -512,6 +575,7 @@
 		-moz-transform: translateY(0);
 	}
 }
+
 @keyframes slideinfrombottom {
 	from {
 		transform: translateY(100%);
@@ -520,6 +584,7 @@
 		transform: translateY(0);
 	}
 }
+
 @-webkit-keyframes slideouttobottom {
 	from {
 		-webkit-transform: translate3d(0, 0, 0);;
@@ -528,6 +593,7 @@
 		-webkit-transform: translate3d(0, 100%, 0);
 	}
 }
+
 @-moz-keyframes slideouttobottom {
 	from {
 		-moz-transform: translateY(0);
@@ -536,6 +602,7 @@
 		-moz-transform: translateY(100%);
 	}
 }
+
 @keyframes slideouttobottom {
 	from {
 		transform: translateY(0);
@@ -544,20 +611,29 @@
 		transform: translateY(100%);
 	}
 }
+
+/* The properties in this rule are only necessary for the 'flip' transition.
+ * We need specify the perspective to create a projection matrix. This will add
+ * some depth as the element flips. The depth number represents the distance of
+ * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
+ * value.
+ */
 .app5-viewport-flip {
 	-webkit-perspective: 1000;
 	-moz-perspective: 1000;
 	perspective: 1000;
 	position: absolute;
 }
+
 .app5-flip {
 	-webkit-backface-visibility: hidden;
-	-webkit-transform: translate3d(0, 0, 0);; 
+	-webkit-transform: translate3d(0, 0, 0);; /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-moz-backface-visibility: hidden;
 	-moz-transform: translateX(0);
 	backface-visibility: hidden;
 	transform: translateX(0);
 }
+
 .app5-flip.app5-out {
 	-webkit-transform: rotateY(-90deg) scale(.9);
 	-webkit-animation-name: flipouttoleft;
@@ -569,6 +645,7 @@
 	animation-name: flipouttoleft;
 	animation-duration: 175ms;
 }
+
 .app5-flip.app5-in {
 	-webkit-animation-name: flipintoright;
 	-webkit-animation-duration: 225ms;
@@ -577,6 +654,7 @@
 	animation-name: flipintoright;
 	animation-duration: 225ms;
 }
+
 .app5-flip.app5-out.app5-reverse {
 	-webkit-transform: rotateY(90deg) scale(.9);
 	-webkit-animation-name: flipouttoright;
@@ -585,11 +663,13 @@
 	transform: rotateY(90deg) scale(.9);
 	animation-name: flipouttoright;
 }
+
 .app5-flip.app5-in.app5-reverse {
 	-webkit-animation-name: flipintoleft;
 	-moz-animation-name: flipintoleft;
 	animation-name: flipintoleft;
 }
+
 @-webkit-keyframes flipouttoleft {
 	from {
 		-webkit-transform: rotateY(0);
@@ -598,6 +678,7 @@
 		-webkit-transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @-moz-keyframes flipouttoleft {
 	from {
 		-moz-transform: rotateY(0);
@@ -606,6 +687,7 @@
 		-moz-transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @keyframes flipouttoleft {
 	from {
 		transform: rotateY(0);
@@ -614,6 +696,7 @@
 		transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @-webkit-keyframes flipouttoright {
 	from {
 		-webkit-transform: rotateY(0);
@@ -622,6 +705,7 @@
 		-webkit-transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @-moz-keyframes flipouttoright {
 	from {
 		-moz-transform: rotateY(0);
@@ -630,6 +714,7 @@
 		-moz-transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @keyframes flipouttoright {
 	from {
 		transform: rotateY(0);
@@ -638,6 +723,7 @@
 		transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @-webkit-keyframes flipintoleft {
 	from {
 		-webkit-transform: rotateY(-90deg) scale(.9);
@@ -646,6 +732,7 @@
 		-webkit-transform: rotateY(0);
 	}
 }
+
 @-moz-keyframes flipintoleft {
 	from {
 		-moz-transform: rotateY(-90deg) scale(.9);
@@ -654,6 +741,7 @@
 		-moz-transform: rotateY(0);
 	}
 }
+
 @keyframes flipintoleft {
 	from {
 		transform: rotateY(-90deg) scale(.9);
@@ -662,6 +750,7 @@
 		transform: rotateY(0);
 	}
 }
+
 @-webkit-keyframes flipintoright {
 	from {
 		-webkit-transform: rotateY(90deg) scale(.9);
@@ -670,6 +759,7 @@
 		-webkit-transform: rotateY(0);
 	}
 }
+
 @-moz-keyframes flipintoright {
 	from {
 		-moz-transform: rotateY(90deg) scale(.9);
@@ -678,6 +768,7 @@
 		-moz-transform: rotateY(0);
 	}
 }
+
 @keyframes flipintoright {
 	from {
 		transform: rotateY(90deg) scale(.9);
@@ -686,6 +777,13 @@
 		transform: rotateY(0);
 	}
 }
+
+/* The properties in this rule are only necessary for the 'flip' transition.
+ * We need specify the perspective to create a projection matrix. This will add
+ * some depth as the element flips. The depth number represents the distance of
+ * the viewer from the z-plane. According to the CSS3 spec, 1000 is a moderate
+ * value.
+ */
 .app5-viewport-turn {
 	-webkit-perspective: 200px;
 	-moz-perspective: 200px;
@@ -693,17 +791,21 @@
 	perspective: 200px;
 	position: absolute;
 }
+
 .app5-turn {
 	-webkit-backface-visibility: hidden;
-	-webkit-transform: translate3d(0, 0, 0);; 
+	-webkit-transform: translate3d(0, 0, 0);; /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-webkit-transform-origin: 0;
+
 	-moz-backface-visibility: hidden;
 	-moz-transform: translateX(0);
 	-moz-transform-origin: 0;
+
 	backface-visibility: hidden;
 	transform: translateX(0);
 	transform-origin: 0;
 }
+
 .app5-turn.app5-out {
 	-webkit-transform: rotateY(-90deg) scale(.9);
 	-webkit-animation-name: flipouttoleft;
@@ -715,6 +817,7 @@
 	animation-name: flipouttoleft;
 	animation-duration: 125ms;
 }
+
 .app5-turn.app5-in {
 	-webkit-animation-name: flipintoright;
 	-webkit-animation-duration: 250ms;
@@ -722,7 +825,9 @@
 	-moz-animation-duration: 250ms;
 	animation-name: flipintoright;
 	animation-duration: 250ms;
+
 }
+
 .app5-turn.app5-out.app5-reverse {
 	-webkit-transform: rotateY(90deg) scale(.9);
 	-webkit-animation-name: flipouttoright;
@@ -731,11 +836,13 @@
 	transform: rotateY(90deg) scale(.9);
 	animation-name: flipouttoright;
 }
+
 .app5-turn.app5-in.app5-reverse {
 	-webkit-animation-name: flipintoleft;
 	-moz-animation-name: flipintoleft;
 	animation-name: flipintoleft;
 }
+
 @-webkit-keyframes flipouttoleft {
 	from {
 		-webkit-transform: rotateY(0);
@@ -744,6 +851,7 @@
 		-webkit-transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @-moz-keyframes flipouttoleft {
 	from {
 		-moz-transform: rotateY(0);
@@ -752,6 +860,7 @@
 		-moz-transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @keyframes flipouttoleft {
 	from {
 		transform: rotateY(0);
@@ -760,6 +869,7 @@
 		transform: rotateY(-90deg) scale(.9);
 	}
 }
+
 @-webkit-keyframes flipouttoright {
 	from {
 		-webkit-transform: rotateY(0);
@@ -768,6 +878,7 @@
 		-webkit-transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @-moz-keyframes flipouttoright {
 	from {
 		-moz-transform: rotateY(0);
@@ -776,6 +887,7 @@
 		-moz-transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @keyframes flipouttoright {
 	from {
 		transform: rotateY(0);
@@ -784,6 +896,7 @@
 		transform: rotateY(90deg) scale(.9);
 	}
 }
+
 @-webkit-keyframes flipintoleft {
 	from {
 		-webkit-transform: rotateY(-90deg) scale(.9);
@@ -792,6 +905,7 @@
 		-webkit-transform: rotateY(0);
 	}
 }
+
 @-moz-keyframes flipintoleft {
 	from {
 		-moz-transform: rotateY(-90deg) scale(.9);
@@ -800,6 +914,7 @@
 		-moz-transform: rotateY(0);
 	}
 }
+
 @keyframes flipintoleft {
 	from {
 		transform: rotateY(-90deg) scale(.9);
@@ -808,6 +923,7 @@
 		transform: rotateY(0);
 	}
 }
+
 @-webkit-keyframes flipintoright {
 	from {
 		-webkit-transform: rotateY(90deg) scale(.9);
@@ -816,6 +932,7 @@
 		-webkit-transform: rotateY(0);
 	}
 }
+
 @-moz-keyframes flipintoright {
 	from {
 		-moz-transform: rotateY(90deg) scale(.9);
@@ -824,6 +941,7 @@
 		-moz-transform: rotateY(0);
 	}
 }
+
 @keyframes flipintoright {
 	from {
 		transform: rotateY(90deg) scale(.9);
@@ -832,6 +950,8 @@
 		transform: rotateY(0);
 	}
 }
+
+/* flow transition */
 .app5-flow {
 	-webkit-transform-origin: 50% 30%;
 	-webkit-box-shadow: 0 0 20px rgba(0, 0, 0, .4);
@@ -840,6 +960,7 @@
 	transform-origin: 50% 30%;
 	box-shadow: 0 0 20px rgba(0, 0, 0, .4);
 }
+
 .app5-dialog.app5-flow {
 	-webkit-transform-origin: none;
 	-webkit-box-shadow: none;
@@ -848,6 +969,7 @@
 	transform-origin: none;
 	box-shadow: none;
 }
+
 .app5-flow.app5-out {
 	-webkit-transform: translate3d(-100%, 0, 0) scale(.7);
 	-webkit-animation-name: flowouttoleft;
@@ -862,6 +984,7 @@
 	animation-timing-function: ease;
 	animation-duration: 350ms;
 }
+
 .app5-flow.app5-in {
 	-webkit-transform: translate3d(0, 0, 0) scale(1);
 	-webkit-animation-name: flowinfromright;
@@ -876,6 +999,7 @@
 	animation-timing-function: ease;
 	animation-duration: 350ms;
 }
+
 .app5-flow.app5-out.app5-reverse {
 	-webkit-transform: translate3d(100%, 0, 0);
 	-webkit-animation-name: flowouttoright;
@@ -884,11 +1008,13 @@
 	transform: translateX(100%);
 	animation-name: flowouttoright;
 }
+
 .app5-flow.app5-in.app5-reverse {
 	-webkit-animation-name: flowinfromleft;
 	-moz-animation-name: flowinfromleft;
 	animation-name: flowinfromleft;
 }
+
 @-webkit-keyframes flowouttoleft {
 	0% {
 		-webkit-transform: translate3d(0, 0, 0) scale(1);
@@ -900,6 +1026,7 @@
 		-webkit-transform: translate3d(-100%, 0, 0) scale(.7);
 	}
 }
+
 @-moz-keyframes flowouttoleft {
 	0% {
 		-moz-transform: translateX(0) scale(1);
@@ -911,6 +1038,7 @@
 		-moz-transform: translateX(-100%) scale(.7);
 	}
 }
+
 @keyframes flowouttoleft {
 	0% {
 		transform: translateX(0) scale(1);
@@ -922,6 +1050,7 @@
 		transform: translateX(-100%) scale(.7);
 	}
 }
+
 @-webkit-keyframes flowouttoright {
 	0% {
 		-webkit-transform: translate3d(0, 0, 0) scale(1);
@@ -933,6 +1062,7 @@
 		-webkit-transform: translate3d(100%, 0, 0) scale(.7);
 	}
 }
+
 @-moz-keyframes flowouttoright {
 	0% {
 		-moz-transform: translateX(0) scale(1);
@@ -943,6 +1073,7 @@
 		-moz-transform: translateX(100%) scale(.7);
 	}
 }
+
 @keyframes flowouttoright {
 	0% {
 		transform: translateX(0) scale(1);
@@ -954,6 +1085,7 @@
 		transform: translateX(100%) scale(.7);
 	}
 }
+
 @-webkit-keyframes flowinfromleft {
 	0% {
 		-webkit-transform: translate3d(-100%, 0, 0) scale(.7);
@@ -965,6 +1097,7 @@
 		-webkit-transform: translate3d(0, 0, 0) scale(1);
 	}
 }
+
 @-moz-keyframes flowinfromleft {
 	0% {
 		-moz-transform: translateX(-100%) scale(.7);
@@ -977,6 +1110,7 @@
 		-moz-transform: translateX(0) scale(1);
 	}
 }
+
 @keyframes flowinfromleft {
 	0% {
 		transform: translateX(-100%) scale(.7);
@@ -988,6 +1122,7 @@
 		transform: translateX(0) scale(1);
 	}
 }
+
 @-webkit-keyframes flowinfromright {
 	0% {
 		-webkit-transform: translate3d(100%, 0, 0) scale(.7);
@@ -999,6 +1134,7 @@
 		-webkit-transform: translate3d(0, 0, 0) scale(1);
 	}
 }
+
 @-moz-keyframes flowinfromright {
 	0% {
 		-moz-transform: translateX(100%) scale(.7);
@@ -1010,6 +1146,7 @@
 		-moz-transform: translateX(0) scale(1);
 	}
 }
+
 @keyframes flowinfromright {
 	0% {
 		transform: translateX(100%) scale(.7);

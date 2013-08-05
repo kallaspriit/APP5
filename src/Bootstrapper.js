@@ -1,1 +1,213 @@
-define(["angular","jquery","underscore","Debug","config/main","App","ResourceManager","router/ConfigRouter","Keyboard","Mouse","UI","Translator","Navi","Scheduler","Util","Directives","Filters","RootController","translations"],function(e,t,n,r,i,o,a,s,l,u,c,f,p,d,h,m,g,v,y){var $=function(){};return $.prototype.bootstrap=function(){var $,b,w=this,x={_:n,$:t,config:i,dbg:r.init(),resourceManager:a.init(),router:s.init(i.navigation.mode),keyboard:l.init(),mouse:u.init(),ui:c.init(),translator:f.init(y,i.language),navi:p.init(),scheduler:d.init(),util:h};p.router=x.router,o.module=e.module("app",["ui.bootstrap"]),o.module.config(["$provide","$locationProvider","$controllerProvider",function(e,t,n){o.provide=e,o.controllerProvider=n,e.provider("$parameters",{$get:function(){return function(){return o.parameters}}});for(var a in x)e.value(a,x[a]);e.factory("$exceptionHandler",function(){return function(e){return r.error(e),!1}}),t.html5Mode(i.navigation.html5Mode).hashPrefix(i.navigation.hashPrefix),o.registerController("RootController",v)}]);for($ in m)o.module.directive($,m[$]);for(b in g)o.module.filter(b,g[b]);o.module.run(["$rootScope","$location","$compile",function(e,t,n){w._onModuleRun(e,t,n)}]),x.translator.on(x.translator.Event.LANGUAGE_CHANGED,function(){o.validate()}),t(document).ready(function(){w._onDomReady()}),i.debug&&(h.extend(o,x),window.app=o)},$.prototype._onDomReady=function(){o.injector=e.bootstrap(t("HTML"),["app"])},$.prototype._onModuleRun=function(e,t,n){o.rootScope=e,o.location=t,o.compile=n,this._setupRouter(e,t)},$.prototype._setupRouter=function(e,t){e.$watch(function(){return t.absUrl()},function(){var e={url:t.absUrl(),hash:t.hash(),path:t.path(),query:t.url(),args:t.search(),host:t.host(),port:t.port(),protocol:t.protocol()};p._onUrlChanged(e)})},new $});
+define(
+[
+	'angular',
+	'jquery',
+	'underscore',
+	'Debug',
+	'config/main',
+	'App',
+	'ResourceManager',
+	'router/ConfigRouter', // QueryRouter/PathRouter/ConfigRouter
+	'Keyboard',
+	'Mouse',
+	'UI',
+	'Translator',
+	'Navi',
+	'Scheduler',
+	'Util',
+	'Directives',
+	'Filters',
+	'RootController',
+	'translations'
+],
+function(
+	angular,
+	$,
+	_,
+	dbg,
+	config,
+	app,
+	resourceManager,
+	router,
+	keyboard,
+	mouse,
+	ui,
+	translator,
+	navi,
+	scheduler,
+	util,
+	directives,
+	filters,
+	RootController,
+	translations
+) {
+	'use strict';
+
+	/**
+	 * Responsible for bootstrapping the application.
+	 *
+	 * @class Bootstrapper
+	 * @constructor
+	 * @module Core
+	 */
+	var Bootstrapper = function() {};
+
+	/**
+	 * Bootstraps the application.
+	 *
+	 * @method bootstrap
+	 */
+	Bootstrapper.prototype.bootstrap = function() {
+		var self = this,
+			components = {
+				_:                  _,
+				$:                  $,
+				config:             config,
+				dbg:                dbg.init(),
+				resourceManager:    resourceManager.init(),
+				router:             router.init(config.navigation.mode),
+				keyboard:           keyboard.init(),
+				mouse:              mouse.init(),
+				ui:                 ui.init(),
+				translator:         translator.init(translations, config.language),
+				navi:               navi.init(),
+				scheduler:          scheduler.init(),
+				util:               util
+			},
+			directiveName,
+			filterName;
+
+		navi.router = components.router;
+		app.module = angular.module('app', ['ui.bootstrap']);
+
+		app.module.config([
+			'$provide', '$locationProvider', '$controllerProvider',
+			function($provide, $locationProvider, $controllerProvider) {
+				app.provide = $provide;
+				app.controllerProvider = $controllerProvider;
+
+				// provide module action parameters
+				// TODO Can this be done without returning function, damn cache
+				$provide.provider('$parameters', {
+					$get: function() {
+						return function() {
+							return app.parameters;
+						};
+					}
+				});
+
+				// provide the components to module actions
+				for (var key in components) {
+					$provide.value(key, components[key]);
+				}
+
+				// listen for angular expections
+				$provide.factory('$exceptionHandler', function() {
+					return function(exception) {
+						dbg.error(exception);
+
+						return false;
+					};
+				});
+
+				// configure HTML5 url-rewrite mode
+				$locationProvider
+					.html5Mode(config.navigation.html5Mode)
+					.hashPrefix(config.navigation.hashPrefix);
+
+				// register the root-controller
+				app.registerController('RootController', RootController);
+			}
+		]);
+
+		// register directives
+		for (directiveName in directives) {
+			app.module.directive(directiveName, directives[directiveName]);
+		}
+
+		// register filters
+		for (filterName in filters) {
+			app.module.filter(filterName, filters[filterName]);
+		}
+
+		// register callback for module run
+		app.module.run([
+			'$rootScope', '$location', '$compile',
+			function($rootScope, $location, $compile) {
+				self._onModuleRun($rootScope, $location, $compile);
+			}
+		]);
+
+		// redraw the application when language changes
+		components.translator.on(components.translator.Event.LANGUAGE_CHANGED, function() {
+			app.validate();
+		});
+
+		// listen for dom ready event
+		$(document).ready(function() {
+			self._onDomReady();
+		});
+
+		// register the core application components in global scope for debugging, never rely on this
+		if (config.debug) {
+			util.extend(app, components);
+
+			window.app = app;
+		}
+	};
+
+	/**
+	 * Called when all base bootstrapping has been completed and DOM is ready.
+	 *
+	 * @method _onDomReady
+	 * @private
+	 */
+	Bootstrapper.prototype._onDomReady = function() {
+		// bootstrap the application, results in _onModuleRun below
+		app.injector = angular.bootstrap($('HTML'), ['app']);
+	};
+
+	/**
+	 * Called when angular injector has performed loading all the modules.
+	 *
+	 * @method _onModuleRun
+	 * @param {Scope} $rootScope Root scope
+	 * @param {Location} $location The location service
+	 * @param {Compile} $compile The compiler service
+	 * @private
+	 */
+	Bootstrapper.prototype._onModuleRun = function($rootScope, $location, $compile) {
+		app.rootScope = $rootScope;
+		app.location = $location;
+		app.compile = $compile;
+
+		this._setupRouter($rootScope, $location);
+	};
+
+	/**
+	 * Sets up listener for URL changes.
+	 *
+	 * @method _setupRouter
+	 * @private
+	 */
+	Bootstrapper.prototype._setupRouter = function($scope, $location) {
+		$scope.$watch(function () {
+			return $location.absUrl();
+		}, function() {
+			var parameters = {
+				url:        $location.absUrl(),
+				hash:       $location.hash(),
+				path:       $location.path(),
+				query:      $location.url(),
+				args:       $location.search(),
+				host:       $location.host(),
+				port:       $location.port(),
+				protocol:   $location.protocol()
+			};
+
+			navi._onUrlChanged(parameters);
+		});
+	};
+
+	return new Bootstrapper();
+});

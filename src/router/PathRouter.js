@@ -1,1 +1,122 @@
-define(["router/RouterBase","config/main","Navi","App","Util"],function(e,t,n,r,i){var o=function(){e.call(this)};return o.prototype=Object.create(e.prototype),o.prototype.init=function(){var e=this;return n.on(n.Event.URL_CHANGED,function(t){e._onUrlChanged(t.parameters)}),this},o.prototype.navigate=function(e,t,n){var o,a="/"+e+"/"+t;if(i.isObject(n)&&!i.isEmpty(n))for(o in n)a+=n[o]===!0?"/"+o:"/"+o+"="+n[o];r.location.path(a),r.validate()},o.prototype._onUrlChanged=function(e){var r,o,a,s,l=e.path,u=l.split("/"),c=t.index.module,p=t.index.action,f=t.index.parameters;if(u.length>=2&&u[1].length>0&&(c=u[1],f={}),u.length>=3&&u[2].length>0&&(p=u[2]),u.length>=4)for(r=3;u.length>r;r++)-1!==u[r].indexOf("=")?(o=u[r].split("="),a=o[0],s=i.normalizeType(o[1])):(a=u[r],s=!0),f[a]=s;n._open(c,p,f)},new o});
+define(
+['router/RouterBase', 'config/main', 'Navi', 'App', 'Util'],
+function(RouterBase, config, navi, app, util) {
+	'use strict';
+
+	/**
+	 * Path-based router strategy.
+	 *
+	 * @class PathRouter
+	 * @extends RouterBase
+	 * @constructor
+	 * @module Core
+	 */
+	var PathRouter = function() {
+		RouterBase.call(this);
+	};
+
+	PathRouter.prototype = Object.create(RouterBase.prototype);
+
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {Router} Self
+	 */
+	PathRouter.prototype.init = function() {
+		var self = this;
+
+		navi.on(navi.Event.URL_CHANGED, function(e) {
+			self._onUrlChanged(e.parameters);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Composes a URL that matches given module action.
+	 *
+	 * @method navigate
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
+	 * @param {Object} [parameters] Action parameters
+	 */
+	PathRouter.prototype.navigate = function(module, action, parameters) {
+		var path = '/' + module + '/' + action,
+			key;
+
+		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
+			for (key in parameters) {
+				if (parameters[key] === true) {
+					path += '/' + key;
+				} else {
+					path += '/' + key + '=' + parameters[key];
+				}
+			}
+		}
+
+		app.location.path(path);
+		app.validate();
+	};
+
+	/**
+	 * Called when application URL changes.
+	 *
+	 * The parameters include:
+	 * - url
+	 * - hash
+	 * - path
+	 * - query
+	 * - args
+	 * - host
+	 * - port
+	 * - protocol
+	 *
+	 * @method _onUrlChanged
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	PathRouter.prototype._onUrlChanged = function(parameters) {
+		var path = parameters.path,
+			tokens = path.split('/'),
+			module = config.index.module,
+			action = config.index.action,
+			actionParameters = config.index.parameters,
+			i,
+			paramParts,
+			paramName,
+			paramValue;
+
+		if (tokens.length >= 2 && tokens[1].length > 0) {
+			module = tokens[1];
+			actionParameters = {};
+		}
+
+		if (tokens.length >= 3 && tokens[2].length > 0) {
+			action = tokens[2];
+		}
+
+		if (tokens.length >= 4) {
+			for (i = 3; i < tokens.length; i++) {
+				if (tokens[i].indexOf('=') !== -1) {
+					paramParts = tokens[i].split('=');
+					paramName = paramParts[0];
+					paramValue = util.normalizeType(paramParts[1]);
+				} else {
+					paramName = tokens[i];
+					paramValue = true;
+				}
+
+				actionParameters[paramName] = paramValue;
+			}
+		}
+
+		navi._open(
+			module,
+			action,
+			actionParameters
+		);
+	};
+
+	return new PathRouter();
+});

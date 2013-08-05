@@ -1,4 +1,4 @@
-
+/* Logging */
 #debug-renderer {
 	position: fixed;
 	top: 0;
@@ -7,7 +7,7 @@
 	height: 100%;
 	background-color: rgba(255, 255, 255, 0.75);
 	overflow: hidden;
-	
+	/*border-left: 2px solid #CCC;*/
 	padding: 0 0 0 1px;
 	outline: none;
 	font-family: Consolas;
@@ -77,6 +77,8 @@
 #debug-renderer .tx {
 	background-image: url(../images/debug-renderer/tx-bg.png);
 }
+
+/* Error modal */
 #debug-renderer-error {
 	position: absolute;
 	width: 620px;
@@ -129,6 +131,14 @@
 #debug-renderer-error .debug-renderer-error-content {
 	padding: 0 20px 10px 20px;
 }
+/*#debug-renderer-error .debug-renderer-error-location {
+	padding: 0 8px 0 0;
+	margin: -40px 0 20px 0;
+	line-height: 14px;
+	font-size: 14px;
+	font-style: italic;
+	text-align: right;
+}*/
 #debug-renderer-error .debug-renderer-error-location {
 	padding: 0 20px;
 	line-height: 30px;

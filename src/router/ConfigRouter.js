@@ -1,1 +1,410 @@
-define(["router/RouterBase","config/main","config/routes","Navi","App","Util"],function(e,t,n,r,i,o){var a=function(){e.call(this),this._currentRouteName=null};return a.prototype=Object.create(e.prototype),a.prototype.Param={STRING:"string",INT:"int",POS_INT:"+int"},a.prototype.ParamDefaults={string:"","int":0,"+int":1},a.prototype.init=function(){var e=this;return r.on(r.Event.URL_CHANGED,function(t){e._onUrlChanged(t.parameters)}),this},a.prototype.navigate=function(e,t,n){if(o.isUndefined(t)||o.isObject(t)){var r=e,a=t,s=n;return this.open(r,a,s),void 0}var l,u="/"+e+"/"+t;if(o.isObject(n)&&!o.isEmpty(n))for(l in n)u+=n[l]===!0?"/"+l:"/"+l+"="+n[l];i.location.path(u),i.validate()},a.prototype.open=function(e,t,r){if(!o.isObject(n[e]))throw Error('Route "'+e+'" not found');var a,s,l=this._parseRoute(n[e]),u=l.path;for(o.isObject(t)&&o.extend(l.parameters,t),s=0;l.tokens.length>s;s++)a=l.tokens[s],"static"!=a.type&&(o.isUndefined(l.parameters[a.name])&&(l.parameters[a.name]=this.ParamDefaults[a.type]),u=u.replace(a.original,l.parameters[a.name]));i.location.path("/"+u),r&&i.location.replace(),i.validate()},a.prototype.setUrlParameter=function(e,t,n){var i,a=r.getCurrent();return null===a?!1:(i=o.clone(a),i.parameters[e]=t,null!==this._currentRouteName?r.open(this._currentRouteName,i.parameters,n):r.open(i.module,i.action,i.parameters),void 0)},a.prototype._onUrlChanged=function(e){var i,a,s,l=e.path;for(i in n)if(a=this._parseRoute(n[i]),a.name=i,s=this._matchRoute(a,l),null!==s)return this._currentRouteName=i,r._open(a.module,a.action,s),void 0;this._currentRouteName=null;var u,c,p,f,d=l.split("/"),h=t.index.module,m=t.index.action,g=t.index.parameters,v=!0;if(d.length>=2&&d[1].length>0&&(h=d[1],g={},v=!1),d.length>=3&&d[2].length>0&&(m=d[2],v=!1),d.length>=4){for(u=3;d.length>u;u++)-1!==d[u].indexOf("=")?(c=d[u].split("="),p=c[0],f=o.normalizeType(c[1])):(p=d[u],f=!0),g[p]=f;v=!1}v&&o.isString(t.index.route)&&(this._currentRouteName=t.index.route),o.normalizeType(g),r._open(h,m,g)},a.prototype._parseRoute=function(e){var t=[];if(e.path.length>0){var n,r=e.path.split("/");for(n=0;r.length>n;n++)":"===r[n].substr(0,1)?t.push(this._parseRouteParameter(r[n])):t.push({original:r[n],type:"static",name:r[n]})}return{path:e.path,module:e.module,action:e.action,parameters:e.parameters||{},tokens:t}},a.prototype._parseRouteParameter=function(e){var t=e.substr(1);if(-1===t.indexOf("["))return{original:e,type:this.Param.STRING,name:t};var n=/(\w+)\[([+\w]+)\]/,r=n.exec(t);return{original:e,type:r[2],name:r[1]}},a.prototype._matchRoute=function(e,t){"/"===t.substr(0,1)&&(t=t.substr(1));var n,r,i,a=t.split("/"),s=!0,l={};for(i=0;a.length>i;i++){if(o.isUndefined(e.tokens[i])){s=!1;break}if(n=a[i],r=e.tokens[i],!this._matchTokens(n,r)){s=!1;break}"static"!==r.type&&(l[r.name]=n)}return o.normalizeType(l),s?l:null},a.prototype._matchTokens=function(e,t){if("static"===t.type){if(e!==t.name)return!1}else if(t.type===this.Param.STRING){if(!o.isString(e)&&!o.isNumber(e))return!1}else if(t.type===this.Param.INT){if(parseInt(e,10)+""!==e)return!1}else if(t.type===this.Param.POS_INT&&(parseInt(e,10)+""!==e||1>parseInt(e,10)))return!1;return!0},new a});
+define(
+['router/RouterBase', 'config/main', 'config/routes', 'Navi', 'App', 'Util'],
+function(RouterBase, config, routes, navi, app, util) {
+	'use strict';
+
+	/**
+	 * Configuration-file based router strategy.
+	 *
+	 * @class ConfigRouter
+	 * @extends RouterBase
+	 * @constructor
+	 * @module Core
+	 */
+	var ConfigRouter = function() {
+		RouterBase.call(this);
+
+		this._currentRouteName = null;
+	};
+
+	ConfigRouter.prototype = Object.create(RouterBase.prototype);
+
+	/**
+	 * Parameter types.
+	 *
+	 * @property Param
+	 * @param {String} Param.STRING String type
+	 * @param {String} Param.POS_INT Positive integer type
+	 */
+	ConfigRouter.prototype.Param = {
+		STRING: 'string',
+		INT: 'int',
+		POS_INT: '+int'
+	};
+
+	/**
+	 * Default values for the parameter types.
+	 *
+	 * @property ParamDefaults
+	 */
+	ConfigRouter.prototype.ParamDefaults = {
+		'string': '',
+		'int': 0,
+		'+int': 1
+	};
+
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {Router} Self
+	 */
+	ConfigRouter.prototype.init = function() {
+		var self = this;
+
+		navi.on(navi.Event.URL_CHANGED, function(e) {
+			self._onUrlChanged(e.parameters);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Composes a URL that matches given module action.
+	 *
+	 * @method navigate
+	 * @param {String} module Module name or route name
+	 * @param {String} [action=index] Action name or route parameters
+	 * @param {Object} [parameters] Action parameters
+	 */
+	ConfigRouter.prototype.navigate = function(module, action, parameters) {
+		if (util.isUndefined(action) || util.isObject(action)) {
+			var routeName = module,
+				routeParameters = action,
+				replaceUrl = parameters;
+
+			this.open(routeName, routeParameters, replaceUrl);
+
+			return;
+		}
+
+		var path = '/' + module + '/' + action,
+			key;
+
+		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
+			for (key in parameters) {
+				if (parameters[key] === true) {
+					path += '/' + key;
+				} else {
+					path += '/' + key + '=' + parameters[key];
+				}
+			}
+		}
+
+		app.location.path(path);
+		app.validate();
+	};
+
+	/**
+	 * Composes a URL that matches given module action.
+	 *
+	 * @method navigate
+	 * @param {String} routeName Name of the route
+	 * @param {Object} [parameters] Route parameters
+	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
+	 */
+	ConfigRouter.prototype.open = function(routeName, parameters, replace) {
+		if (!util.isObject(routes[routeName])) {
+			throw new Error('Route "' + routeName + '" not found');
+		}
+
+		var route = this._parseRoute(routes[routeName]),
+			path = route.path,
+			token,
+			i;
+
+		if (util.isObject(parameters)) {
+			util.extend(route.parameters, parameters);
+		}
+
+		for (i = 0; i < route.tokens.length; i++) {
+			token = route.tokens[i];
+
+			if (token.type == 'static') {
+				continue;
+			}
+
+			if ( util.isUndefined(route.parameters[token.name])) {
+				route.parameters[token.name] = this.ParamDefaults[token.type];
+			}
+
+			path = path.replace(token.original, route.parameters[token.name]);
+		}
+
+		app.location.path('/' + path);
+
+		if (replace) {
+			app.location.replace();
+		}
+
+		app.validate();
+	};
+
+	/**
+	 * Changes a parameter of the current URL.
+	 *
+	 * @method setUrlParameter
+	 * @param {String} name Name of the parameter
+	 * @param {String} value Parameter value
+	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
+	 * @return {Boolean} Was setting the parameter successful
+	 */
+	ConfigRouter.prototype.setUrlParameter = function(name, value, replace) {
+		var currentItem = navi.getCurrent(),
+			newItem;
+
+		if (currentItem === null) {
+			return false;
+		}
+
+		newItem = util.clone(currentItem);
+		newItem.parameters[name] = value;
+
+		if (this._currentRouteName !== null) {
+			navi.open(
+				this._currentRouteName,
+				newItem.parameters,
+				replace
+			);
+		} else {
+			navi.open(
+				newItem.module,
+				newItem.action,
+				newItem.parameters
+			);
+		}
+	},
+
+	/**
+	 * Called when application URL changes.
+	 *
+	 * The parameters include:
+	 * - url
+	 * - hash
+	 * - path
+	 * - query
+	 * - args
+	 * - host
+	 * - port
+	 * - protocol
+	 *
+	 * @method _onUrlChanged
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	ConfigRouter.prototype._onUrlChanged = function(parameters) {
+		var path = parameters.path,
+			routeName,
+			route,
+			matchParameters;
+
+		for (routeName in routes) {
+			route = this._parseRoute(routes[routeName]);
+			route.name = routeName;
+
+			matchParameters = this._matchRoute(route, path);
+
+			if (matchParameters === null) {
+				continue;
+			}
+
+			this._currentRouteName = routeName;
+
+			navi._open(
+				route.module,
+				route.action,
+				matchParameters
+			);
+
+			return;
+		}
+
+		this._currentRouteName = null;
+
+		var tokens = path.split('/'),
+			module = config.index.module,
+			action = config.index.action,
+			actionParameters = config.index.parameters,
+			isDefault = true,
+			i,
+			paramParts,
+			paramName,
+			paramValue;
+
+		if (tokens.length >= 2 && tokens[1].length > 0) {
+			module = tokens[1];
+			actionParameters = {};
+			isDefault = false;
+		}
+
+		if (tokens.length >= 3 && tokens[2].length > 0) {
+			action = tokens[2];
+			isDefault = false;
+		}
+
+		if (tokens.length >= 4) {
+			for (i = 3; i < tokens.length; i++) {
+				if (tokens[i].indexOf('=') !== -1) {
+					paramParts = tokens[i].split('=');
+					paramName = paramParts[0];
+					paramValue = util.normalizeType(paramParts[1]);
+				} else {
+					paramName = tokens[i];
+					paramValue = true;
+				}
+
+				actionParameters[paramName] = paramValue;
+			}
+
+			isDefault = false;
+		}
+
+		if (isDefault && util.isString(config.index.route)) {
+			this._currentRouteName = config.index.route;
+		}
+
+		util.normalizeType(actionParameters);
+
+		navi._open(
+			module,
+			action,
+			actionParameters
+		);
+	};
+
+	/**
+	 * Parses a route definition into a more detailed state including:
+	 * - module
+	 * - action
+	 * - parameters
+	 * - tokens
+	 *
+	 * @method _parseRoute
+	 * @param {Object} route Route to parse
+	 * @return {Object} Parsed route
+	 * @private
+	 */
+	ConfigRouter.prototype._parseRoute = function(route) {
+		var pathParameters = [];
+
+		if (route.path.length > 0) {
+			var pathTokens = route.path.split('/'),
+				i;
+
+			for (i = 0; i < pathTokens.length; i++) {
+				if (pathTokens[i].substr(0, 1) === ':') {
+					pathParameters.push(this._parseRouteParameter(pathTokens[i]));
+				} else {
+					pathParameters.push({
+						original: pathTokens[i],
+						type: 'static',
+						name: pathTokens[i]
+					});
+				}
+			}
+		}
+
+		return {
+			path: route.path,
+			module: route.module,
+			action: route.action,
+			parameters: route.parameters || {},
+			tokens: pathParameters
+		};
+	};
+
+	/**
+	 * Parses a route parameter to name and type.
+	 *
+	 * @method _parseRouteParameter
+	 * @param {String} original Parameter to parse int :param[type] format
+	 * @return {Object} Parsed parameter
+	 * @private
+	 */
+	ConfigRouter.prototype._parseRouteParameter = function(original) {
+		var parameter = original.substr(1);
+
+		if (parameter.indexOf('[') === -1) {
+			return {
+				original: original,
+				type: this.Param.STRING,
+				name: parameter
+			};
+		}
+
+		var regex = /(\w+)\[([+\w]+)\]/,
+			matches = regex.exec(parameter);
+
+		return {
+			original: original,
+			type: matches[2],
+			name: matches[1]
+		};
+	};
+
+	ConfigRouter.prototype._matchRoute = function(route, path) {
+		if (path.substr(0, 1) === '/') {
+			path = path.substr(1);
+		}
+
+		var pathTokens = path.split('/'),
+			match = true,
+			parameters = {},
+			pathToken,
+			routeToken,
+			i;
+
+		for (i = 0; i < pathTokens.length; i++) {
+			if (util.isUndefined(route.tokens[i])) {
+				match = false;
+
+				break;
+			}
+
+			pathToken = pathTokens[i];
+			routeToken = route.tokens[i]; // check if exists
+
+			if (!this._matchTokens(pathToken, routeToken)) {
+				match = false;
+
+				break;
+			}
+
+			if (routeToken.type !== 'static') {
+				parameters[routeToken.name] = pathToken;
+			}
+		}
+
+		util.normalizeType(parameters);
+
+		if (match) {
+			return parameters;
+		} else {
+			return null;
+		}
+	};
+
+	ConfigRouter.prototype._matchTokens = function(pathToken, routeToken) {
+		if (routeToken.type === 'static') {
+			if (pathToken !== routeToken.name) {
+				return false;
+			}
+		} else if (routeToken.type === this.Param.STRING) {
+			if (!util.isString(pathToken) && !util.isNumber(pathToken)) {
+				return false;
+			}
+		} else if (routeToken.type === this.Param.INT) {
+			if (parseInt(pathToken, 10) + '' !== pathToken) {
+				return false;
+			}
+		} else if (routeToken.type === this.Param.POS_INT) {
+			if (parseInt(pathToken, 10) + '' !== pathToken || parseInt(pathToken, 10) < 1) {
+				return false;
+			}
+		}
+
+		return true;
+	};
+
+	return new ConfigRouter();
+});

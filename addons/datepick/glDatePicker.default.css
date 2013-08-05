@@ -2,6 +2,8 @@
 	position: absolute;
 	font-family: 'helvetica';
 }
+
+/* Core style for every cell */
 .gldp-default .core {
 	box-sizing: border-box;
 	-webkit-box-sizing: border-box;
@@ -23,34 +25,46 @@
 	background: linear-gradient(to bottom,  #ffffff 0%,#dadada 98%,#ffffff 99%,#dadada 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dadada',GradientType=0 );
 }
+
+/* Cell border */
 .gldp-default .border {
 	border-style: solid;
 	border-width: 0;
 	border-color: #888;
 }
+
+/* Month/Year text and select */
 .gldp-default .monyear,
 .gldp-default .monyear select {
 	font-size: 16px !important;
 	font-weight: bold;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
 }
+
+/* Month/Year text */
 .gldp-default .monyear span {
 	margin: 0 5px 0 5px;
 }
+
+/* Prev/Next arrows */
 .gldp-default .prev-arrow,
 .gldp-default .next-arrow {
 	color: #222;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
 }
+
 .gldp-default .prev-arrow:active,
 .gldp-default .next-arrow:active {
 	color: #f00;
 }
+
 .gldp-default .prev-arrow-off,
 .gldp-default .next-arrow-off {
 	color: #222;
 	opacity: 0.15;
 }
+
+/* Days of the week */
 .gldp-default .dow {
 	color: #fff;
 	font-weight: bold;
@@ -64,6 +78,8 @@
 	background: linear-gradient(to bottom,  #ff0000 0%,#ffcccc 1%,#ff0000 2%,#aa0000 98%,#dd4444 99%,#880000 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0000', endColorstr='#880000',GradientType=0 );
 }
+
+/* Weekdays */
 .gldp-default .mon,
 .gldp-default .tue,
 .gldp-default .wed,
@@ -72,15 +88,21 @@
 	font-weight: bold;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
 }
+
+/* Weekend days */
 .gldp-default .sat,
 .gldp-default .sun {
 	color: #3858a8;
 	font-weight: bold;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.75);
 }
+
+/* Selectable days that are outside of current month being shown */
 .gldp-default .outday {
 	color: #666 !important;
 }
+
+/* Hover */
 .gldp-default .mon:hover,
 .gldp-default .tue:hover,
 .gldp-default .wed:hover,
@@ -97,19 +119,23 @@
 	background: linear-gradient(to bottom,  #fcfff4 0%,#e9e9ce 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfff4', endColorstr='#e9e9ce',GradientType=0 );
 }
+
+/* Non-Selectable days */
 .gldp-default .noday {
 	color: #444;
 	font-weight: normal;
 	cursor: wait !important;
 	background: #aaaaaa;
 	background: -moz-linear-gradient(top,  #aaaaaa 0%, #8a8a8a 98%, #aaaaaa 99%, #8a8a8a 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#aaaaaa), color-stop(98%,#8a8a8a), color-stop(99%,#aaaaaa), color-stop(100%,#8a8a8a)); 
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#aaaaaa), color-stop(98%,#8a8a8a), color-stop(99%,#aaaaaa), color-stop(100%,#8a8a8a)); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top,  #aaaaaa 0%,#8a8a8a 98%,#aaaaaa 99%,#8a8a8a 100%);
 	background: -o-linear-gradient(top,  #aaaaaa 0%,#8a8a8a 98%,#aaaaaa 99%,#8a8a8a 100%);
 	background: -ms-linear-gradient(top,  #aaaaaa 0%,#8a8a8a 98%,#aaaaaa 99%,#8a8a8a 100%);
 	background: linear-gradient(to bottom,  #aaaaaa 0%,#8a8a8a 98%,#aaaaaa 99%,#8a8a8a 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#aaaaaa', endColorstr='#8a8a8a',GradientType=0 );
 }
+
+/* Currently selected day */
 .gldp-default .selected {
 	color: #fff;
 	font-weight: bold;
@@ -123,6 +149,8 @@
 	background: linear-gradient(to bottom,  #e8bf88 0%,#ffc19d 1%,#fd8642 2%,#ab2412 98%,#ef753f 99%,#ef753f 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e8bf88', endColorstr='#ef753f',GradientType=0 );
 }
+
+/* Today */
 .gldp-default .today {
 	color: #fff;
 	font-weight: bold;
@@ -136,6 +164,8 @@
 	background: linear-gradient(to bottom,  #88bfe8 0%,#9dc1ff 1%,#4286fd 2%,#0124ab 98%,#3775ef 99%,#3775ef 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88bfe8', endColorstr='#3775ef',GradientType=0 );
 }
+
+/* Special */
 .gldp-default .special {
 	color: #fff;
 	font-weight: bold;

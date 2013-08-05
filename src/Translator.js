@@ -1,1 +1,216 @@
-define(["EventEmitter","Util","underscore"],function(e,t,n){var r=function(){e.call(this),this._language=null,this._translations={}};return r.prototype=Object.create(e.prototype),r.prototype.Event={LANGUAGE_CHANGED:"language-changed"},r.prototype.init=function(e,n){return t.isObject(e)&&this.setTranslations(e),t.isString(n)&&this.setLanguage(n),this},r.prototype.setTranslations=function(e){return this._translations=e,this},r.prototype.appendTranslations=function(e){return t.extend(this._translations,e),this},r.prototype.addTranslation=function(e,n,r){return t.isObject(this._translations[e])||(this._translations[e]={}),this._translations[e][n]=r,this},r.prototype.setLanguage=function(e){var t=this._language;return this._language=e,this.emit({type:this.Event.LANGUAGE_CHANGED,newLanguage:e,previousLanguage:t}),this},r.prototype.getLanguage=function(){return this._language},r.prototype.getLanguages=function(e){e=t.isBoolean(e)?e:!1;var n,r,i=[];for(n in this._translations){for(r in this._translations[n])e?i.push({id:r,name:this.has("lang."+r)?this.translate("lang."+r):r}):i.push(r);break}return i},r.prototype.has=function(e){return t.isString(e)&&t.isObject(this._translations[e])&&t.isString(this._translations[e][this._language])?!0:!1},r.prototype.translate=function(e){if(!t.isString(e)||!t.isObject(this._translations[e])||!t.isString(this._translations[e][this._language]))return e;var r=n.toArray(arguments);return r[0]=this._translations[e][this._language],t.sprintf.apply(t,r)},new r});
+define(
+['EventEmitter', 'Util', 'underscore'],
+function(EventEmitter, util, _) {
+	'use strict';
+
+	/**
+	 * Provides i18n functionality.
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> LANGUAGE_CHANGED - fired when language is changed
+	 *		newLanguage - new language name
+	 *		previousLanguage - last language name
+	 *
+	 * @class Translator
+	 * @extends EventEmitter
+	 * @constructor
+	 * @module Core
+	 */
+	var Translator = function() {
+		EventEmitter.call(this);
+
+		this._language = null;
+		this._translations = {};
+	};
+
+	Translator.prototype = Object.create(EventEmitter.prototype);
+
+	/**
+	 * Event types.
+	 *
+	 * @event Event
+	 * @param {Object} Event
+	 * @param {String} Event.LANGUAGE_CHANGED Triggered when language changes
+	 */
+	Translator.prototype.Event = {
+		LANGUAGE_CHANGED: 'language-changed'
+	};
+
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @param {Object} [translations] Translations to use
+	 * @param {String} [language] Active language
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.init = function(translations, language) {
+		if (util.isObject(translations)) {
+			this.setTranslations(translations);
+		}
+
+		if (util.isString(language)) {
+			this.setLanguage(language);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Sets translations to use.
+	 *
+	 * @method setTranslations
+	 * @param {Object} translations Translations to use
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.setTranslations = function(translations) {
+		this._translations = translations;
+
+		return this;
+	};
+
+	/**
+	 * Appends given translations to current.
+	 *
+	 * @method appendTranslations
+	 * @param {Object} translations Translations to append
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.appendTranslations = function(translations) {
+		util.extend(this._translations, translations);
+
+		return this;
+	};
+
+	/**
+	 * Adds a single translation.
+	 *
+	 * @method addTranslation
+	 * @param {String} key Translation key to add
+	 * @param {String} language Translation language code
+	 * @param {String} translation The actual translation in given language
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.addTranslation = function(key, language, translation) {
+		if (!util.isObject(this._translations[key])) {
+			this._translations[key] = {};
+		}
+
+		this._translations[key][language] = translation;
+
+		return this;
+	};
+
+	/**
+	 * Sets active language.
+	 *
+	 * @method setLanguage
+	 * @param {String} language Language to use
+	 * @return {Translator} Self
+	 */
+	Translator.prototype.setLanguage = function(language) {
+		var previousLanguage = this._language;
+
+		this._language = language;
+
+		this.emit({
+			type: this.Event.LANGUAGE_CHANGED,
+			newLanguage: language,
+			previousLanguage: previousLanguage
+		});
+
+		return this;
+	};
+
+	/**
+	 * Returns active language.
+	 *
+	 * @method getLanguage
+	 * @return {String}
+	 */
+	Translator.prototype.getLanguage = function() {
+		return this._language;
+	};
+
+	/**
+	 * Returns available languages.
+	 *
+	 * If translated is set to true, creates an object and attempts to translate using language.KEY and resulting keys
+	 * id, name.
+	 *
+	 * @method getLanguages
+	 * @param {Boolean} [translated=false] Should the keys be translated
+	 * @return {Array}
+	 */
+	Translator.prototype.getLanguages = function(translated) {
+		translated = util.isBoolean(translated) ? translated : false;
+
+		var languages = [],
+			key,
+			language;
+
+		for (key in this._translations) {
+			for (language in this._translations[key]) {
+				if (translated) {
+					languages.push({
+						id: language,
+						name: this.has('lang.' + language) ? this.translate('lang.' + language) : language
+					});
+				} else {
+					languages.push(language);
+				}
+			}
+
+			break;
+		}
+
+		return languages;
+	};
+
+	/**
+	 * Returns whether the translator has given translation.
+	 *
+	 * @method has
+	 * @param {String} key Translation key to check
+	 * @return {Boolean}
+	 */
+	Translator.prototype.has = function(key) {
+		if (
+			!util.isString(key)
+			|| !util.isObject(this._translations[key])
+			|| !util.isString(this._translations[key][this._language])
+		) {
+			return false;
+		}
+
+		return true;
+	};
+
+	/**
+	 * Translates given key.
+	 *
+	 * This method accepts any number of arguments that are replaced into the translation string using printf format.
+	 *
+	 * @method translate
+	 * @param {String} key Key to translate
+	 * @return {String}
+	 */
+	Translator.prototype.translate = function(key) {
+		if (
+			!util.isString(key)
+			|| !util.isObject(this._translations[key])
+			|| !util.isString(this._translations[key][this._language])
+		) {
+			return key;
+		}
+
+		var parameters = _.toArray(arguments);
+
+		parameters[0] = this._translations[key][this._language];
+
+		return util.sprintf.apply(util, parameters);
+	};
+
+	return new Translator();
+});

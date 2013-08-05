@@ -1,1 +1,58 @@
-define(["models/MainMenu"],function(e){return{mainMenuAction:["$scope","$location","dbg","navi",function(t,n,r,i){t.menus=e,t.backPossible=!1,t.open=function(t){i.open(e[t].route,e[t].parameters||{})},t.updateActive=function(){var n=i.getCurrent();null!==n&&(e.markActive(n.module,n.action),t.backPossible=i.isBackPossible())},i.on(i.Event.STACK_CHANGED,function(){t.updateActive()}),t.updateActive()}]}});
+define(
+['models/MainMenu'],
+function(menus) {
+	'use strict';
+
+	/**
+	 * Site module.
+	 *
+	 * @class SiteModule
+	 * @constructor
+	 * @module Modules
+	 */
+	return {
+
+		/**
+		 * Displays main menu.
+		 *
+		 * @method mainMenuAction
+		 * @param {Scope} $scope Angular scope
+		 * @param {Location} $location Angular location service
+		 * @param {Debug} dbg Debugger
+		 * @param {Navi} navi Navigation
+		 */
+		mainMenuAction: function($scope, $location, dbg, navi) {
+			$scope.menus = menus;
+			$scope.backPossible = false;
+
+			$scope.open = function(index) {
+				/*navi.open(
+					menus[index].module,
+					menus[index].action || 'index',
+					menus[index].parameters || []
+				);*/
+
+				// for config router
+				navi.open(menus[index].route, menus[index].parameters || {});
+			};
+
+			$scope.updateActive = function() {
+				var page = navi.getCurrent();
+
+				if (page === null) {
+					return;
+				}
+
+				menus.markActive(page.module, page.action);
+
+				$scope.backPossible = navi.isBackPossible();
+			};
+
+			navi.on(navi.Event.STACK_CHANGED, function() {
+				$scope.updateActive();
+			});
+
+			$scope.updateActive();
+		}
+	};
+});

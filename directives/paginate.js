@@ -1,1 +1,112 @@
-define(["Util","Navi","Keyboard"],function(e,t,n){var r=function(r,i,o){var a=t.getCurrent(),s=1;if(e.isObject(a)&&e.isObject(a.parameters)&&!e.isUndefined(a.parameters.page)&&(s=parseInt(a.parameters.page,10),(isNaN(s)||1>s)&&(s=1)),r.currentPage=s,r.itemsPerPage=10,r.pageCount=0,r.pageNumbers=[],r.data=null,r.$parent.pagination=[],!e.isUndefined(o.itemsPerPage)){var l=parseInt(o.itemsPerPage,10);l>=1&&(r.itemsPerPage=l)}var u=r.$watch(o.data,function(t){e.isObject(t)||e.isArray(t)||(t=[]),r.data=t,r.pageCount=Math.ceil(e.sizeOf(t)/r.itemsPerPage),r.currentPage>r.pageCount&&(r.currentPage=1),r.$parent.pagination=r.data.slice((r.currentPage-1)*r.itemsPerPage,r.currentPage*r.itemsPerPage),r.pageNumbers=[];for(var n=1;r.pageCount>=n;n++)r.pageNumbers.push(n)},!0);r.showNextPage=function(){var e=Math.min(r.currentPage+1,r.pageCount);t.setUrlParameter("page",e,!0)},r.showPreviousPage=function(){var e=Math.max(r.currentPage-1,1);t.setUrlParameter("page",e,!0)};var c=t.on(t.Event.PARAMETERS_CHANGED,function(e){r.currentPage=e.parameters.page,r.$parent.pagination=r.data.slice((r.currentPage-1)*r.itemsPerPage,r.currentPage*r.itemsPerPage)}),p=n.on(n.Event.KEYDOWN,function(e){"RIGHT"===e.info.name?r.showNextPage():"LEFT"===e.info.name&&r.showPreviousPage()});i.bind("$destroy",function(){u(),c.unbind(),p.unbind()})};return[function(){return{scope:!0,restrict:"E",transclude:!0,replace:!0,link:r,templateUrl:"partials/paginate.html"}}]});
+define(
+['Util', 'Navi', 'Keyboard'],
+function(util, navi, keyboard) {
+	'use strict';
+
+	var link = function($scope, $element, $attrs/*, $controller*/) {
+		var currentAction = navi.getCurrent(),
+			page = 1;
+
+		if (
+			util.isObject(currentAction)
+			&& util.isObject(currentAction.parameters)
+			&& !util.isUndefined(currentAction.parameters.page)
+		) {
+			page = parseInt(currentAction.parameters.page, 10);
+
+			if (isNaN(page) || page < 1) {
+				page = 1;
+			}
+		}
+
+		$scope.currentPage = page;
+		$scope.itemsPerPage = 10;
+		$scope.pageCount = 0;
+		$scope.pageNumbers = [];
+		$scope.data = null;
+		$scope.$parent.pagination = [];
+
+		if (!util.isUndefined($attrs.itemsPerPage)) {
+			var itemsPerPage = parseInt($attrs.itemsPerPage, 10);
+
+			if (itemsPerPage >= 1) {
+				$scope.itemsPerPage = itemsPerPage;
+			}
+		}
+
+		var unwatchData = $scope.$watch($attrs.data, function(data) {
+			if (!util.isObject(data) && !util.isArray(data)) {
+				data = [];
+			}
+
+			$scope.data = data;
+			$scope.pageCount = Math.ceil(util.sizeOf(data) / $scope.itemsPerPage);
+
+			if ($scope.currentPage > $scope.pageCount) {
+				$scope.currentPage = 1;
+			}
+
+			$scope.$parent.pagination = $scope.data.slice(
+				($scope.currentPage - 1) * $scope.itemsPerPage,
+				$scope.currentPage * $scope.itemsPerPage
+			);
+
+			$scope.pageNumbers = [];
+
+			for (var i = 1; i <= $scope.pageCount; i++) {
+				$scope.pageNumbers.push(i);
+			}
+		}, true);
+
+		$scope.showNextPage = function() {
+			var nextPage = Math.min($scope.currentPage + 1, $scope.pageCount);
+
+			navi.setUrlParameter('page', nextPage, true);
+		};
+
+		$scope.showPreviousPage = function() {
+			var previousPage = Math.max($scope.currentPage - 1, 1);
+
+			navi.setUrlParameter('page', previousPage, true);
+		};
+
+		var naviBind = navi.on(navi.Event.PARAMETERS_CHANGED, function(e) {
+				$scope.currentPage = e.parameters.page;
+				$scope.$parent.pagination = $scope.data.slice(
+					($scope.currentPage - 1) * $scope.itemsPerPage,
+					$scope.currentPage * $scope.itemsPerPage
+				);
+			}),
+			keyboardBind = keyboard.on(keyboard.Event.KEYDOWN, function(e) {
+				if (e.info.name === 'RIGHT') {
+					$scope.showNextPage();
+				} else if (e.info.name === 'LEFT') {
+					$scope.showPreviousPage();
+				}
+			});
+
+		$element.bind('$destroy', function() {
+			unwatchData();
+			naviBind.unbind();
+			keyboardBind.unbind();
+		});
+	};
+
+	/**
+	 * Pagination directive.
+	 *
+	 * @class pagination
+	 * @module Directives
+	 * @static
+	 */
+	return [function() {
+		return {
+			scope: true,        // use data from parent scope
+			restrict: 'E',      // restrict to elements
+			transclude: true,   // we need the contents of the tag
+			replace: true,      // replace the <pagination> tag
+			link: link,
+			templateUrl: 'partials/paginate.html'
+		};
+	}];
+});

@@ -1,1 +1,214 @@
-define(["EventEmitter","Util"],function(e,t){var n=function(){e.call(this),this._buttonDown=[]};return n.prototype=Object.create(e.prototype),n.prototype.Event={MOUSEDOWN:"mousedown",MOUSEUP:"mouseup",MOUSEMOVE:"mousemove"},n.prototype.Button={LEFT:0,MIDDLE:1,RIGHT:2},n.MouseEvent=function(e,t,n,r,i,o,a,s,l,u,c,p){this.type=e,this.button=t,this.offsetX=n,this.offsetY=r,this.clientX=i,this.clientY=o,this.screenX=a,this.screenY=s,this.pageX=l,this.pageY=u,this.target=c,this.original=p},n.prototype.init=function(){var e=this;return $(document.body).bind("mousedown mouseup mousemove",function(t){e.consume(e.generate(t.type,t.button,t.offsetX,t.offsetY,t.clientX,t.clientY,t.screenX,t.screenY,t.pageX,t.pageY,t.target,t.originalEvent))}),this},n.prototype.generate=function(e,r,i,o,a,s,l,u,c,p,f,d){return r=t.isNumber(r)?r:0,a=t.isNumber(a)?a:i,s=t.isNumber(s)?s:o,l=t.isNumber(l)?l:i,u=t.isNumber(u)?u:o,c=t.isNumber(c)?c:i,p=t.isNumber(p)?p:o,d=t.isUndefined(d)?null:d,f=t.isUndefined(f)?null:f,new n.MouseEvent(e,r,i,o,a,s,l,u,c,p,f,d)},n.prototype.consume=function(e){if(e.type===this.Event.MOUSEDOWN)t.contains(this._buttonDown,e.button)||this._buttonDown.push(e.button);else if(e.type===this.Event.MOUSEUP)t.contains(this._buttonDown,e.button)&&t.remove(e.button,this._buttonDown);else if(e.type!==this.Event.MOUSEMOVE)throw Error('Unexpected mouse event type "'+e.type+'"');this.emit({type:e.type,info:e})},n.prototype.isButtonDown=function(e){return t.contains(this._buttonDown,e)},new n});
+define(
+['EventEmitter', 'Util'],
+function(EventEmitter, util) {
+	'use strict';
+
+	/**
+	 * Provides mouse events.
+	 *
+	 * Can fire the following events:
+	 *
+	 *	> MOUSEDOWN - fired on mouse down
+	 *		info - Mouse.MouseEvent info
+	 *	> MOUSEUP - fired on mouse up
+	 *		info - Mouse.MouseEvent info
+	 *	> MOUSEMOVE - fired on mouse move
+	 *		info - Mouse.MouseEvent info
+	 *
+	 * @class Mouse
+	 * @extends EventEmitter
+	 * @constructor
+	 * @module Core
+	 */
+	var Mouse = function() {
+		EventEmitter.call(this);
+
+		this._buttonDown = [];
+	};
+
+	Mouse.prototype = Object.create(EventEmitter.prototype);
+
+	/**
+	 * Event types.
+	 *
+	 * @event Event
+	 * @param {Object} Event
+	 * @param {String} Event.MOUSEDOWN Triggered on mouse down
+	 * @param {String} Event.MOUSEUP Triggered on mouse up
+	 * @param {String} Event.MOUSEMOVE Triggered on mouse move
+	 */
+	Mouse.prototype.Event = {
+		MOUSEDOWN: 'mousedown',
+		MOUSEUP: 'mouseup',
+		MOUSEMOVE: 'mousemove'
+	};
+
+	/**
+	 * Represents mouse buttons.
+	 *
+	 * @property Button
+	 * @type {Object}
+	 */
+	Mouse.prototype.Button = {
+		LEFT: 0,
+		MIDDLE: 1,
+		RIGHT: 2
+	};
+
+	/**
+	 * Represent a mouse event.
+	 *
+	 * @class Mouse.MouseEvent
+	 * @param {Mouse.Event} type Either mousedown/mouseup/mousemove
+	 * @param {Number} button Button id
+	 * @param {Number} offsetX Relative to target element
+	 * @param {Number} offsetY Relative to target element
+	 * @param {Number} clientX Relative to the upper left edge of the browser window
+	 * @param {Number} clientY Relative to the upper left edge of the browser window
+	 * @param {Number} screenX Relative to the top left of the physical screen/monitor
+	 * @param {Number} screenY Relative to the top left of the physical screen/monitor
+	 * @param {Number} pageX Relative the to the top left of the fully rendered content area in the browser
+	 * @param {Number} pageY Relative the to the top left of the fully rendered content area in the browser
+	 * @param {Object} target Target element
+	 * @param {Object} original Original event if available
+	 * @constructor
+	 * @module Core
+	 */
+	Mouse.MouseEvent = function(
+		type,
+		button,
+		offsetX, offsetY,
+		clientX, clientY,
+		screenX, screenY,
+		pageX, pageY,
+		target,
+		original
+	) {
+		this.type = type;
+		this.button = button;
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
+		this.clientX = clientX;
+		this.clientY = clientY;
+		this.screenX = screenX;
+		this.screenY = screenY;
+		this.pageX = pageX;
+		this.pageY = pageY;
+		this.target = target;
+		this.original = original;
+	};
+
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {Mouse} Self
+	 */
+	Mouse.prototype.init = function() {
+		var self = this;
+
+		$(document.body).bind('mousedown mouseup mousemove', function(e) {
+			self.consume(self.generate(
+				e.type,
+				e.button,
+				e.offsetX, e.offsetY,
+				e.clientX, e.clientY,
+				e.screenX, e.screenY,
+				e.pageX, e.pageY,
+				e.target,
+				e.originalEvent
+			));
+		});
+
+		return this;
+	};
+
+	/**
+	 * Represent a mouse event.
+	 *
+	 * @method generate
+	 * @param {String} type Either mousedown/mouseup/mousemove
+	 * @param {Number} button Button id
+	 * @param {Number} offsetX Relative to target element
+	 * @param {Number} offsetY Relative to target element
+	 * @param {Number} clientX Relative to the upper left edge of the browser window
+	 * @param {Number} clientY Relative to the upper left edge of the browser window
+	 * @param {Number} screenX Relative to the top left of the physical screen/monitor
+	 * @param {Number} screenY Relative to the top left of the physical screen/monitor
+	 * @param {Number} pageX Relative the to the top left of the fully rendered content area in the browser
+	 * @param {Number} pageY Relative the to the top left of the fully rendered content area in the browser
+	 * @param {Object} [target] Target element
+	 * @param {Object} [original] Original event if available
+	 * @constructor
+	 * @module Core
+	 */
+	Mouse.prototype.generate = function(
+		type,
+		button,
+		offsetX, offsetY,
+		clientX, clientY,
+		screenX, screenY,
+		pageX, pageY,
+		target,
+		original
+	) {
+		button = util.isNumber(button) ? button : 0;
+		clientX = util.isNumber(clientX) ? clientX : offsetX;
+		clientY = util.isNumber(clientY) ? clientY : offsetY;
+		screenX = util.isNumber(screenX) ? screenX : offsetX;
+		screenY = util.isNumber(screenY) ? screenY : offsetY;
+		pageX = util.isNumber(pageX) ? pageX : offsetX;
+		pageY = util.isNumber(pageY) ? pageY : offsetY;
+		original = !util.isUndefined(original) ? original : null;
+		target = !util.isUndefined(target) ? target : null;
+
+		return new Mouse.MouseEvent(
+			type,
+			button,
+			offsetX, offsetY,
+			clientX, clientY,
+			screenX, screenY,
+			pageX, pageY,
+			target,
+			original
+		);
+	};
+
+	/**
+	 * Consumes mouse event, passing it on to all listeners.
+	 *
+	 * @method consume
+	 * @param {Mouse.MouseEvent} event Event to consume
+	 */
+	Mouse.prototype.consume = function(event) {
+		if (event.type === this.Event.MOUSEDOWN) {
+			if (!util.contains(this._buttonDown, event.button)) {
+				this._buttonDown.push(event.button);
+			}
+		} else if (event.type === this.Event.MOUSEUP) {
+			if (util.contains(this._buttonDown, event.button)) {
+				util.remove(event.button, this._buttonDown);
+			}
+		} else if (event.type !== this.Event.MOUSEMOVE) {
+			throw new Error('Unexpected mouse event type "' + event.type + '"');
+		}
+
+		this.emit({
+			type: event.type,
+			info: event
+		});
+	};
+
+	/**
+	 * Returns whether given button is currently down.
+	 *
+	 * @method isButtonDown
+	 * @param {Number} button Button id
+	 * @return {Boolean}
+	 */
+	Mouse.prototype.isButtonDown = function(button) {
+		return util.contains(this._buttonDown, button);
+	};
+
+	return new Mouse();
+});

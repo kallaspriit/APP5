@@ -1,4 +1,4 @@
-
+/* Base tags */
 HTML, BODY {
 	padding: 0;
 	margin: 0;
@@ -6,9 +6,13 @@ HTML, BODY {
 	height: 100%;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
+
+/* Pages */
 #header {
+
 }
 #pages {
+
 }
 .app5-page {
 	box-sizing: border-box;
@@ -29,11 +33,15 @@ HTML, BODY {
 	display: block;
 	overflow: visible;
 }
+
 @media (max-width: 979px) {
 	.navbar-fixed-top, .navbar-fixed-bottom {
 		position: relative;
 	}
 }
+
+
+/* Bootstrap customizations */
 .sidebar-nav {
 	padding: 9px 0;
 }
@@ -62,6 +70,7 @@ HTML, BODY {
 .navbar .lang-nav > li > a:hover {
 	opacity: 1;
 }
+
 .navbar .nav-collapse .lang-nav {
 	overflow: hidden;
 	text-align: right;
@@ -69,6 +78,8 @@ HTML, BODY {
 .navbar .nav-collapse .lang-nav > li {
 	display: inline-block;
 }
+
+/* Brand back button */
 .brand {
 	padding-left: 42px !important;
 }

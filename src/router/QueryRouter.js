@@ -1,1 +1,102 @@
-define(["router/RouterBase","config/main","Navi","App","Util"],function(e,t,n,r,i){var o=function(){e.call(this)};return o.prototype=Object.create(e.prototype),o.prototype.init=function(){var e=this;return n.on(n.Event.URL_CHANGED,function(t){e._onUrlChanged(t.parameters)}),this},o.prototype.navigate=function(e,t,n){var o={module:e,action:t};i.isObject(n)&&!i.isEmpty(n)&&(o.parameters=n),r.location.search(o),r.validate()},o.prototype._onUrlChanged=function(e){var r=n.getCurrent();i.isString(e.args.module)&&i.isString(e.args.action)&&(null===r||e.args.module!==r.module||e.args.action!==r.action)?n._open(e.args.module,e.args.action,i.isObject(e.args.parameters)?e.args.parameters:{}):n._open(t.index.module,t.index.action,t.index.parameters)},new o});
+define(
+['router/RouterBase', 'config/main', 'Navi', 'App', 'Util'],
+function(RouterBase, config, navi, app, util) {
+	'use strict';
+
+	/**
+	 * Query-string based router strategy.
+	 *
+	 * @class QueryRouter
+	 * @extends RouterBase
+	 * @constructor
+	 * @module Core
+	 */
+	var QueryRouter = function() {
+		RouterBase.call(this);
+	};
+
+	QueryRouter.prototype = Object.create(RouterBase.prototype);
+
+	/**
+	 * Initiates the component.
+	 *
+	 * @method init
+	 * @return {Router} Self
+	 */
+	QueryRouter.prototype.init = function() {
+		var self = this;
+
+		navi.on(navi.Event.URL_CHANGED, function(e) {
+			self._onUrlChanged(e.parameters);
+		});
+
+		return this;
+	};
+
+	/**
+	 * Composes a URL that matches given module action.
+	 *
+	 * @method navigate
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
+	 * @param {Object} [parameters] Action parameters
+	 */
+	QueryRouter.prototype.navigate = function(module, action, parameters) {
+		var urlArguments = {
+			module: module,
+			action: action
+		};
+
+		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
+			urlArguments.parameters = parameters;
+		}
+
+		app.location.search(urlArguments);
+		app.validate();
+	};
+
+	/**
+	 * Called when application URL changes.
+	 *
+	 * The parameters include:
+	 * - url
+	 * - hash
+	 * - path
+	 * - query
+	 * - args
+	 * - host
+	 * - port
+	 * - protocol
+	 *
+	 * @method _onUrlChanged
+	 * @param {Object} parameters URL parameters
+	 * @private
+	 */
+	QueryRouter.prototype._onUrlChanged = function(parameters) {
+		var current = navi.getCurrent();
+
+		if (
+			util.isString(parameters.args.module)
+			&& util.isString(parameters.args.action)
+			&& (
+				current === null
+				|| parameters.args.module !== current.module
+				|| parameters.args.action !== current.action
+			)
+		) {
+			navi._open(
+				parameters.args.module,
+				parameters.args.action,
+				util.isObject(parameters.args.parameters) ? parameters.args.parameters : {}
+			);
+		} else {
+			navi._open(
+				config.index.module,
+				config.index.action,
+				config.index.parameters
+			);
+		}
+	};
+
+	return new QueryRouter();
+});

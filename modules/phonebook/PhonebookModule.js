@@ -1,1 +1,102 @@
-define(["models/Phonebook"],function(e){return{contactsAction:["$scope","$parameters","ui",function(t,n,r){t.phonebook=e,t.filter="",t.order="name",t.orderOptions=["name","number"],t.orderBy=function(e){t.order=e},t.edit=function(e){r.openModal("phonebook","edit-contact",{id:e,callback:function(){r.hideModal()}})},t.remove=function(t){var n=e.get(t);r.confirm(function(){e.remove(t)},"phonebook.confirm-delete","phonebook.confirm-delete-text(name)",n.name)}}],addContactAction:["$scope","navi",function(t,n){t.setTitle("Add Contact"),t.addContact=function(t,r,i){e.add(t,r,i),n.open("contacts")}}],editContactAction:["$scope","$parameters","navi","util",function(t,n,r,i){var o=n();t.contact=i.clone(e.get(o.id)),t.update=function(t){e.update(t.id,t),i.isFunction(o.callback)&&o.callback()}}]}});
+define(
+['models/Phonebook'],
+function(phonebook) {
+	'use strict';
+
+	/**
+	 * Phonebook module.
+	 *
+	 * @class PhonebookModule
+	 * @constructor
+	 * @module Modules
+	 */
+	return {
+
+		/**
+		 * Contact list action.
+		 *
+		 * @method contactsAction
+		 * @param {Scope} $scope Angular scope
+		 * @param {Function} $parameters Action parameters
+		 * @param {UI} ui User interface
+		 */
+		contactsAction: function($scope, $parameters, ui) {
+			$scope.phonebook = phonebook;
+			$scope.filter = '';
+			$scope.order = 'name';
+			$scope.orderOptions = ['name', 'number'];
+
+			$scope.orderBy = function(property) {
+				$scope.order = property;
+			};
+			$scope.edit = function(id) {
+				ui.openModal(
+					'phonebook',
+					'edit-contact',
+					{
+						id : id,
+						callback: function() {
+							ui.hideModal();
+						}
+					}
+				);
+			};
+			$scope.remove = function(id) {
+				var contact = phonebook.get(id);
+
+				ui.confirm(
+					function() {
+						phonebook.remove(id);
+					},
+					'phonebook.confirm-delete',
+					'phonebook.confirm-delete-text(name)',
+					contact.name
+				);
+			};
+		},
+
+		/**
+		 * Add new contact action.
+		 *
+		 * @method addContactAction
+		 * @param {Scope} $scope Angular scope
+		 * @param {Navi} navi Navigation
+		 */
+		addContactAction: function($scope, navi) {
+			$scope.setTitle('Add Contact');
+
+			//$scope.birthdate = '01.01.1990';
+
+			$scope.addContact = function(name, number, birthdate) {
+				phonebook.add(name, number, birthdate);
+
+				//navi.open('phonebook', 'contacts');
+				navi.open('contacts'); // ConfigRouter
+			};
+		},
+
+		/**
+		 * Enables editing contact information.
+		 *
+		 * @method addContactAction
+		 * @param {Scope} $scope Angular scope
+		 * @param {Object} $parameters Action parameters
+		 * @param {Navi} navi Navigation
+		 * @param {Util} util Utilities
+		 */
+		editContactAction: function($scope, $parameters, navi, util) {
+			// TODO Find a better way
+			var params = $parameters();
+
+			$scope.contact = util.clone(phonebook.get(params.id));
+
+			$scope.update = function(contact) {
+				phonebook.update(contact.id, contact);
+
+				if (util.isFunction(params.callback)) {
+					params.callback();
+				}
+			};
+		}
+	};
+});

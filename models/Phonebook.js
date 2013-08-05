@@ -1,1 +1,69 @@
-define(["jquery","underscore","Util","App"],function(e,t,n,r){var i=[];return i.get=function(e){return t.find(this,function(t){return t.id===e})},i.add=function(e,t,n){this.push({id:this.length+1,name:e,number:t,birthdate:n,image:this.length%6+1+".png"})},i.update=function(e,t){var r=this.get(e);n.extend(r,t)},i.remove=function(e){var t=this.get(e);n.remove(t,this)},e.ajax({url:"data/contacts.json",type:"GET",dataType:"JSON"}).success(function(e){n.extend(i,e),r.validate()}).fail(function(){}),i});
+define(
+['jquery', 'underscore', 'Util', 'App'],
+function($, _, util, app) {
+	'use strict';
+
+	/**
+	 * Phonebook model
+	 *
+	 * @class Phonebook
+	 * @constructor
+	 * @module Models
+	 */
+	var Phonebook = [];
+
+	Phonebook.get = function(id) {
+		return _.find(this, function(contact) { return contact.id === id; });
+	};
+
+	Phonebook.add = function(name, number, birthdate) {
+		this.push({
+			id: this.length + 1,
+			name: name,
+			number: number,
+			birthdate: birthdate,
+			image: ((this.length % 6) + 1) + '.png'
+		});
+	};
+
+	Phonebook.update = function(id, properties) {
+		var contact = this.get(id);
+
+		util.extend(contact, properties);
+	};
+
+	Phonebook.remove = function(id) {
+		var contact = this.get(id);
+
+		util.remove(contact, this);
+	};
+
+	/*app.injector.invoke(['$http', function($http) {
+		$http
+			.get('data/contacts.json')
+			.success(function(data) {
+				console.log('phonebook data', data);
+				util.extend(Phonebook, data);
+			});
+	}]);*/
+
+	$.ajax({
+		url: 'data/contacts.json',
+		type: 'GET',
+		dataType: 'JSON'
+	}).success(function(data) {
+		util.extend(Phonebook, data);
+
+		app.validate();
+
+		/*window.setTimeout(function() {
+			Phonebook = [1, 2, 3];
+
+			app.validate();
+		}, 1000);*/
+	}).fail(function() {
+
+	});
+
+	return Phonebook;
+});

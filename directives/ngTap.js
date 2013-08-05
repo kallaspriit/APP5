@@ -1,1 +1,26 @@
-define([],function(){return[function(){return function(e,t,n){"ontouchstart"in document?t.bind("touchstart",function(){e.$apply(n.ngTap)}):t.bind("click",function(){e.$apply(n.ngTap)})}}]});
+define(function() {
+	'use strict';
+
+	/**
+	 * Tag directive.
+	 *
+	 * Provides instant-click functionality in place of ng-click.
+	 *
+	 * @class ngTap
+	 * @module Directives
+	 * @static
+	 */
+	return [function() {
+		return function($scope, $element, $attrs) {
+			if ('ontouchstart' in document) {
+				$element.bind('touchstart', function() {
+					$scope.$apply($attrs.ngTap);
+				});
+			} else {
+				$element.bind('click', function() {
+					$scope.$apply($attrs.ngTap);
+				});
+			}
+		};
+	}];
+});
