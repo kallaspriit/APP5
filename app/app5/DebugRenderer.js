@@ -1,6 +1,6 @@
 define(
-['jquery', 'Debug', 'ResourceManager', 'Util', 'underscore'],
-function($, dbg, resourceManager, util, _) {
+['jquery', 'underscore', 'core/Debug', 'core/ResourceManager', 'core/BaseUtil'],
+function($, _, dbg, resourceManager, util) {
 	'use strict';
 
 	/**
@@ -168,7 +168,7 @@ function($, dbg, resourceManager, util, _) {
 		var self = this;
 
 		// not required at the top as this would create a dependency loop
-		require(['Navi'], function(navi) {
+		require(['core/Navi'], function(navi) {
 			navi.on(navi.Event.PRE_NAVIGATE, function(e) {
 				dbg.log('! Navigating to ' + e.module + '::' + e.action, e.parameters);
 			});

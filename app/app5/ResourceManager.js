@@ -1,6 +1,6 @@
 define(
-['jquery', 'EventEmitter', 'Deferred', 'Util', 'Translator', 'config/main'],
-function($, EventEmitter, Deferred, util, translator, config) {
+['jquery', 'config/main', 'core/EventEmitter', 'core/Deferred', 'core/BaseUtil', 'core/Translator'],
+function($, config, EventEmitter, Deferred, util, translator) {
 	'use strict';
 
 	/**

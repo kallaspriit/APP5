@@ -1,16 +1,20 @@
-define(function() {
+define(
+[
+	'underscore',
+	'core/Translator',
+	'Util'
+],
+function(_, translator, util) {
 	'use strict';
 
 	/**
-	 * Tag directive.
+	 * Provides translation.
 	 *
-	 * Provides instant-click functionality in place of ng-click.
-	 *
-	 * @class ngTap
+	 * @class translate
 	 * @module Directives
 	 * @static
 	 */
-	return ['translator', 'util', '_', function(translator, util, _) {
+	return function() {
 		return function($scope, $element, $attrs) {
 			var key = $element.html(),
 				params = [],
@@ -59,5 +63,5 @@ define(function() {
 				}
 			}
 		};
-	}];
+	};
 });

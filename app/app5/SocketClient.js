@@ -1,5 +1,5 @@
 define(
-['EventEmitter'],
+['core/EventEmitter'],
 function(EventEmitter) {
 	'use strict';
 

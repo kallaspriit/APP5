@@ -1,6 +1,6 @@
 define(
-['EventEmitter', 'Util', 'jquery'],
-function(EventEmitter, util, $) {
+['jquery', 'core/EventEmitter', 'core/BaseUtil'],
+function($, EventEmitter, util) {
 	'use strict';
 
 	/**

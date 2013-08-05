@@ -1,6 +1,6 @@
 define(
-['EventEmitter', 'Util', 'underscore'],
-function(EventEmitter, util, _) {
+['underscore', 'core/EventEmitter', 'core/BaseUtil'],
+function(_, EventEmitter, util) {
 	'use strict';
 
 	/**

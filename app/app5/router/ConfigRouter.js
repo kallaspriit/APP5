@@ -1,6 +1,13 @@
 define(
-['router/RouterBase', 'config/main', 'config/routes', 'Navi', 'App', 'Util'],
-function(RouterBase, config, routes, navi, app, util) {
+[
+	'config/main',
+	'config/routes',
+	'core/router/RouterBase',
+	'core/Navi',
+	'core/App',
+	'core/BaseUtil'
+],
+function(config, routes, RouterBase, navi, app, util) {
 	'use strict';
 
 	/**

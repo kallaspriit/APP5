@@ -1,5 +1,5 @@
 define(
-['App'],
+['core/App'],
 function(app) {
 	'use strict';
 
@@ -10,7 +10,7 @@ function(app) {
 	 *
 	 * @class RootController
 	 * @constructor
-	 * @module Core
+	 * @module App
 	 */
 	return ['$scope', 'translator', 'navi',
 		function($scope, translator, navi) {

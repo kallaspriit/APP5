@@ -1,17 +1,17 @@
 define(
 [
 	'underscore',
-	'EventEmitter',
-	'Deferred',
-	'App',
-	'Debug',
-	'Util',
-	'UI',
-	'ResourceManager',
-	'Keyboard',
-	'Mouse'
+	'core/EventEmitter',
+	'core/Deferred',
+	'core/App',
+	'core/Debug',
+	'core/BaseUtil',
+	'core/ResourceManager',
+	'core/Keyboard',
+	'core/Mouse',
+	'UI'
 ],
-function(_, EventEmitter, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse) {
+function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, mouse, ui) {
 	'use strict';
 
 	/**

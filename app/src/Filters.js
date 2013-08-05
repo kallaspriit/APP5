@@ -1,15 +1,20 @@
 define(
-function() {
+[
+	'Util',
+	'core/BaseFilters'
+],
+function(util, baseFilters) {
 	'use strict';
 
 	/**
-	 * Custom angularjs directives.
+	 * Additional app-specific filters.
 	 *
 	 * @class Filters
-	 * @module Core
+	 * @extends BaseFilters
+	 * @module App
 	 * @static
 	 */
-	return {
+	return util.extend({}, baseFilters, {
 
 		/**
 		 * Formats unit to millions/thousands.
@@ -18,10 +23,10 @@ function() {
 		 * @param {Number} input Input number
 		 * @return {String}
 		 */
-		formatBytes: ['util', function(util) {
+		formatBytes: function() {
 			return function(input) {
 				return util.formatBytes(input);
 			};
-		}]
-	};
+		}
+	});
 });

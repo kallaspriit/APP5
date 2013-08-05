@@ -1,6 +1,6 @@
 define(
-['jquery', 'underscore', 'Util', 'App'],
-function($, _, util, app) {
+['jquery', 'underscore', 'core/App', 'Util'],
+function($, _, app, util) {
 	'use strict';
 
 	/**

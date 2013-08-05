@@ -1,5 +1,5 @@
 define(
-['Deferred', 'Util', 'Navi'],
+['core/Deferred', 'core/BaseUtil', 'core/Navi'],
 function(Deferred, util, navi) {
 	'use strict';
 

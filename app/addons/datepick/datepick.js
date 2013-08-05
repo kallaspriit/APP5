@@ -1,5 +1,10 @@
 define(
-['ResourceManager', 'App', 'Util', 'addons/datepick/glDatePicker'],
+[
+	'core/ResourceManager',
+	'core/App',
+	'Util',
+	'addons/datepick/glDatePicker'
+],
 function(resourceManager, app, util) {
 	'use strict';
 

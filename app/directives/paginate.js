@@ -1,6 +1,6 @@
 define(
-['Util', 'Navi', 'Keyboard'],
-function(util, navi, keyboard) {
+['core/Navi', 'core/Keyboard', 'Util'],
+function(navi, keyboard, util) {
 	'use strict';
 
 	var link = function($scope, $element, $attrs/*, $controller*/) {

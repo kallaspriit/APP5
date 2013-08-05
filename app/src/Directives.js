@@ -1,12 +1,14 @@
 define(
 [
-	'directives/translate',
+	'core/BaseDirectives',
+	'Util',
 	'directives/ngTap',
 	'directives/paginate',
 	'addons/datepick/datepick'
 ],
 function(
-	translate,
+	baseDirectives,
+	util,
 	ngTap,
 	paginate,
     datepick
@@ -14,12 +16,11 @@ function(
 	'use strict';
 
 	/*
-	 * This file includes the directives required and maps them to some name.
+	 * This file includes additional app-specific directives and addons.
 	 */
-	return {
-		translate: translate,
+	return util.extend({}, baseDirectives, {
 		ngTap: ngTap,
 		paginate: paginate,
 		datepick: datepick
-	};
+	});
 });
