@@ -1,7 +1,7 @@
 APP5
 ====
 
-**HTML5 Application Framework.**
+**Modular HTML5 Application Framework based on AngularJS.**
 
 ![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/media/logo-doc.png "APP5")
 
