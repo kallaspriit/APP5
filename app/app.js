@@ -43,6 +43,9 @@ require.config({
         },
 		twitterBootstrap: {
 			deps: ['jquery']
+		},
+		twitterBootstrapUI: {
+			deps: ['twitterBootstrap', 'angular']
 		}
 	}
 });
@@ -51,7 +54,8 @@ require.config({
 require(
 	[
 		'Bootstrapper',
-		'twitterBootstrap'
+		'twitterBootstrap',
+		'twitterBootstrapUI'
 	],
 	function(bootstrapper) {
 		'use strict';

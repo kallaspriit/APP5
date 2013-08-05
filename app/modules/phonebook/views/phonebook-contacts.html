@@ -15,6 +15,7 @@
 			</form>
 		</div>
 	</div>
+
 	<!--<ul class="media-list">
 		<li class="media contacts" ng-repeat="contact in phonebook | filter: filter | orderBy: order">
 			<a class="pull-left" href="#">
@@ -30,7 +31,7 @@
 			</div>
 		</li>
 	</ul>-->
-	<pagination data="phonebook | filter: filter | orderBy: order" items-per-page="4">
+	<paginate data="phonebook | filter: filter | orderBy: order" items-per-page="4">
 		<ul class="media-list">
 			<li class="media contacts" ng-repeat="contact in pagination">
 				<a class="pull-left" href="#">
@@ -48,5 +49,5 @@
 			</li>
 		</ul>
 		<p><em>Tip: Use left/right arrows to change page.</em></p>
-	</pagination>
+	</paginate>
 </div>

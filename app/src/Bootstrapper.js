@@ -78,7 +78,7 @@ function(
 			filterName;
 
 		navi.router = components.router;
-		app.module = angular.module('app', []);
+		app.module = angular.module('app', ['ui.bootstrap']);
 
 		app.module.config([
 			'$provide', '$locationProvider', '$controllerProvider',

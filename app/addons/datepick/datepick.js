@@ -1,5 +1,5 @@
 define(
-['ResourceManager', 'App', 'Util', 'addons/datepicker/glDatePicker'],
+['ResourceManager', 'App', 'Util', 'addons/datepick/glDatePicker'],
 function(resourceManager, app, util) {
 	'use strict';
 
@@ -26,7 +26,7 @@ function(resourceManager, app, util) {
 		},
 
 		link = function($scope, $element, $attrs) {
-			resourceManager.loadCss('addons/datepicker/glDatePicker.default.css');
+			resourceManager.loadCss('addons/datepick/glDatePicker.default.css');
 
 			var unwatchData = null,
 				datePicker = null,
@@ -96,7 +96,7 @@ function(resourceManager, app, util) {
 			transclude: true,
 			replace: true,
 			link: link,
-			templateUrl: 'addons/datepicker/datepicker.html'
+			templateUrl: 'addons/datepick/datepick.html'
 		};
 	}];
 });
