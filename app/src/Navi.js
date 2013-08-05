@@ -1,7 +1,7 @@
 define(
 [
 	'underscore',
-	'Bindable',
+	'EventEmitter',
 	'Deferred',
 	'App',
 	'Debug',
@@ -11,7 +11,7 @@ define(
 	'Keyboard',
 	'Mouse'
 ],
-function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse) {
+function(_, EventEmitter, Deferred, app, dbg, util, ui, resourceManager, keyboard, mouse) {
 	'use strict';
 
 	/**
@@ -47,11 +47,13 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 *		parameters - new parameters values
 	 *
 	 * @class Navi
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var Navi = function() {
+		EventEmitter.call(this);
+
 		this.router = null;
 		this.backPossible = false;
 		this._stack = [];
@@ -59,12 +61,12 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 		this._partialRendering = false;
 	};
 
-	Navi.prototype = new Bindable();
+	Navi.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.PRE_NAVIGATE Triggered just before navigation
 	 * @param {String} Event.POST_NAVIGATE Triggered just after navigation
@@ -99,15 +101,15 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	Navi.prototype.init = function() {
 		var self = this;
 
-		keyboard.bind([keyboard.Event.KEYDOWN, keyboard.Event.KEYUP], function(e) {
+		keyboard.on([keyboard.Event.KEYDOWN, keyboard.Event.KEYUP], function(e) {
 			self._onKeyEvent(e.info);
 		});
 
-		mouse.bind([mouse.Event.MOUSEDOWN, mouse.Event.MOUSEUP, mouse.Event.MOUSEMOVE], function(e) {
+		mouse.on([mouse.Event.MOUSEDOWN, mouse.Event.MOUSEUP, mouse.Event.MOUSEMOVE], function(e) {
 			self._onMouseEvent(e.info);
 		});
 
-		this.bind(this.Event.STACK_CHANGED, function() {
+		this.on(this.Event.STACK_CHANGED, function() {
 			self.backPossible = self.isBackPossible();
 		});
 
@@ -159,7 +161,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
 
-		this.fire({
+		this.emit({
 			type: this.Event.PRE_NAVIGATE,
 			module: module,
 			action: action,
@@ -216,9 +218,9 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			newItemContainer = null;
 
 		if (currentItem !== null && currentItem === existingItem) {
-			currentItem.fire(this.Event.URL_CHANGED);
+			currentItem.emit(this.Event.URL_CHANGED);
 
-			this.fire({
+			this.emit({
 				type: this.Event.PARAMETERS_CHANGED,
 				module: module,
 				action: action,
@@ -244,33 +246,44 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 
 				this.popLast();
 
-				stackItem.fire(this.Event.EXIT);
-				stackItem.container.remove();
+				stackItem.emit(this.Event.EXIT);
+
+				if (stackItem.container !== null) {
+					stackItem.container.remove();
+				}
 			}
 
 			isBack = true;
 
-			existingItem.fire(this.Event.WAKEUP);
+			existingItem.emit(this.Event.WAKEUP);
+		}
+
+		if (existingItem !== null && existingItem.container === null) {
+			isBack = false;
 		}
 
 		if (isBack) {
-			currentItem.fire(this.Event.EXIT);
+			currentItem.emit(this.Event.EXIT);
 		} else {
 			app.parameters = parameters;
 			app.registerController(className + '.' + actionName, moduleObj[actionName]);
 
-			newItem = this.appendNavigation(module, action, parameters, moduleObj);
+			if (existingItem !== null) {
+				newItem = existingItem;
+			} else {
+				newItem = this.appendNavigation(module, action, parameters);
 
-			newItem.fire = function(type, parameters) {
-				var scope = this.container.data('$scope');
+				newItem.emit = function(type, parameters) {
+					var scope = this.container.data('$scope');
 
-				if (util.isObject(scope) && util.isFunction(scope.$broadcast)) {
-					scope.$broadcast(type, parameters);
-				}
-			};
+					if (util.isObject(scope) && util.isFunction(scope.$broadcast)) {
+						scope.$broadcast(type, parameters);
+					}
+				};
+			}
 
 			if (currentItem !== null) {
-				currentItem.fire(this.Event.SLEEP);
+				currentItem.emit(this.Event.SLEEP);
 			}
 		}
 
@@ -288,11 +301,11 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			isBack,
 			function() {
 				if (isBack) {
-					currentItem.fire(self.Event.EXIT);
+					currentItem.emit(self.Event.EXIT);
 					currentItem.container.remove();
 				}
 
-				self.fire({
+				self.emit({
 					type: self.Event.POST_NAVIGATE,
 					module: module,
 					action: action,
@@ -338,7 +351,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
 			item = null;
 
-		this.fire({
+		this.emit({
 			type: this.Event.PRE_PARTIAL,
 			containerSelector: containerSelector,
 			module: module,
@@ -363,7 +376,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 				append
 			);
 
-			self.fire({
+			self.emit({
 				type: self.Event.POST_PARTIAL,
 				containerSelector: containerSelector,
 				module: module,
@@ -476,7 +489,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	Navi.prototype.clearHistory = function() {
 		this._stack = [];
 
-		this.fire({
+		this.emit({
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
@@ -533,7 +546,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @private
 	 */
 	Navi.prototype._onUrlChanged = function(parameters) {
-		this.fire({
+		this.emit({
 			type: this.Event.URL_CHANGED,
 			parameters: parameters
 		});
@@ -557,7 +570,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 
 			var last = this._stack.pop();
 
-			this.fire({
+			this.emit({
 				type: this.Event.STACK_CHANGED,
 				stack: this._stack
 			});
@@ -595,7 +608,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 
 		var item = this._stack.pop();
 
-		this.fire({
+		this.emit({
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
@@ -614,7 +627,7 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 			this._stack.pop();
 		}
 
-		this.fire({
+		this.emit({
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
@@ -627,27 +640,57 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	 * @param {String} module Name of the module to use
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
-	 * @param {Object} instance Instance of the module
 	 * @return {Object} New stack item
 	 */
-	Navi.prototype.appendNavigation = function(module, action, parameters, instance) {
+	Navi.prototype.appendNavigation = function(module, action, parameters) {
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
 			action: action,
-			parameters: parameters,
-			instance: instance,
+			parameters: util.isObject(parameters) ? parameters : {},
 			level: this._stack.length,
 			container: null,
-			fire: function() {}
+			emit: function() {}
 		});
 
-		this.fire({
+		this.emit({
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
 
 		return this._stack[this._stack.length - 1];
+	};
+
+	/**
+	 * Prepends an item to the navigation stack.
+	 *
+	 * @method prependNavigation
+	 * @param {String} module Name of the module to use
+	 * @param {String} action Module action to call, defaults to index
+	 * @param {Object} parameters Map of parameters to pass to action
+	 * @return {Object} New stack item
+	 */
+	Navi.prototype.prependNavigation = function(module, action, parameters) {
+		this._stack.unshift({
+			id: this._naviCounter++,
+			module: module,
+			action: action,
+			parameters: util.isObject(parameters) ? parameters : {},
+			level: 0,
+			container: null,
+			emit: function() {}
+		});
+
+		for (var i = 1; i < this._stack.length; i++) {
+			this._stack[i].level++;
+		}
+
+		this.emit({
+			type: this.Event.STACK_CHANGED,
+			stack: this._stack
+		});
+
+		return this._stack[0];
 	};
 
 	/**
@@ -662,11 +705,11 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	Navi.prototype._onKeyEvent = function(event) {
 		var currentItem = this.getCurrent();
 
-		if (currentItem === null || !util.isFunction(currentItem.fire)) {
+		if (currentItem === null || !util.isFunction(currentItem.emit)) {
 			return;
 		}
 
-		currentItem.fire(event.type, event);
+		currentItem.emit(event.type, event);
 	};
 
 	/**
@@ -681,11 +724,11 @@ function(_, Bindable, Deferred, app, dbg, util, ui, resourceManager, keyboard, m
 	Navi.prototype._onMouseEvent = function(event) {
 		var currentItem = this.getCurrent();
 
-		if (currentItem === null || !util.isFunction(currentItem.fire)) {
+		if (currentItem === null || !util.isFunction(currentItem.emit)) {
 			return;
 		}
 
-		currentItem.fire(event.type, event);
+		currentItem.emit(event.type, event);
 	};
 
 	return new Navi();

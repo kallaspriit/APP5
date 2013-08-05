@@ -66,14 +66,14 @@ function(util, navi, keyboard) {
 				navi.setUrlParameter('page', previousPage, true);
 			};
 
-			var naviBind = navi.bind(navi.Event.PARAMETERS_CHANGED, function(e) {
+			var naviBind = navi.on(navi.Event.PARAMETERS_CHANGED, function(e) {
 					$scope.currentPage = e.parameters.page;
 					$scope.$parent.pagination = $scope.data.slice(
 						($scope.currentPage - 1) * $scope.itemsPerPage,
 						$scope.currentPage * $scope.itemsPerPage
 					);
 				}),
-				keyboardBind = keyboard.bind(keyboard.Event.KEYDOWN, function(e) {
+				keyboardBind = keyboard.on(keyboard.Event.KEYDOWN, function(e) {
 					if (e.info.name === 'RIGHT') {
 						$scope.showNextPage();
 					} else if (e.info.name === 'LEFT') {

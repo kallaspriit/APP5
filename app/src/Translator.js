@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util', 'underscore'],
-function(Bindable, util, _) {
+['EventEmitter', 'Util', 'underscore'],
+function(EventEmitter, util, _) {
 	'use strict';
 
 	/**
@@ -13,21 +13,23 @@ function(Bindable, util, _) {
 	 *		previousLanguage - last language name
 	 *
 	 * @class Translator
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var Translator = function() {
+		EventEmitter.call(this);
+
 		this._language = null;
 		this._translations = {};
 	};
 
-	Translator.prototype = new Bindable();
+	Translator.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.LANGUAGE_CHANGED Triggered when language changes
 	 */
@@ -112,7 +114,7 @@ function(Bindable, util, _) {
 
 		this._language = language;
 
-		this.fire({
+		this.emit({
 			type: this.Event.LANGUAGE_CHANGED,
 			newLanguage: language,
 			previousLanguage: previousLanguage

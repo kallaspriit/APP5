@@ -71,6 +71,12 @@
 #debug-renderer .success {
 	background-image: url(../images/debug-renderer/success-bg.png);
 }
+#debug-renderer .rx {
+	background-image: url(../images/debug-renderer/rx-bg.png);
+}
+#debug-renderer .tx {
+	background-image: url(../images/debug-renderer/tx-bg.png);
+}
 
 /* Error modal */
 #debug-renderer-error {

@@ -139,7 +139,7 @@ function(
 		]);
 
 		// redraw the application when language changes
-		components.translator.bind(components.translator.Event.LANGUAGE_CHANGED, function() {
+		components.translator.on(components.translator.Event.LANGUAGE_CHANGED, function() {
 			app.validate();
 		});
 

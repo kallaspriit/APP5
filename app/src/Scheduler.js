@@ -24,7 +24,7 @@ function(Deferred, util, navi) {
 	Scheduler.prototype.init = function() {
 		var self = this;
 
-		navi.bind(navi.Event.PRE_NAVIGATE, function() {
+		navi.on(navi.Event.PRE_NAVIGATE, function() {
 			// does not clear persistent timeouts
 			self.clear(null, false);
 		});

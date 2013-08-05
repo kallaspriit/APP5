@@ -48,7 +48,7 @@ function(menus) {
 				$scope.backPossible = navi.isBackPossible();
 			};
 
-			navi.bind(navi.Event.STACK_CHANGED, function() {
+			navi.on(navi.Event.STACK_CHANGED, function() {
 				$scope.updateActive();
 			});
 

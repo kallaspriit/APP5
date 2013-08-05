@@ -5,23 +5,23 @@ function() {
 	/**
 	 * Event target base class used for custom events system.
 	 *
-	 * @class Bindable
+	 * @class EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
-	var Bindable = function() {
+	var EventEmitter = function() {
 		this._listeners = {};
 	};
 
 	/**
 	 * Adds a new listener of given type.
 	 *
-	 * @method bind
+	 * @method on
 	 * @param {String|Array} type Type of listener to add (or array of them)
 	 * @param {Function} listener The listener function to add
-	 * @return {Object} Containing the type, listener and unbind method
+	 * @return {Object} Containing the type, listener and removeListener method
 	 */
-	Bindable.prototype.bind = function(type, listener) {
+	EventEmitter.prototype.on = function(type, listener) {
 		if (typeof(type) === 'string') {
 			type = [type];
 		}
@@ -45,15 +45,27 @@ function() {
 			this._listeners[type[i]].push(listener);
 		}
 
-		this._onBind(type, listener);
+		this._onListenerAdded(type, listener);
 
 		return {
 			type: type,
 			listener: listener,
-			unbind: function() {
-				self.unbind(type, listener);
+			removeListener: function() {
+				self.removeListener(type, listener);
 			}
 		};
+	};
+
+	/**
+	 * Alias to on().
+	 *
+	 * @method addListener
+	 * @param {String|Array} type Type of listener to add (or array of them)
+	 * @param {Function} listener The listener function to add
+	 * @return {Object} Containing the type, listener and removeListener method
+	 */
+	EventEmitter.prototype.addListener = function(type, listener) {
+		return this.on(type, listener);
 	};
 
 	/**
@@ -61,24 +73,24 @@ function() {
 	 *
 	 * This does noting by default but can be overriden in child class to do something when a listener is added.
 	 *
-	 * @method _onBind
+	 * @method _onListenerAdded
 	 * @param {String} type Type of listener added
 	 * @param {Function} listener The added listener function
 	 * @protected
 	 */
-	Bindable.prototype._onBind = function(/*type, listener*/) {};
+	EventEmitter.prototype._onListenerAdded = function(/*type, listener*/) {};
 
 	/**
 	 * Removes listener of given type.
 	 *
 	 * If no type is given, all listeners are removed. If no listener is given, all listeners of given type are removed.
 	 *
-	 * @method unbind
+	 * @method removeListener
 	 * @param {String|Array} [type] Type of listener to remove (or array of them)
 	 * @param {Function} [listener] The listener function to remove
-	 * @return {Boolean} Was unbinding the event successful
+	 * @return {Boolean} Was removing the listener successful
 	 */
-	Bindable.prototype.unbind = function(type, listener) {
+	EventEmitter.prototype.removeListener = function(type, listener) {
 		var i;
 
 		if (typeof(type) === 'undefined') {
@@ -89,7 +101,7 @@ function() {
 			var result = true;
 
 			for (i = 0; i < type.length; i++) {
-				if (!this.unbind(type[i], listener)) {
+				if (!this.removeListener(type[i], listener)) {
 					result = false;
 				}
 			}
@@ -128,14 +140,34 @@ function() {
 	 * an object containing type as key and optionally a target. If no
 	 * target is given, the current context is used.
 	 *
-	 * @method fire
+	 * Supports two formats:
+	 * obj.emit('event-name', 'parameter 1', 'parameter 2..')
+	 *
+	 * And
+	 * obj.emit({ type: 'event-name', parameter: 'something', another: 1);
+	 *
+	 * @method emit
 	 * @param {Object} event Event to fire
 	 */
-	Bindable.prototype.fire = function(event) {
+	EventEmitter.prototype.emit = function(event) {
+		var propagate = true,
+			listType = false,
+			result,
+			i;
+
 		if (typeof(event) === 'string') {
 			event = {
-				type: event
+				type: event,
+				_arguments: []
 			};
+
+			if (arguments.length > 0) {
+				for (i = 1; i < arguments.length; i++) {
+					event._arguments.push(arguments[i]);
+				}
+			}
+
+			listType = true;
 		}
 
 		if (typeof(event.target) === 'undefined') {
@@ -146,11 +178,15 @@ function() {
 			throw 'Event "type" attribute is missing';
 		}
 
-		var propagate = true;
-
 		if (typeof(this._listeners[event.type]) === 'object') {
-			for (var i = 0; i < this._listeners[event.type].length; i++) {
-				if (this._listeners[event.type][i].call(this, event) === false) {
+			for (i = 0; i < this._listeners[event.type].length; i++) {
+				if (listType) {
+					result = this._listeners[event.type][i].apply(this, event._arguments);
+				} else {
+					result = this._listeners[event.type][i].call(this, event);
+				}
+
+				if (result === false) {
 					propagate = false;
 				}
 			}
@@ -162,11 +198,11 @@ function() {
 	/**
 	 * Returns the number of event listeners of given type.
 	 *
-	 * @method numListeners
-	 * @param {String} type Type of listener to add
+	 * @method listenerCount
+	 * @param {String} type Type of listener to get count of
 	 * @return {Number}
 	 */
-	Bindable.prototype.numListeners = function(type) {
+	EventEmitter.prototype.listenerCount = function(type) {
 		if (typeof(this._listeners[type]) === 'undefined') {
 			return 0;
 		}
@@ -177,10 +213,10 @@ function() {
 	/**
 	 * Clears all listeners of a type or all if no type is given
 	 *
-	 * @method clearListeners
+	 * @method removeAllListeners
 	 * @param {String} type Type to clear, leave empty for all
 	 */
-	Bindable.prototype.clearListeners = function(type) {
+	EventEmitter.prototype.removeAllListeners = function(type) {
 		if (typeof(type) === 'undefined') {
 			this._listeners = {};
 		} else {
@@ -194,21 +230,21 @@ function() {
 	 * If type is given, returns listeners for it, if not, returns all listeners
 	 * for all types.
 	 *
-	 * @method getListeners
+	 * @method listeners
 	 * @param {String} [type] Optional type
 	 * @return {object} Listeners
 	 */
-	Bindable.prototype.getListeners = function(type) {
+	EventEmitter.prototype.listeners = function(type) {
 		if (typeof(type) === 'string') {
 			if (typeof(this._listeners[type]) !== 'undefined') {
 				return this._listeners[type];
 			} else {
-				return null;
+				return [];
 			}
 		}
 
 		return this._listeners;
 	};
 
-	return Bindable;
+	return EventEmitter;
 });

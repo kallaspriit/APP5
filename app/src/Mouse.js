@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util'],
-function(Bindable, util) {
+['EventEmitter', 'Util'],
+function(EventEmitter, util) {
 	'use strict';
 
 	/**
@@ -16,20 +16,22 @@ function(Bindable, util) {
 	 *		info - Mouse.MouseEvent info
 	 *
 	 * @class Mouse
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var Mouse = function() {
+		EventEmitter.call(this);
+
 		this._buttonDown = [];
 	};
 
-	Mouse.prototype = new Bindable();
+	Mouse.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.MOUSEDOWN Triggered on mouse down
 	 * @param {String} Event.MOUSEUP Triggered on mouse up
@@ -191,7 +193,7 @@ function(Bindable, util) {
 			throw new Error('Unexpected mouse event type "' + event.type + '"');
 		}
 
-		this.fire({
+		this.emit({
 			type: event.type,
 			info: event
 		});

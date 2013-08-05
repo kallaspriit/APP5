@@ -1,6 +1,6 @@
 define(
-['Bindable', 'Util', 'underscore'],
-function(Bindable, util, _) {
+['EventEmitter', 'Util', 'underscore'],
+function(EventEmitter, util, _) {
 	'use strict';
 
 	/**
@@ -18,11 +18,13 @@ function(Bindable, util, _) {
 	 *		message - alert message
 	 *
 	 * @class Debug
-	 * @extends Bindable
+	 * @extends EventEmitter
 	 * @constructor
 	 * @module Core
 	 */
 	var Debug = function() {
+		EventEmitter.call(this);
+
 		this._queue = {
 			error: [],
 			log: [],
@@ -53,12 +55,12 @@ function(Bindable, util, _) {
 		};
 	};
 
-	Debug.prototype = new Bindable();
+	Debug.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.
 	 *
-	 * @event
+	 * @event Event
 	 * @param {Object} Event
 	 * @param {String} Event.ERROR Error event
 	 * @param {String} Event.CONSOLE Log to console
@@ -160,7 +162,7 @@ function(Bindable, util, _) {
 	 * @param {Function} listener The added listener function
 	 * @protected
 	 */
-	Debug.prototype._onBind = function(/*type, listener*/) {
+	Debug.prototype._onListenerAdded = function(/*type, listener*/) {
 		this._flush();
 	};
 
@@ -175,13 +177,13 @@ function(Bindable, util, _) {
 			args,
 			source;
 
-		if (this.numListeners(this.Event.ERROR) > 0) {
+		if (this.listenerCount(this.Event.ERROR) > 0) {
 			while (this._queue.error.length > 0) {
 				info = this._queue.error.shift();
 				args = info[0];
 				source = info[1];
 
-				this.fire({
+				this.emit({
 					type: this.Event.ERROR,
 					args: args,
 					source: source
@@ -191,13 +193,13 @@ function(Bindable, util, _) {
 			}
 		}
 
-		if (this.numListeners(this.Event.LOG) > 0) {
+		if (this.listenerCount(this.Event.LOG) > 0) {
 			while (this._queue.log.length > 0) {
 				info = this._queue.log.shift();
 				args = info[0];
 				source = info[1];
 
-				this.fire({
+				this.emit({
 					type: this.Event.LOG,
 					args: args,
 					source: source
@@ -207,13 +209,13 @@ function(Bindable, util, _) {
 			}
 		}
 
-		if (this.numListeners(this.Event.CONSOLE) > 0) {
+		if (this.listenerCount(this.Event.CONSOLE) > 0) {
 			while (this._queue.console.length > 0) {
 				info = this._queue.console.shift();
 				args = info[0];
 				source = info[1];
 
-				this.fire({
+				this.emit({
 					type: this.Event.CONSOLE,
 					args: args,
 					source: source
@@ -223,13 +225,13 @@ function(Bindable, util, _) {
 			}
 		}
 
-		if (this.numListeners(this.Event.ALERT) > 0) {
+		if (this.listenerCount(this.Event.ALERT) > 0) {
 			while (this._queue.alert.length > 0) {
 				info = this._queue.alert.shift();
 				args = info[0];
 				source = info[1];
 
-				this.fire({
+				this.emit({
 					type: this.Event.ALERT,
 					args: args,
 					source: source

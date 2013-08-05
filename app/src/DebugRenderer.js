@@ -1,6 +1,6 @@
 define(
-['jquery', 'Debug', 'ResourceManager', 'Util', 'moment', 'underscore'],
-function($, dbg, resourceManager, util, moment, _) {
+['jquery', 'Debug', 'ResourceManager', 'Util', 'underscore'],
+function($, dbg, resourceManager, util, _) {
 	'use strict';
 
 	/**
@@ -153,33 +153,9 @@ function($, dbg, resourceManager, util, moment, _) {
 			return;
 		}
 
-		$('#debug-renderer')
-			.hammer()
-			/*.bind('drag', function(e) {
-				if (e.direction !== 'left' && e.direction !== 'right') {
-					return;
-				}
-
-				var clientWidth = parseInt($(window).width());
-
-				$(this).removeClass('visible').width(clientWidth - e.touches[0].x);
-			})*/
-			.bind('swipe', function(e) {
-				switch (e.direction) {
-					case 'left':
-						$(this).addClass('visible');
-
-						return false;
-
-					case 'right':
-						$(this).removeClass('visible');
-
-						return false;
-				}
-			})
-			.bind('hold', function() {
-				$(this).empty();
-			});
+		$('#debug-renderer').click(function() {
+			$(this).toggleClass('visible');
+		});
 	};
 
 	/**
@@ -193,24 +169,24 @@ function($, dbg, resourceManager, util, moment, _) {
 
 		// not required at the top as this would create a dependency loop
 		require(['Navi'], function(navi) {
-			navi.bind(navi.Event.PRE_NAVIGATE, function(e) {
+			navi.on(navi.Event.PRE_NAVIGATE, function(e) {
 				dbg.log('! Navigating to ' + e.module + '::' + e.action, e.parameters);
 			});
 
-			/*navi.bind(navi.Event.POST_NAVIGATE, function(e) {
+			/*navi.on(navi.Event.POST_NAVIGATE, function(e) {
 				dbg.log('+ Navigated to ' + e.module + '::' + e.action);
 			});*/
 		});
 
-		resourceManager.bind(resourceManager.Event.MODULE_LOADED, function(e) {
+		resourceManager.on(resourceManager.Event.MODULE_LOADED, function(e) {
 			dbg.log('+ Loaded module ' + e.name);
 		});
 
-		resourceManager.bind(resourceManager.Event.VIEW_LOADED, function(e) {
+		resourceManager.on(resourceManager.Event.VIEW_LOADED, function(e) {
 			dbg.log('+ Loaded view ' + e.filename);
 		});
 
-		resourceManager.bind(resourceManager.Event.LOAD_ERROR, function(e) {
+		resourceManager.on(resourceManager.Event.LOAD_ERROR, function(e) {
 			switch (e.resource) {
 				case resourceManager.ResourceType.REQUEST:
 					dbg.error('Requesting "' + e.url + '" failed: ' + e.message);
@@ -244,9 +220,8 @@ function($, dbg, resourceManager, util, moment, _) {
 			}
 		});
 
-		dbg.bind(dbg.Event.CONSOLE, function(e) {
-			var time = util.date(),
-				args = [moment(time).format('hh:mm:ss')],
+		dbg.on(dbg.Event.CONSOLE, function(e) {
+			var args = [],
 				i;
 
 			if (util.isObject(e.source)) {
@@ -264,7 +239,7 @@ function($, dbg, resourceManager, util, moment, _) {
 			}
 		});
 
-		dbg.bind(dbg.Event.LOG, function(e) {
+		dbg.on(dbg.Event.LOG, function(e) {
 			var type = 'info',
 				message = e.args[0];
 
@@ -283,18 +258,22 @@ function($, dbg, resourceManager, util, moment, _) {
 				type = 'success';
 			} else if (id === '- ') {
 				type = 'error';
+			} else if (id === '> ') {
+				type = 'tx';
+			} else if (id === '< ') {
+				type = 'rx';
 			}
 
 			self._appendMessage(type, content, e.source);
 		});
 
-		dbg.bind(dbg.Event.ALERT, function(e) {
+		dbg.on(dbg.Event.ALERT, function(e) {
 			var content = self._formatContent(e.args);
 
 			self._appendMessage('alert', content, e.source);
 		});
 
-		dbg.bind(dbg.Event.ERROR, function(e) {
+		dbg.on(dbg.Event.ERROR, function(e) {
 			function formatError(arg) {
 				if (arg instanceof Error) {
 					if (arg.stack) {
@@ -432,7 +411,7 @@ function($, dbg, resourceManager, util, moment, _) {
 		for (var i = 0; i < properties.length; i++) {
 			token = properties[i];
 
-			if (i === 0 && util.isString(token) && /[\-+!] /.test(token)) {
+			if (i === 0 && util.isString(token) && /[\-+<>!] /.test(token)) {
 				token = token.substr(2);
 			}
 
