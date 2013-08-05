@@ -1,0 +1,1 @@
+define(["jquery"],function(e){var t=e.Deferred;return t.when=function(){return e.when.apply(window,arguments)},t});

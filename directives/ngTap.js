@@ -1,0 +1,1 @@
+define([],function(){return[function(){return function(e,t,n){"ontouchstart"in document?t.bind("touchstart",function(){e.$apply(n.ngTap)}):t.bind("click",function(){e.$apply(n.ngTap)})}}]});

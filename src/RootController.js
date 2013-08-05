@@ -1,0 +1,1 @@
+define(["App"],function(e){return["$scope","translator","navi",function(t,n,r){e.baseScope=t,t.title="APP5 Demo Application",t.setTitle=function(){},t.translator=n,t.navi=r,r.partial("#header","site","main-menu")}]});
