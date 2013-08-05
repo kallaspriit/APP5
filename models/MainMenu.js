@@ -1,1 +1,0 @@
-define([],function(){var e=[{name:"contacts",module:"phonebook",action:"contacts",route:"contacts"},{name:"add-contact",module:"phonebook",action:"add-contact",route:"add-contact"}];return e.markActive=function(e,t){for(var n=0;this.length>n;n++)this[n].active=!1,this[n].module===e&&this[n].action===t&&(this[n].active=!0)},e});

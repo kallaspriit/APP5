@@ -1,1 +1,0 @@
-define([],function(){return{formatBytes:["util",function(e){return function(t){return e.formatBytes(t)}}]}});

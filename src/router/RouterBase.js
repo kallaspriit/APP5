@@ -1,1 +1,0 @@
-define([],function(){var e=function(){};return e.prototype.init=function(){return this},e.prototype.navigate=function(){throw Error("RouterBase::navigate() should be implemented in child class")},e});

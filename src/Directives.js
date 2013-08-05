@@ -1,1 +1,0 @@
-define(["directives/translate","directives/ngTap","directives/pagination","addons/datepicker/datepicker"],function(e,t,n,r){return{translate:e,ngTap:t,pagination:n,datepicker:r}});

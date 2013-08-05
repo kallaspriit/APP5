@@ -1,1 +1,0 @@
-define(["config/main"],function(e){return{index:{path:"",module:e.index.module,action:e.index.action,parameters:e.index.parameters},"add-contact":{path:"add-contact",module:"phonebook",action:"add-contact"},contacts:{path:"contacts/:page[+int]",module:"phonebook",action:"contacts",parameters:{page:1}}}});
