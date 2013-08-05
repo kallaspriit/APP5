@@ -17,6 +17,11 @@
 	transition: width 300ms ease-in;
 	z-index: 100;
 }
+@media screen and (max-width: 480px) {
+	#debug-renderer {
+		display: none;
+	}
+}
 .no-touch #debug-renderer:hover,
 #debug-renderer.visible {
 	width: 600px;

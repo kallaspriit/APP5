@@ -2,9 +2,10 @@
  * TODO Rename resources based on class/instance e.g. Navi > navi
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
- * TODO Router, /some/page URLs
  * TODO Consider http://jsfiddle.net/gVEq5/ for model design
- * TODO Show multiple errors
+ * TODO Make back optional
+ * TODO Only use back when actually pressing back
+ * TODO New page cloaking
  */
 
 // Configuration for RequireJS.
