@@ -316,6 +316,7 @@ function(RouterBase, config, routes, navi, app, util) {
 	/**
 	 * Parses a route parameter to name and type.
 	 *
+	 * @method _parseRouteParameter
 	 * @param {String} original Parameter to parse int :param[type] format
 	 * @return {Object} Parsed parameter
 	 * @private

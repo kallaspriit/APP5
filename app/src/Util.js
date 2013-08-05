@@ -165,8 +165,9 @@ function(Deferred, _) {
 		/**
 		 * Returns the size of an array or object or string.
 		 *
+		 * @method sizeOf
 		 * @param {Array|Object|String} item Item to get size of
-		 * @returns {Number} Size/length of the item
+		 * @return {Number} Size/length of the item
 		 */
 		sizeOf: function(item) {
 			if (this.isArray(item) || this.isString(item)) {
@@ -840,6 +841,7 @@ function(Deferred, _) {
 		 * If the method is called several times with the same name, the action is executed only once after the time
 		 * has passed from the last call.
 		 *
+		 * @method performDelayed
 		 * @param {String} name Name of the action
 		 * @param {Function} callback Action function to call
 		 * @param {Number} [delay=1000] The delay, default to 1000 ms

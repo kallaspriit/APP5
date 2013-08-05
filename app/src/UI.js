@@ -452,8 +452,6 @@ function(
 	 * @private
 	 */
 	UI.prototype._onDocumentReady = function() {
-		var self = this;
-
 		if (config.debug) {
 			debugRenderer.init(this);
 

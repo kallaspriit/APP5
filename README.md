@@ -3,7 +3,7 @@ APP5
 
 **HTML5 Application Framework.**
 
-![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/assets/logo-doc.png "APP5")
+![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/media/logo-doc.png "APP5")
 
 Features
 --------
