@@ -220,7 +220,8 @@ function(config, routes, RouterBase, navi, app, util) {
 			navi._open(
 				route.module,
 				route.action,
-				matchParameters
+				matchParameters,
+				parameters.isBack
 			);
 
 			return;
@@ -275,7 +276,8 @@ function(config, routes, RouterBase, navi, app, util) {
 		navi._open(
 			module,
 			action,
-			actionParameters
+			actionParameters,
+			parameters.isBack
 		);
 	};
 

@@ -196,6 +196,10 @@ function(
 	 * @private
 	 */
 	BaseBootstrapper.prototype._setupRouter = function($scope, $location) {
+		$scope.$on('$locationChangeSuccess', function () {
+			$scope.actualLocation = $location.path();
+		});
+
 		$scope.$watch(function () {
 			return $location.absUrl();
 		}, function() {
@@ -207,7 +211,8 @@ function(
 				args:       $location.search(),
 				host:       $location.host(),
 				port:       $location.port(),
-				protocol:   $location.protocol()
+				protocol:   $location.protocol(),
+				isBack:     $scope.actualLocation === $location.path()
 			};
 
 			navi._onUrlChanged(parameters);

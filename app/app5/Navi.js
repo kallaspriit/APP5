@@ -143,12 +143,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} module Module to open
 	 * @param {String} [action=index] Action to navigate to
 	 * @param {Array} [parameters] Action parameters
+	 * @param {Boolean} [isBack=false] Is the opening triggered by a back button
 	 * @return {Deferred} Deferred promise
 	 * @private
 	 */
-	Navi.prototype._open = function(module, action, parameters) {
+	Navi.prototype._open = function(module, action, parameters, isBack) {
 		action = action || 'index';
 		parameters = parameters || [];
+
+		if (!util.isBoolean(isBack)) {
+			isBack = false;
+		}
 
 		if (ui.isTransitioning()) {
 			return;
@@ -173,7 +178,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
-			self._showAction(module, action, moduleObj, viewContent, className, actionName, deferred, parameters);
+			self._showAction(
+				module,
+				action,
+				moduleObj,
+				viewContent,
+				className,
+				actionName,
+				deferred,
+				parameters,
+				isBack
+			);
 		}).fail(function() {
 			throw new Error('Loading module "' + module + '" resources failed');
 		});
@@ -193,6 +208,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} actionName Name of the module action
 	 * @param {Deferred} deferred Progress deferred
 	 * @param {Array} parameters List of parameters
+	 * @param {Boolean} isBack Is the view change triggered by back-button
 	 * @private
 	 */
 	Navi.prototype._showAction = function(
@@ -203,7 +219,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		className,
 		actionName,
 		deferred,
-		parameters
+		parameters,
+		isBackBtn
 	) {
 		if (!util.isFunction(moduleObj[actionName]) && !util.isArray(moduleObj[actionName])) {
 			throw new Error('Invalid "' + module + '" module action "' + action + '" requested');
@@ -230,7 +247,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			return;
 		}
 
-		if (existingItem !== null) {
+		if (existingItem !== null && isBackBtn === true) {
 			while (this._stack.length > 0) {
 				stackItem = this.peekLast();
 
