@@ -57,6 +57,10 @@ function(
 	 * @method bootstrap
 	 */
 	BaseBootstrapper.prototype.bootstrap = function() {
+		if (util.isFunction(this.preBootstrap)) {
+			this.preBootstrap();
+		}
+
 		var self = this,
 			components = {
 				config:             config,
@@ -150,6 +154,10 @@ function(
 			util.extend(app, components);
 
 			window.app = app;
+		}
+
+		if (util.isFunction(this.postBootstrap)) {
+			this.postBootstrap();
 		}
 	};
 

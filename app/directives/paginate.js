@@ -87,8 +87,8 @@ function(navi, keyboard, util) {
 
 		$element.bind('$destroy', function() {
 			unwatchData();
-			naviBind.unbind();
-			keyboardBind.unbind();
+			naviBind.removeListener();
+			keyboardBind.removeListener();
 		});
 	};
 

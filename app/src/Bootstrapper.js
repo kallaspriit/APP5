@@ -26,18 +26,14 @@ function(
 	 *
 	 * @method preBootstrap
 	 */
-	Bootstrapper.prototype.preBootstrap = function() {
-		alert('preBootstrap'); // TODO Remove
-	};
+	Bootstrapper.prototype.preBootstrap = function() {};
 
 	/**
 	 * Called after the system bootstrapping routine.
 	 *
 	 * @method preBootstrap
 	 */
-	Bootstrapper.prototype.postBootstrap = function() {
-		alert('postBootstrap'); // TODO Remove
-	};
+	Bootstrapper.prototype.postBootstrap = function() {};
 
 	return new Bootstrapper();
 });
