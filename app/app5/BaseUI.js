@@ -82,17 +82,105 @@ function(
 	};
 
 	/**
+	 * Returns whether the view is already transitioning.
+	 *
+	 * @method isTransitioning
+	 * @return {Boolean}
+	 */
+	BaseUI.prototype.isTransitioning = function() {
+		return this._transitioning;
+	};
+
+	/**
+	 * Renders module action view.
+	 *
+	 * @method showView
+	 * @param {String} module Name of the module
+	 * @param {String} action Name of the action
+	 * @param {String} className Class name of the module
+	 * @param {String} actionName Method name of the action
+	 * @param {Array} parameters Action parameters
+	 * @param {Object} moduleObj Module object
+	 * @param {String} viewContent View content to render
+	 * @param {DOMElement} currentContainer Current view container to animate to
+	 * @param {DOMElement} existingContainer Previous view container to animate from
+	 * @param {String} newItemId Identifier of the new item if created
+	 * @param {Boolean} isBack Is the navigation happening to a previous view
+	 * @param {Function} doneCallback Callback to call when done
+	 * @return {DOMElement|null} New item container or null if navigating back
+	 * @private
+	 */
+	BaseUI.prototype.showView = function(
+		module,
+		action,
+		className,
+		actionName,
+		parameters,
+		moduleObj,
+		viewContent,
+		currentContainer,
+		existingContainer,
+		newItemId,
+		isBack,
+		doneCallback
+	) {
+		if (isBack) {
+			this.transitionView(currentContainer, existingContainer, isBack, doneCallback);
+
+			return null;
+		}
+
+		var self = this,
+			prefix = config.cssPrefix,
+			newWrapId = 'content-' + newItemId,
+			parentWrap = $(config.viewSelector),
+			currentWrap = parentWrap.find('.' + prefix + 'page-active'),
+			body = $(document.body),
+			newWrap;
+
+		parentWrap.append(
+			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
+		);
+
+		newWrap = $('#' + newWrapId)
+			.html(viewContent)
+			.attr('ng-controller', className + '.' + actionName);
+
+		//newWrap.addClass(prefix + 'page-loading');
+		body.addClass(prefix + 'loading-view');
+
+		try {
+			app.compile(newWrap)(app.baseScope);
+			app.validate();
+
+			var createdScope = $(newWrap).scope();
+
+			createdScope.$evalAsync(function() {
+				//newWrap.removeClass(prefix + 'page-loading');
+				body.removeClass(prefix + 'loading-view');
+				self.transitionView(currentWrap, newWrap, isBack, doneCallback);
+			});
+
+			//this.transitionView(currentWrap, newWrap, isBack, doneCallback);
+		} catch (e) {
+			dbg.error(e);
+		}
+
+		return newWrap;
+	};
+
+	/**
 	 * Transitions from one page to another.
 	 *
 	 * @method transitionView
-	 * @param {String} currentWrapSelector Current page wrap selector
-	 * @param {String} newWrapSelector New page wrap selector
+	 * @param {Array} currentWrap Current page wrap selector
+	 * @param {Array} newWrap New page wrap selector
 	 * @param {Boolean} [isReverse=false] Should reverse (back) animation be displayed
 	 * @param {Function} [doneCallback] Called when transition is complete
 	 */
 	BaseUI.prototype.transitionView = function(
-		currentWrapSelector,
-		newWrapSelector,
+		currentWrap,
+		newWrap,
 		isReverse,
 		doneCallback
 	) {
@@ -101,8 +189,6 @@ function(
 		this._transitioning = true;
 
 		var self = this,
-			currentWrap = $(currentWrapSelector),
-			newWrap = $(newWrapSelector),
 			prefix = config.cssPrefix,
 			body = $(document.body),
 			transitionType = config.pageTransition,
@@ -160,80 +246,6 @@ function(
 				doneCallback();
 			}
 		}
-	};
-
-	/**
-	 * Returns whether the view is already transitioning.
-	 *
-	 * @method isTransitioning
-	 * @return {Boolean}
-	 */
-	BaseUI.prototype.isTransitioning = function() {
-		return this._transitioning;
-	};
-
-	/**
-	 * Renders module action view.
-	 *
-	 * @method showView
-	 * @param {String} module Name of the module
-	 * @param {String} action Name of the action
-	 * @param {String} className Class name of the module
-	 * @param {String} actionName Method name of the action
-	 * @param {Array} parameters Action parameters
-	 * @param {Object} moduleObj Module object
-	 * @param {String} viewContent View content to render
-	 * @param {DOMElement} currentContainer Current view container to animate to
-	 * @param {DOMElement} existingContainer Previous view container to animate from
-	 * @param {String} newItemId Identifier of the new item if created
-	 * @param {Boolean} isBack Is the navigation happening to a previous view
-	 * @param {Function} doneCallback Callback to call when done
-	 * @return {DOMElement|null} New item container or null if navigating back
-	 * @private
-	 */
-	BaseUI.prototype.showView = function(
-		module,
-		action,
-		className,
-		actionName,
-		parameters,
-		moduleObj,
-		viewContent,
-		currentContainer,
-		existingContainer,
-		newItemId,
-		isBack,
-		doneCallback
-	) {
-		if (isBack) {
-			this.transitionView(currentContainer, existingContainer, isBack, doneCallback);
-
-			return null;
-		}
-
-		var prefix = config.cssPrefix,
-			newWrapId = 'content-' + newItemId,
-			parentWrap = $(config.viewSelector),
-			currentWrap = parentWrap.find('.' + prefix + 'page-active'),
-			newWrap;
-
-		parentWrap.append(
-			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
-		);
-
-		newWrap = $('#' + newWrapId)
-			.html(viewContent)
-			.attr('ng-controller', className + '.' + actionName);
-
-		try {
-			app.compile(newWrap)(app.baseScope);
-
-			this.transitionView(currentWrap, newWrap, isBack, doneCallback);
-		} catch (e) {
-			dbg.error(e);
-		}
-
-		return newWrap;
 	};
 
 	/**

@@ -247,7 +247,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			return;
 		}
 
-		if (existingItem !== null && isBackBtn === true) {
+		if (existingItem !== null) {
 			while (this._stack.length > 0) {
 				stackItem = this.peekLast();
 
@@ -270,9 +270,11 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				}
 			}
 
-			isBack = true;
+			if (isBackBtn === true) {
+				isBack = true;
 
-			existingItem.emit(this.Event.WAKEUP);
+				existingItem.emit(this.Event.WAKEUP);
+			}
 		}
 
 		if (existingItem !== null && existingItem.container === null) {
@@ -287,6 +289,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 			if (existingItem !== null) {
 				newItem = existingItem;
+				newItem.parameters = parameters;
 			} else {
 				newItem = this.appendNavigation(module, action, parameters);
 

@@ -78,7 +78,7 @@ function(config, routes, RouterBase, navi, app, util) {
 		if (util.isUndefined(action) || util.isObject(action)) {
 			var routeName = module,
 				routeParameters = action,
-				replaceUrl = parameters;
+				replaceUrl = typeof(parameters) !== 'undefined' ? parameters : false;
 
 			this.open(routeName, routeParameters, replaceUrl);
 
@@ -117,11 +117,12 @@ function(config, routes, RouterBase, navi, app, util) {
 
 		var route = this._parseRoute(routes[routeName]),
 			path = route.path,
+			routeParameters = util.clone(route.parameters),
 			token,
 			i;
 
 		if (util.isObject(parameters)) {
-			util.extend(route.parameters, parameters);
+			util.extend(routeParameters, parameters);
 		}
 
 		for (i = 0; i < route.tokens.length; i++) {
@@ -131,11 +132,11 @@ function(config, routes, RouterBase, navi, app, util) {
 				continue;
 			}
 
-			if ( util.isUndefined(route.parameters[token.name])) {
-				route.parameters[token.name] = this.ParamDefaults[token.type];
+			if (util.isUndefined(routeParameters[token.name])) {
+				routeParameters[token.name] = this.ParamDefaults[token.type];
 			}
 
-			path = path.replace(token.original, route.parameters[token.name]);
+			path = path.replace(token.original, routeParameters[token.name]);
 		}
 
 		app.location.path('/' + path);
