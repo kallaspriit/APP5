@@ -1,5 +1,5 @@
 define(
-['models/Phonebook'],
+['modules/phonebook/models/Phonebook'],
 function(phonebook) {
 	'use strict';
 
