@@ -153,15 +153,18 @@ function(
 			app.compile(newWrap)(app.baseScope);
 			app.validate();
 
-			var createdScope = $(newWrap).scope();
+			// TODO Why is this sometimes not true?
+			if (typeof($(newWrap).scope) === 'function') {
+				var createdScope = $(newWrap).scope();
 
-			createdScope.$evalAsync(function() {
-				//newWrap.removeClass(prefix + 'page-loading');
-				body.removeClass(prefix + 'loading-view');
-				self.transitionView(currentWrap, newWrap, isBack, doneCallback);
-			});
-
-			//this.transitionView(currentWrap, newWrap, isBack, doneCallback);
+				createdScope.$evalAsync(function() {
+					//newWrap.removeClass(prefix + 'page-loading');
+					body.removeClass(prefix + 'loading-view');
+					self.transitionView(currentWrap, newWrap, isBack, doneCallback);
+				});
+			} else {
+				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
+			}
 		} catch (e) {
 			dbg.error(e);
 		}
