@@ -130,8 +130,7 @@ function(
 			return null;
 		}
 
-		var self = this,
-			prefix = config.cssPrefix,
+		var prefix = config.cssPrefix,
 			newWrapId = 'content-' + newItemId,
 			parentWrap = $(config.viewSelector),
 			currentWrap = parentWrap.find('.' + prefix + 'page-active'),
@@ -160,9 +159,9 @@ function(
 				createdScope.$evalAsync(function() {
 					//newWrap.removeClass(prefix + 'page-loading');
 					body.removeClass(prefix + 'loading-view');
-					self.transitionView(currentWrap, newWrap, isBack, doneCallback);
-				});
-				
+					this.transitionView(currentWrap, newWrap, isBack, doneCallback);
+				}.bind(this));
+
 				app.validate();
 			} else {
 				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
