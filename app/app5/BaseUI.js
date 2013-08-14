@@ -162,6 +162,8 @@ function(
 					body.removeClass(prefix + 'loading-view');
 					self.transitionView(currentWrap, newWrap, isBack, doneCallback);
 				});
+				
+				app.validate();
 			} else {
 				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
 			}
