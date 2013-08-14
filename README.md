@@ -1,13 +1,12 @@
-APP5
+![APP5](https://raw.github.com/kallaspriit/APP5/master/media/logo-doc.png "APP5")
 ====
 
-**Modular HTML5 Application Framework based on AngularJS.**
-
-![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/media/logo-doc.png "APP5")
+**APP5 - Modular HTML5 Application Framework.**
 
 ![Download presentation](https://dl.dropboxusercontent.com/u/8855759/app5/slides-thumb.jpg "Download introductory presentation below")
 
 [PowerPoint](https://dl.dropboxusercontent.com/u/8855759/app5/presentation.pptx) | [PDF](https://dl.dropboxusercontent.com/u/8855759/app5/presentation.pdf)
+
 
 Features
 --------
