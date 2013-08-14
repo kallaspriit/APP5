@@ -57,10 +57,6 @@ function(
 	 * @method bootstrap
 	 */
 	BaseBootstrapper.prototype.bootstrap = function() {
-		if (util.isFunction(this.preBootstrap)) {
-			this.preBootstrap();
-		}
-
 		var self = this,
 			components = {
 				config:             config,
@@ -75,8 +71,17 @@ function(
 				scheduler:          scheduler.init(),
 				util:               util
 			},
+			additionalComponents = {},
 			directiveName,
 			filterName;
+
+		if (util.isFunction(this.preBootstrap)) {
+			additionalComponents = this.preBootstrap();
+
+			if (util.isObject(additionalComponents)) {
+				util.extend(components, additionalComponents);
+			}
+		}
 
 		navi.router = components.router;
 		app.module = angular.module('app', ['ui.bootstrap']);
