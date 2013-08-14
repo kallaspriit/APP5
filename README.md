@@ -5,6 +5,9 @@ APP5
 
 ![APP5 logo](https://raw.github.com/kallaspriit/APP5/master/media/logo-doc.png "APP5")
 
+![Download presentation](https://dl.dropboxusercontent.com/u/8855759/app5/presentation.pptx "Download pptx presentation")
+[PowerPoint](https://dl.dropboxusercontent.com/u/8855759/app5/presentation.pptx) | [PDF](https://dl.dropboxusercontent.com/u/8855759/app5/presentation.pdf)
+
 Features
 --------
 * Uses Google's [AngularJS](http://angularjs.org/) for rendering
