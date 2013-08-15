@@ -1,15 +1,10 @@
 define(
-['Bindable'],
-function(Bindable) {
+['core/EventEmitter'],
+function(EventEmitter) {
 	'use strict';
 
 	/**
-	 * ???
-	 *
-	 * Can fire the following events:
-	 *
-	 *	> ??? - fired...
-	 *		??? - ???
+	 * ${NAME}.
 	 *
 	 * @class ${NAME}
 	 * @extends Bindable
@@ -17,10 +12,10 @@ function(Bindable) {
 	 * @module Core
 	 */
 	var ${NAME} = function() {
-
+		EventEmitter.call(this);
 	};
 
-	${NAME}.prototype = new Bindable();
+	${NAME}.prototype = Object.create(EventEmitter.prototype);
 
 	/**
 	 * Event types.

@@ -3,7 +3,7 @@ function() {
 	'use strict';
 
 	/**
-	 * ${NAME} model
+	 * ${NAME} model.
 	 *
 	 * @class ${NAME}
 	 * @constructor
@@ -11,7 +11,7 @@ function() {
 	 */
 	var ${NAME} = [];
 
-	${NAME}.method = function(value) {
+	${NAME}.add = function(value) {
 		this.push(value);
 	};
 
