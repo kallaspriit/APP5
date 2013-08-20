@@ -13,9 +13,5 @@ function() {
 
 	};
 
-	${NAME}.prototype.add = function(value) {
-		this.push(value);
-	};
-
 	return ${NAME};
 });
