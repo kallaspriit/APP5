@@ -33,7 +33,7 @@ function(app) {
 		navi.partial(
 			'#header',
 			'site',
-			'main-menu'
+			'header'
 		);
 	}];
 });

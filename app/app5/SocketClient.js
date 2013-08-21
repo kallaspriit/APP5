@@ -1,6 +1,6 @@
 define(
-['core/EventEmitter'],
-function(EventEmitter) {
+['core/EventEmitter', 'Util'],
+function(EventEmitter, util) {
 	'use strict';
 
 	/**
@@ -38,6 +38,7 @@ function(EventEmitter) {
 		this._reconnectInterval = 1000;
 		this._reconnectAttempts = 10;
 		this._reconnectAttemptsLeft = null;
+		this._closeRequested = false;
 	};
 
 	SocketClient.prototype = Object.create(EventEmitter.prototype);
@@ -112,6 +113,7 @@ function(EventEmitter) {
 
 		this._host = host;
 		this._port = port;
+		this._closeRequested = false;
 
 		this.emit({
 			type: this.Event.OPEN_REQUESTED,
@@ -161,7 +163,7 @@ function(EventEmitter) {
 		}
 
 		if (typeof(message) === 'object') {
-			message = JSON.stringify(message);
+			message = util.stringify(message);
 		}
 
 		this._ws.send(message);
@@ -178,6 +180,8 @@ function(EventEmitter) {
 	 * @method close
 	 */
 	SocketClient.prototype.close = function() {
+		this._closeRequested = true;
+
 		this._ws.close();
 	};
 
@@ -274,7 +278,7 @@ function(EventEmitter) {
 			client: this
 		});
 
-		if (this._everOpened) {
+		if (this._everOpened && !this._closeRequested) {
 			this._attemptReconnect();
 		}
 	};

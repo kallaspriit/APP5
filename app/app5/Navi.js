@@ -281,9 +281,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			isBack = false;
 		}
 
-		if (isBack) {
-			currentItem.emit(this.Event.EXIT);
-		} else {
+		if (!isBack) {
 			app.parameters = parameters;
 			app.registerController(className + '.' + actionName, moduleObj[actionName]);
 

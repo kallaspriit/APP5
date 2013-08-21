@@ -31,9 +31,6 @@ function(
 	 * Can fire the following events:
 	 *
 	 *	> READY - fired when ui is ready
-	 *	> MODAL_SHOWN - fired when modal window is displayed
-	 *		modal - the modal that was shown
-	 *	> MODAL_HIDDEN - fired when modal window is hidden
 	 *
 	 * @class BaseUI
 	 * @extends EventEmitter
@@ -58,9 +55,7 @@ function(
 	 * @param {String} Event.MODAL_HIDDEN A modal window is hidden
 	 */
 	BaseUI.prototype.Event = {
-		READY: 'ready',
-		MODAL_SHOWN: 'modal-shown',
-		MODAL_HIDDEN: 'modal-hidden'
+		READY: 'ready'
 	};
 
 	/**
@@ -305,84 +300,6 @@ function(
 		} catch (e) {
 			dbg.error(e);
 		}
-	};
-
-	/**
-	 * Displays a confirmation window.
-	 *
-	 * The method accepts any number of additional parameters that are used in the translation of the content.
-	 *
-	 * @method confirm
-	 * @param {Function} callback Callback to call on confirmation
-	 * @param {String} [title] Default title override, can be translation key
-	 * @param {String} [content] Default confirmation text override, can be translation key
-	 */
-	BaseUI.prototype.confirm = function(callback, title, content) {
-		var self = this,
-			filename = 'partials/confirm.html',
-			existing = $('#confirm');
-
-		// TODO Not sure if this is great..
-		if (existing.length > 0) {
-			existing.remove();
-		}
-
-		title = title || 'confirm-title';
-		content = content || 'confirm-text';
-
-		if (translator.has(title)) {
-			title = translator.translate(title);
-		}
-
-		if (translator.has(content)) {
-			var translationArgs = [];
-
-			if (arguments.length > 3) {
-				translationArgs = _.toArray(arguments).slice(3);
-			}
-
-			translationArgs.unshift(content);
-
-			content = translator.translate.apply(translator, translationArgs);
-		}
-
-		resourceManager.loadView(filename)
-			.done(function(template) {
-				$(document.body).append(template);
-
-				$('#confirm-title').html(title);
-				$('#confirm-content').html(content);
-				$('#confirm-btn').click(function() {
-					if (util.isFunction(callback)) {
-						callback();
-					}
-
-					$('#confirm').modal('hide');
-				});
-
-				$('#confirm')
-					.modal()
-					.on('shown', function() {
-						self.emit({
-							type: self.Event.MODAL_SHOWN,
-							modal: $(this)
-						});
-
-						app.validate();
-					})
-					.on('hidden', function() {
-						$(this).remove();
-
-						self.emit({
-							type: self.Event.MODAL_HIDDEN
-						});
-
-						app.validate();
-					});
-			})
-			.fail(function() {
-				throw new Error('Loading confirm template from ' + filename + ' failed');
-			});
 	};
 
 	/**

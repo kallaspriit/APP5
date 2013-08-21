@@ -15,13 +15,13 @@ function(menus) {
 		/**
 		 * Displays main menu.
 		 *
-		 * @method mainMenuAction
+		 * @method headerAction
 		 * @param {Scope} $scope Angular scope
 		 * @param {Location} $location Angular location service
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
 		 */
-		mainMenuAction: function($scope, $location, dbg, navi) {
+		headerAction: function($scope, $location, dbg, navi) {
 			$scope.menus = menus;
 			$scope.backPossible = false;
 

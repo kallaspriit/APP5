@@ -1,6 +1,6 @@
 define(
-['core/Deferred', 'underscore'],
-function(Deferred, _) {
+['angular', 'core/Deferred', 'underscore'],
+function(angular, Deferred, _) {
 	'use strict';
 
 	var delayedTasks = {};
@@ -86,20 +86,20 @@ function(Deferred, _) {
 		},
 
 		/**
-		 * Converts any type of argument to a string
+		 * Converts any type of argument to a string.
 		 *
-		 * @method str
+		 * @method stringify
 		 * @param {*} arg Argument to convert
 		 * @return {String}
 		 */
-		str: function(arg) {
+		stringify: function(arg) {
 			if (arg === null) {
 				return 'null';
 			} else if (this.typeOf(arg) === 'string') {
 				return arg;
 			} else {
 				try {
-					return JSON.stringify(arg);
+					return angular.toJson(arg);
 				} catch (e) {
 					return '[obj]';
 				}

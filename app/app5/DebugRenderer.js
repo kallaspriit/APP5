@@ -147,15 +147,17 @@ function($, _, dbg, resourceManager, util) {
 	 * @private
 	 */
 	DebugRenderer.prototype._initHtml = function() {
-		$(document.body).append('<div id="debug-renderer"></div>');
+		$(document.body).append('<div id="debug-renderer"><button id="debug-renderer-clear-btn">clear</button></div>');
 
-		if (!$(document.body).hasClass('with-touch')) {
-			return;
-		}
-
-		$('#debug-renderer').click(function() {
-			$(this).toggleClass('visible');
+		$('#debug-renderer-clear-btn').click(function() {
+			$(this).parent().find('DIV').remove();
 		});
+
+		if ($(document.body).hasClass('with-touch')) {
+			$('#debug-renderer').click(function() {
+				$(this).toggleClass('visible');
+			});
+		}
 	};
 
 	/**
@@ -194,7 +196,7 @@ function($, _, dbg, resourceManager, util) {
 
 				case resourceManager.ResourceType.FILE:
 					if (!util.isUndefined(e.error) && util.isArray(e.error.requireModules)) {
-						dbg.error('Requiring modules failed: ' + JSON.stringify(e.error.requireModules));
+						dbg.error('Requiring modules failed: ' + util.stringify(e.error.requireModules));
 					} else {
 						dbg.error('Loading file failed', e);
 					}
@@ -419,7 +421,7 @@ function($, _, dbg, resourceManager, util) {
 				content += ', ';
 			}
 
-			content += util.str(token);
+			content += util.stringify(token);
 		}
 
 		return content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
