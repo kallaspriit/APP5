@@ -1,6 +1,6 @@
 define(
-['Util', 'Navi', 'Keyboard'],
-function(util, navi, keyboard) {
+['core/Navi', 'core/Keyboard', 'Util'],
+function(navi, keyboard, util) {
 	'use strict';
 
 	var link = function($scope, $element, $attrs/*, $controller*/) {
@@ -87,8 +87,8 @@ function(util, navi, keyboard) {
 
 		$element.bind('$destroy', function() {
 			unwatchData();
-			naviBind.unbind();
-			keyboardBind.unbind();
+			naviBind.removeListener();
+			keyboardBind.removeListener();
 		});
 	};
 

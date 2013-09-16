@@ -55,6 +55,10 @@ function() {
 			'en': 'Are you sure you want to delete %s?',
 			'et': 'Kas olete kindel et soovite kasutaja "%s" kustutada?'
 		},
+		'pagination-tip': {
+			'en': 'Tip: Use left/right arrows to change page.',
+			'et': 'Vihje: Kasuta lehekülgede vahetamiseks nooleklahve'
+		},
 
 
 		'': {
