@@ -12,7 +12,9 @@ HTML, BODY {
 
 }
 #pages {
-
+	position: relative;
+	width: 100%;
+	min-height: 100%;
 }
 #loading-indicator {
 	position: absolute;
@@ -32,16 +34,6 @@ BODY.app5-loading-view #loading-indicator {
 	box-sizing: border-box;
 	padding: 60px 0 0 0;
 	margin: 0;
-	top: 0;
-	left: 0;
-	width: 100%;
-	min-height: 100%;
-	position: absolute;
-	display: none;
-	border: 0;
-	outline: none;
-	-webkit-transform: translate3d(0, 0, 0);
-	-webkit-backface-visibility: hidden;
 }
 /*.app5-page-loading {
 	display: block;
@@ -49,10 +41,6 @@ BODY.app5-loading-view #loading-indicator {
 	left: -10000px;
 	background-color: #FF0 !important;
 }*/
-.app5-page-active {
-	display: block;
-	overflow: visible;
-}
 
 @media (max-width: 979px) {
 	.navbar-fixed-top, .navbar-fixed-bottom {

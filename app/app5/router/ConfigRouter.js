@@ -158,7 +158,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @return {Boolean} Was setting the parameter successful
 	 */
 	ConfigRouter.prototype.setUrlParameter = function(name, value, replace) {
-		var currentItem = navi.getCurrent(),
+		var currentItem = navi.getCurrentItem(),
 			newItem;
 
 		if (currentItem === null) {

@@ -128,6 +128,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 */
 	Navi.prototype.open = function(module, action, parameters) {
 		if (ui.isTransitioning()) {
+			// TODO Handle this properly
+
 			return;
 		}
 
@@ -227,12 +229,34 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		var self = this,
-			currentItem = this.getCurrent(),
+			currentItem = this.getCurrentItem(),
 			existingItem = this.getExistingItem(module, action),
 			newItem = null,
 			isBack = false,
+			isReopen = false,
+			newItemContainer = null,
+			stackChanged = false,
 			stackItem,
-			newItemContainer = null;
+			i;
+
+		if (
+			existingItem !== null
+			&& (
+				existingItem.container === null
+				|| (typeof(existingItem.container.length) === 'number' && existingItem.container.length === 0)
+			)
+		) {
+			// existing item container is missing, remove the item
+			for (i = 0; i < this._stack.length; i++) {
+				if (this._stack[i] === existingItem) {
+					this._stack.splice(i, 1);
+
+					break;
+				}
+			}
+
+			existingItem = null;
+		}
 
 		if (currentItem !== null && currentItem === existingItem) {
 			currentItem.emit(this.Event.URL_CHANGED);
@@ -248,61 +272,84 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		if (existingItem !== null) {
-			while (this._stack.length > 0) {
-				stackItem = this.peekLast();
+			// existing item exists, remove loop
+			if (isBackBtn) {
+				// back button pressed, remove all items after the existing item
+				while (this._stack.length > 0) {
+					stackItem = this.peekLast();
 
-				if (stackItem === currentItem) {
-					this.popLast();
+					if (stackItem === currentItem) {
+						// pop the current item from stack but don't destroy the element yet as we need to animate it
+						this._stack.pop();
+						stackChanged = true;
 
-					continue;
+						continue;
+					}
+
+					if (stackItem == existingItem) {
+						existingItem.emit(this.Event.WAKEUP);
+
+						isBack = true;
+
+						break;
+					}
+
+					this._stack.pop();
+					stackChanged = true;
+
+					stackItem.emit(this.Event.EXIT);
+
+					if (stackItem.container !== null) {
+						stackItem.container.remove();
+					}
 				}
+			} else {
+				// no back button pressed, remove all items up to and including the existing item
+				while (this._stack.length > 0) {
+					stackItem = this._stack.pop();
+					stackChanged = true;
 
-				if (stackItem === existingItem) {
-					break;
-				}
+					if (stackItem === currentItem) {
+						// pop the current item from stack but don't destroy the element yet as we need to animate it
+						continue;
+					}
 
-				this.popLast();
+					stackItem.emit(this.Event.EXIT);
 
-				stackItem.emit(this.Event.EXIT);
+					if (stackItem.container !== null) {
+						stackItem.container.remove();
+					}
 
-				if (stackItem.container !== null) {
-					stackItem.container.remove();
+					if (stackItem === existingItem) {
+						isReopen = true;
+
+						break;
+					}
 				}
 			}
-
-			if (isBackBtn === true) {
-				isBack = true;
-
-				existingItem.emit(this.Event.WAKEUP);
-			}
-		}
-
-		if (existingItem !== null && existingItem.container === null) {
-			isBack = false;
 		}
 
 		if (!isBack) {
 			app.parameters = parameters;
 			app.registerController(className + '.' + actionName, moduleObj[actionName]);
 
-			if (existingItem !== null) {
-				newItem = existingItem;
-				newItem.parameters = parameters;
-			} else {
-				newItem = this.appendNavigation(module, action, parameters);
+			newItem = this.appendNavigation(module, action, parameters, true);
+			stackChanged = true;
 
-				newItem.emit = function(type, parameters) {
-					var scope = this.container.data('$scope');
+			newItem.emit = function(type, parameters) {
+				var scope = this.container.data('$scope');
 
-					if (util.isObject(scope) && util.isFunction(scope.$broadcast)) {
-						scope.$broadcast(type, parameters);
-					}
-				};
-			}
+				if (util.isObject(scope) && util.isFunction(scope.$broadcast)) {
+					scope.$broadcast(type, parameters);
+				}
+			};
+		}
 
-			if (currentItem !== null) {
-				currentItem.emit(this.Event.SLEEP);
-			}
+		if (stackChanged) {
+			this.emit({
+				type: this.Event.STACK_CHANGED,
+				stack: this._stack
+			});
 		}
 
 		newItemContainer = ui.showView(
@@ -318,12 +365,14 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			newItem !== null ? newItem.id : null,
 			isBack,
 			function() {
-				if (isBack) {
-					currentItem.emit(self.Event.EXIT);
+				if (isBack || isReopen) {
+					currentItem.emit(this.Event.EXIT);
 					currentItem.container.remove();
+				} else if (currentItem !== null) {
+					currentItem.emit(this.Event.SLEEP);
 				}
 
-				self.emit({
+				this.emit({
 					type: self.Event.POST_NAVIGATE,
 					module: module,
 					action: action,
@@ -333,7 +382,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				deferred.resolve();
 
 				app.validate();
-			}
+			}.bind(this)
 		);
 
 		if (newItem !== null) {
@@ -420,8 +469,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @method back
 	 */
 	Navi.prototype.back = function() {
-		var currentItem = this.getCurrent(),
-			previousItem = this.getPrevious();
+		var currentItem = this.getCurrentItem(),
+			previousItem = this.getPreviousItem();
 
 		if (currentItem === null || previousItem === null) {
 			return;
@@ -444,7 +493,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			return this.router.setUrlParameter(name, value, replace);
 		}
 
-		var currentItem = this.getCurrent(),
+		var currentItem = this.getCurrentItem(),
 			newItem;
 
 		if (currentItem === null) {
@@ -464,10 +513,10 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Returns currently active action info.
 	 *
-	 * @method getCurrent
+	 * @method getCurrentItem
 	 * @return {Object|null}
 	 */
-	Navi.prototype.getCurrent = function() {
+	Navi.prototype.getCurrentItem = function() {
 		if (this._stack.length === 0) {
 			return null;
 		}
@@ -478,15 +527,38 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Returns previously active action info.
 	 *
-	 * @method getPrevious
+	 * @method getPreviousItem
 	 * @return {Object|null}
 	 */
-	Navi.prototype.getPrevious = function() {
+	Navi.prototype.getPreviousItem = function() {
 		if (this._stack.length < 2) {
 			return null;
 		}
 
 		return this._stack[this._stack.length - 2];
+	};
+
+	/**
+	 * Returns already open matching navi item if available.
+	 *
+	 * @method getExistingItem
+	 * @param {String} module Module name
+	 * @param {String} action Action name
+	 * @return {Object|null} Navi info or null if not exists
+	 */
+	Navi.prototype.getExistingItem = function(module, action) {
+		var i,
+			item;
+
+		for (i = 0; i < this._stack.length; i++) {
+			item = this._stack[i];
+
+			if (item.module === module && item.action === action) {
+				return item;
+			}
+		}
+
+		return null;
 	};
 
 	/**
@@ -511,29 +583,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			type: this.Event.STACK_CHANGED,
 			stack: this._stack
 		});
-	};
-
-	/**
-	 * Returns already open matching navi item if available.
-	 *
-	 * @method getExistingItem
-	 * @param {String} module Module name
-	 * @param {String} action Action name
-	 * @return {Object|null} Navi info or null if not exists
-	 */
-	Navi.prototype.getExistingItem = function(module, action) {
-		var i,
-			item;
-
-		for (i = 0; i < this._stack.length; i++) {
-			item = this._stack[i];
-
-			if (item.module === module && item.action === action) {
-				return item;
-			}
-		}
-
-		return null;
 	};
 
 	/**
@@ -658,9 +707,10 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} module Name of the module to use
 	 * @param {String} action Module action to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to action
+	 * @param {Boolean} [quiet=false] If set to true, no stack change event is automatically emitted
 	 * @return {Object} New stack item
 	 */
-	Navi.prototype.appendNavigation = function(module, action, parameters) {
+	Navi.prototype.appendNavigation = function(module, action, parameters, quiet) {
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
@@ -671,10 +721,12 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			emit: function() {}
 		});
 
-		this.emit({
-			type: this.Event.STACK_CHANGED,
-			stack: this._stack
-		});
+		if (quiet !== true) {
+			this.emit({
+				type: this.Event.STACK_CHANGED,
+				stack: this._stack
+			});
+		}
 
 		return this._stack[this._stack.length - 1];
 	};
@@ -721,7 +773,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @private
 	 */
 	Navi.prototype._onKeyEvent = function(event) {
-		var currentItem = this.getCurrent();
+		var currentItem = this.getCurrentItem();
 
 		if (currentItem === null || !util.isFunction(currentItem.emit)) {
 			return;
@@ -740,7 +792,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @private
 	 */
 	Navi.prototype._onMouseEvent = function(event) {
-		var currentItem = this.getCurrent();
+		var currentItem = this.getCurrentItem();
 
 		if (currentItem === null || !util.isFunction(currentItem.emit)) {
 			return;

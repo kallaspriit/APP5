@@ -37,7 +37,7 @@ function(menus) {
 			};
 
 			$scope.updateActive = function() {
-				var page = navi.getCurrent();
+				var page = navi.getCurrentItem();
 
 				if (page === null) {
 					return;

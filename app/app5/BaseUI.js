@@ -132,13 +132,11 @@ function(
 			body = $(document.body),
 			newWrap;
 
-		parentWrap.append(
-			'<div id="' + newWrapId + '" class="' + prefix + 'page ' + module + '-module ' + action + '-action"></div>'
-		);
-
-		newWrap = $('#' + newWrapId)
-			.html(viewContent)
-			.attr('ng-controller', className + '.' + actionName);
+		newWrap = $('<div/>', {
+			'id': newWrapId,
+			'class': prefix + 'page ' + module + '-module ' + action + '-action',
+			'ng-controller': className + '.' + actionName
+		}).html(viewContent).appendTo(parentWrap);
 
 		//newWrap.addClass(prefix + 'page-loading');
 		body.addClass(prefix + 'loading-view');
@@ -159,6 +157,7 @@ function(
 
 				app.validate();
 			} else {
+				body.removeClass(prefix + 'loading-view');
 				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
 			}
 		} catch (e) {
@@ -192,50 +191,78 @@ function(
 			body = $(document.body),
 			transitionType = config.pageTransition,
 			simultaneousTransitions = ['slide', 'slideup', 'slidedown'],
-			isSimultaneous = util.contains(simultaneousTransitions, transitionType);
+			isSimultaneous = util.contains(simultaneousTransitions, transitionType),
+			bodyClasses = [],
+			currentWrapClasses = [],
+			newWrapClasses = [];
 
-		$(document.body).scrollTop(0);
+		body.scrollTop(0);
 
 		if (currentWrap.length > 0) {
-			body.addClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
+			if (transitionType === 'none') {
+				newWrap.addClass(prefix + 'page-active');
+				currentWrap.removeClass(prefix + 'page-active');
 
-			if (isReverse) {
-				currentWrap.addClass(prefix + 'reverse');
-				newWrap.addClass(prefix + 'reverse');
-			}
-
-			currentWrap.addClass(prefix + transitionType + ' ' + prefix + 'out');
-
-			if (isSimultaneous) {
-				newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
-			}
-
-			var animationEndEvents = 'animationEnd animationend oAnimationEnd msAnimationEnd mozAnimationEnd ' +
-				'webkitAnimationEnd transitionend oTransitionEnd otransitionend webkitTransitionEnd MSTransitionEnd';
-
-			currentWrap.bind(animationEndEvents, function() {
-				currentWrap.removeClass(
-					prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
-				);
-
-				if (!isSimultaneous) {
-					newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
-				}
-
-				currentWrap.unbind(animationEndEvents);
-			});
-
-			newWrap.bind(animationEndEvents, function() {
-				newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
-				body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
-				newWrap.unbind(animationEndEvents);
-
-				self._transitioning = false;
+				this._transitioning = false;
 
 				if (util.isFunction(doneCallback)) {
 					doneCallback();
 				}
-			});
+			} else {
+				bodyClasses.push(prefix + 'transitioning');
+				bodyClasses.push(prefix + 'transition-' + transitionType);
+
+				if (isReverse) {
+					currentWrapClasses.push(prefix + 'reverse');
+					newWrapClasses.push(prefix + 'reverse');
+				}
+
+				if (isSimultaneous) {
+					newWrapClasses.push(prefix + 'in');
+					newWrapClasses.push(prefix + 'page-active');
+					newWrapClasses.push(prefix + 'page-pre-transform');
+					newWrapClasses.push(prefix + transitionType);
+				}
+
+				currentWrapClasses.push(prefix + transitionType);
+				currentWrapClasses.push(prefix + 'out');
+
+				currentWrap.addClass(currentWrapClasses.join(' '));
+				newWrap.addClass(newWrapClasses.join(' '));
+
+				window.setTimeout(function() {
+					newWrap.removeClass(prefix + 'page-pre-transform');
+					body.addClass(bodyClasses.join(' '));
+				}.bind(this), 0);
+
+				var animationEndEvents = 'animationEnd animationend oAnimationEnd msAnimationEnd mozAnimationEnd ' +
+					'webkitAnimationEnd transitionend oTransitionEnd otransitionend webkitTransitionEnd MSTransitionEnd';
+
+				currentWrap.one(animationEndEvents, function() {
+					currentWrap.removeClass(
+						prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
+					);
+
+					if (!isSimultaneous) {
+						newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
+					}
+
+					//currentWrap.unbind(animationEndEvents);
+				});
+
+				newWrap.one(animationEndEvents, function() {
+					newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
+					body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
+
+					//newWrap.unbind(animationEndEvents);
+
+					self._transitioning = false;
+
+					if (util.isFunction(doneCallback)) {
+						doneCallback();
+					}
+				});
+			}
 		} else {
 			newWrap.addClass(prefix + 'page-active');
 
@@ -273,7 +300,8 @@ function(
 		containerSelector,
 		append
 	) {
-		var container = $(containerSelector),
+		var prefix = config.cssPrefix,
+			container = $(containerSelector),
 			controllerName = className + '-' + actionName,
 			containerId;
 
@@ -290,6 +318,8 @@ function(
 		} else {
 			container.html(viewContent).attr('ng-controller', controllerName);
 		}
+
+		container.addClass(prefix + 'partial ' + module + '-module ' + action + '-action');
 
 		app.parameters = parameters;
 

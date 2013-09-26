@@ -4,7 +4,7 @@ function(navi, keyboard, util) {
 	'use strict';
 
 	var link = function($scope, $element, $attrs/*, $controller*/) {
-		var currentAction = navi.getCurrent(),
+		var currentAction = navi.getCurrentItem(),
 			page = 1;
 
 		if (

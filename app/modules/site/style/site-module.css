@@ -1,4 +1,4 @@
 /** Site Module **/
-.site-module {
-
+.site-module #language-choice LI.selected A {
+	opacity: 1;
 }

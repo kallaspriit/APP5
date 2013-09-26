@@ -79,7 +79,7 @@ function(RouterBase, config, navi, app, util) {
 	 * @private
 	 */
 	QueryRouter.prototype._onUrlChanged = function(parameters) {
-		var current = navi.getCurrent();
+		var current = navi.getCurrentItem();
 
 		if (
 			util.isString(parameters.args.module)

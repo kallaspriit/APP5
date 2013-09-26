@@ -1,3 +1,33 @@
+.app5-page {
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-height: 100%;
+	position: absolute;
+	display: none;
+	border: 0;
+	outline: none;
+	/*-webkit-transform: translate3d(0, 0, 0);*/
+	/*-webkit-backface-visibility: hidden;*/
+}
+.app5-page-active {
+	display: block;
+	overflow: visible;
+}
+.app5-page-pre-transform {
+	left: -100%;
+}
+/*.app5-page-loading {
+	display: block;
+	overflow: visible;
+	left: -10000px;
+	background-color: #FF0 !important;
+}*/
+.app5-page-active {
+	display: block;
+	overflow: visible;
+}
+
 .app5-transitioning,
 .app5-transitioning .page {
 	width: 100%;
@@ -9,7 +39,7 @@
 }
 
 /*transitions*/
-.app5-in {
+.app5-transitioning .app5-in {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
@@ -21,7 +51,7 @@
 	animation-duration: 350ms;
 }
 
-.app5-out {
+.app5-transitioning .app5-out {
 	-webkit-animation-fill-mode: both;
 	-webkit-animation-timing-function: ease-in;
 	-webkit-animation-duration: 225ms;
@@ -327,7 +357,7 @@
 	}
 }
 
-.app5-slide.app5-out, .app5-slide.app5-in {
+.app5-transitioning .app5-slide.app5-out, .app5-transitioning .app5-slide.app5-in {
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-duration: 350ms;
 	-moz-animation-timing-function: ease-out;
@@ -336,7 +366,7 @@
 	animation-duration: 350ms;
 }
 
-.app5-slide.app5-out {
+.app5-transitioning .app5-slide.app5-out {
 	-webkit-transform: translate3d(-100%, 0, 0);
 	-webkit-animation-name: slideouttoleft;
 	-moz-transform: translateX(-100%);
@@ -345,8 +375,8 @@
 	animation-name: slideouttoleft;
 }
 
-.app5-slide.app5-in {
-	-webkit-transform: translate3d(0, 0, 0);;
+.app5-transitioning .app5-slide.app5-in {
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: slideinfromright;
 	-moz-transform: translateX(0);
 	-moz-animation-name: slideinfromright;
@@ -354,7 +384,7 @@
 	animation-name: slideinfromright;
 }
 
-.app5-slide.app5-out.app5-reverse {
+.app5-transitioning .app5-slide.app5-out.app5-reverse {
 	-webkit-transform: translate3d(100%, 0, 0);
 	-webkit-animation-name: slideouttoright;
 	-moz-transform: translateX(100%);
@@ -363,8 +393,8 @@
 	animation-name: slideouttoright;
 }
 
-.app5-slide.app5-in.app5-reverse {
-	-webkit-transform: translate3d(0, 0, 0);;
+.app5-transitioning .app5-slide.app5-in.app5-reverse {
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: slideinfromleft;
 	-moz-transform: translateX(0);
 	-moz-animation-name: slideinfromleft;
@@ -385,7 +415,7 @@
 }
 
 .app5-slidefade.app5-in {
-	-webkit-transform: translate3d(0, 0, 0);;
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 200ms;
 	-moz-transform: translateX(0);
@@ -409,7 +439,7 @@
 }
 
 .app5-slidefade.app5-in.app5-reverse {
-	-webkit-transform: translate3d(0, 0, 0);;
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: fadein;
 	-webkit-animation-duration: 200ms;
 	-moz-transform: translateX(0);
@@ -429,7 +459,7 @@
 }
 
 .app5-slidedown.app5-in {
-	-webkit-transform: translate3d(0, 0, 0);;
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: slideinfromtop;
 	-webkit-animation-duration: 250ms;
 	-moz-transform: translateY(0);
@@ -466,7 +496,7 @@
 		-webkit-transform: translate3d(0, -100%, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);;
+		-webkit-transform: translate3d(0, 0, 0);
 	}
 }
 
@@ -490,7 +520,7 @@
 
 @-webkit-keyframes slideouttotop {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);;
+		-webkit-transform: translate3d(0, 0, 0);
 	}
 	to {
 		-webkit-transform: translate3d(0, -100%, 0);
@@ -526,7 +556,7 @@
 }
 
 .app5-slideup.app5-in {
-	-webkit-transform: translate3d(0, 0, 0);;
+	-webkit-transform: translate3d(0, 0, 0);
 	-webkit-animation-name: slideinfrombottom;
 	-webkit-animation-duration: 250ms;
 	-moz-transform: translateY(0);
@@ -563,7 +593,7 @@
 		-webkit-transform: translate3d(0, 100%, 0);
 	}
 	to {
-		-webkit-transform: translate3d(0, 0, 0);;
+		-webkit-transform: translate3d(0, 0, 0);
 	}
 }
 
@@ -587,7 +617,7 @@
 
 @-webkit-keyframes slideouttobottom {
 	from {
-		-webkit-transform: translate3d(0, 0, 0);;
+		-webkit-transform: translate3d(0, 0, 0);
 	}
 	to {
 		-webkit-transform: translate3d(0, 100%, 0);
@@ -627,7 +657,7 @@
 
 .app5-flip {
 	-webkit-backface-visibility: hidden;
-	-webkit-transform: translate3d(0, 0, 0);; /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
+	-webkit-transform: translate3d(0, 0, 0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-moz-backface-visibility: hidden;
 	-moz-transform: translateX(0);
 	backface-visibility: hidden;
@@ -794,7 +824,7 @@
 
 .app5-turn {
 	-webkit-backface-visibility: hidden;
-	-webkit-transform: translate3d(0, 0, 0);; /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
+	-webkit-transform: translate3d(0, 0, 0); /* Needed to work around an iOS 3.1 bug that causes listview thumbs to disappear when -webkit-visibility:hidden is used. */
 	-webkit-transform-origin: 0;
 
 	-moz-backface-visibility: hidden;

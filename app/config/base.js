@@ -53,6 +53,7 @@ define(function() {
 		 * Page transition to use.
 		 *
 		 * One of:
+		 * - none
 		 * - fade
 		 * - pop
 		 * - flip
@@ -61,11 +62,13 @@ define(function() {
 		 * - slide
 		 * - slideup
 		 * - slidedown
+		 * - slidefade
 		 *
 		 * @property pageTransition
 		 * @type String
 		 */
 		pageTransition: 'slide',
+		//pageTransition: 'none',
 
 		/**
 		 * Default language.

@@ -1,11 +1,15 @@
 /*
- * TODO Rename resources based on class/instance e.g. Navi > navi
+ * TODO Refactor APP5 to use the new custom events style
+ * TODO Add support for IE
+ * TODO Optimize for mobile browsers
+ * TODO Add option to disable back-functionality (preserving previous views)
+ * TODO Check for memory leaks
+ * TODO Get rid of self.. in favor of .bind
+ * TODO Rename resources based on class/instance e.g. Navi > navi so it's clear whether we get a class or instance?
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  * TODO Consider http://jsfiddle.net/gVEq5/ for model design
- * TODO Make back optional
- * TODO Only use back when actually pressing back
- * TODO New page cloaking
+ * TODO Figure out better way to get action parameters
  */
 
 // Configuration for RequireJS.
