@@ -4,12 +4,14 @@
  * TODO Optimize for mobile browsers
  * TODO Add option to disable back-functionality (preserving previous views)
  * TODO Check for memory leaks
- * TODO Get rid of self.. in favor of .bind
+ * TODO Get rid of self.. in favor of .bind?
  * TODO Rename resources based on class/instance e.g. Navi > navi so it's clear whether we get a class or instance?
  * TODO Merge & compress CSS
  * TODO Timeouts & Intervals on deferred
  * TODO Consider http://jsfiddle.net/gVEq5/ for model design
  * TODO Figure out better way to get action parameters
+ * TODO Better document the events
+ * TODO Review the build system
  */
 
 // Configuration for RequireJS.

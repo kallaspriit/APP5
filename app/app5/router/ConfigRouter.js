@@ -139,6 +139,10 @@ function(config, routes, RouterBase, navi, app, util) {
 			path = path.replace(token.original, routeParameters[token.name]);
 		}
 
+		if (path.substr(0, 1) == '/') {
+			path = path.substr(1);
+		}
+
 		app.location.path('/' + path);
 
 		if (replace) {

@@ -60,6 +60,12 @@
 #debug-renderer DIV:hover SPAN {
 	display: block;
 }
+#debug-renderer-clear-btn {
+	position: absolute;
+	right: 20px;
+	top: 4px;
+	z-index: 2;
+}
 #debug-renderer .info {
 	background-image: url(../images/debug-renderer/info-bg.png);
 }

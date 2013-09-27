@@ -5,7 +5,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</a>
-		<a class="brand" ng-class="{'back-possible' : backPossible}" href="javascript: void(0);" ng-tap="navi.back()" translate>site.title</a>
+		<a class="brand" ng-class="{'back-possible' : backPossible}" href="javascript: void(0);" ng-tap="back()" translate>site.title</a>
 		<div class="nav-collapse collapse">
 			<ul id="language-choice" class="nav pull-right lang-nav">
 				<li ng-class="{selected : language == translator.getLanguage()}" ng-repeat="language in translator.getLanguages()">

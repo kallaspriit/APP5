@@ -8,7 +8,7 @@ function(config) {
 	 */
 	return {
 		'index': {
-			path: '',
+			path: 'contacts/:page[+int]',
 			module: config.index.module,
 			action: config.index.action,
 			parameters: config.index.parameters

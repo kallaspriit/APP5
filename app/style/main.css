@@ -86,14 +86,21 @@ BODY.app5-loading-view #loading-indicator {
 .navbar .nav-collapse .lang-nav > li {
 	display: inline-block;
 }
+.navbar-inverse .nav > li > a:focus,
+.navbar-inverse .nav > li > a:hover,
+.navbar-inverse .brand:hover,
+.navbar-inverse .nav > li > a:hover,
+.navbar-inverse .brand:focus,
+.navbar-inverse .nav > li > a:focus,
+.navbar .nav > li > a:focus,
+.navbar .nav > li > a:hover {
+	color: #999;
+}
 
 /* Brand back button */
 .brand {
 	padding-left: 42px !important;
 }
 .brand.back-possible {
-	background: url(../images/back-icon.png) no-repeat 10px top;
-}
-.brand.back-possible:hover {
-	background-position: 10px bottom;
+	background: url(../images/back-icon.png) no-repeat 10px 9px;
 }

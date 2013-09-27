@@ -48,6 +48,14 @@ function(menus) {
 				$scope.backPossible = navi.isBackPossible();
 			};
 
+			$scope.back = function() {
+				if (navi.isBackPossible()) {
+					navi.back();
+				} else {
+					navi.open('index', {page: 1});
+				}
+			};
+
 			navi.on(navi.Event.STACK_CHANGED, function() {
 				$scope.updateActive();
 			});

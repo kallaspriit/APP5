@@ -227,7 +227,7 @@ function(angular, Deferred, _) {
 		 * @return {Boolean}
 		 */
 		isNumber: function(arg) {
-			return this.typeOf(arg) === 'number';
+			return this.typeOf(arg) === 'number' && !this.isNaN(arg);
 		},
 
 		/**
@@ -294,6 +294,17 @@ function(angular, Deferred, _) {
 		 */
 		isUndefined: function(arg) {
 			return this.typeOf(arg) === 'undefined';
+		},
+
+		/**
+		 * Returns whether given argument is not a number.
+		 *
+		 * @method isNaN
+		 * @param {*} arg Argument to check
+		 * @return {Boolean}
+		 */
+		isNaN: function(arg) {
+			return isNaN(arg);
 		},
 
 		/**

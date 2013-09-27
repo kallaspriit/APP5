@@ -71,7 +71,25 @@ function(navi, keyboard, util) {
 		};
 
 		var naviBind = navi.on(navi.Event.PARAMETERS_CHANGED, function(e) {
-				$scope.currentPage = e.parameters.page;
+				if (util.isUndefined(e.parameters.page)) {
+					return;
+				}
+
+				var page = parseInt(e.parameters.page, 10);
+
+				if (!util.isNumber(page)) {
+					page = 1;
+				}
+
+				if (page <= 0) {
+					page = 1;
+				}
+
+				if (page > $scope.pageCount) {
+					page = $scope.pageCount;
+				}
+
+				$scope.currentPage = page;
 				$scope.$parent.pagination = $scope.data.slice(
 					($scope.currentPage - 1) * $scope.itemsPerPage,
 					$scope.currentPage * $scope.itemsPerPage

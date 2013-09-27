@@ -9,7 +9,8 @@ define(
 	'core/Debug',
 	'core/DebugRenderer',
 	'core/Translator',
-	'core/BaseUtil'
+	'core/BaseUtil',
+	'core/Deferred'
 ],
 function(
 	$,
@@ -21,7 +22,8 @@ function(
 	dbg,
 	debugRenderer,
 	translator,
-	util
+	util,
+	Deferred
 ) {
 	'use strict';
 
@@ -194,7 +196,11 @@ function(
 			isSimultaneous = util.contains(simultaneousTransitions, transitionType),
 			bodyClasses = [],
 			currentWrapClasses = [],
-			newWrapClasses = [];
+			newWrapClasses = [],
+			animationEndEvents = 'animationEnd animationend oAnimationEnd msAnimationEnd mozAnimationEnd ' +
+				'webkitAnimationEnd transitionend oTransitionEnd otransitionend webkitTransitionEnd MSTransitionEnd',
+			currentWrapAnimation = new Deferred(),
+			newWrapAnimation = new Deferred();
 
 		body.scrollTop(0);
 
@@ -235,9 +241,6 @@ function(
 					body.addClass(bodyClasses.join(' '));
 				}.bind(this), 0);
 
-				var animationEndEvents = 'animationEnd animationend oAnimationEnd msAnimationEnd mozAnimationEnd ' +
-					'webkitAnimationEnd transitionend oTransitionEnd otransitionend webkitTransitionEnd MSTransitionEnd';
-
 				currentWrap.one(animationEndEvents, function() {
 					currentWrap.removeClass(
 						prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
@@ -247,21 +250,26 @@ function(
 						newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 					}
 
-					//currentWrap.unbind(animationEndEvents);
+					currentWrapAnimation.resolve();
 				});
 
 				newWrap.one(animationEndEvents, function() {
 					newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
 					body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 
-					//newWrap.unbind(animationEndEvents);
+					newWrapAnimation.resolve();
+				});
 
-					self._transitioning = false;
+				Deferred.when(
+					currentWrapAnimation,
+					newWrapAnimation
+				).done(function() {
+					this._transitioning = false;
 
 					if (util.isFunction(doneCallback)) {
 						doneCallback();
 					}
-				});
+				}.bind(this));
 			}
 		} else {
 			newWrap.addClass(prefix + 'page-active');

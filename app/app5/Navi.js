@@ -59,6 +59,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		this._stack = [];
 		this._naviCounter = 0;
 		this._partialRendering = false;
+		this._queue = [];
 	};
 
 	Navi.prototype = Object.create(EventEmitter.prototype);
@@ -128,7 +129,13 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 */
 	Navi.prototype.open = function(module, action, parameters) {
 		if (ui.isTransitioning()) {
-			// TODO Handle this properly
+			// there's an ongoing transition to a view, queue this request
+			this._queue.push({
+				type: 'indirect',
+				module: module,
+				action: action,
+				parameters: parameters
+			});
 
 			return;
 		}
@@ -158,6 +165,15 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		if (ui.isTransitioning()) {
+			// there's an ongoing transition to a view, queue this request
+			this._queue.push({
+				type: 'direct',
+				module: module,
+				action: action,
+				parameters: parameters,
+				isBack: isBack
+			});
+
 			return;
 		}
 
@@ -382,6 +398,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				deferred.resolve();
 
 				app.validate();
+
+				this._checkQueue();
 			}.bind(this)
 		);
 
@@ -799,6 +817,26 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		currentItem.emit(event.type, event);
+	};
+
+	/**
+	 * Checks for any requests in the queue and executes the first one.
+	 *
+	 * @method _checkQueue
+	 * @private
+	 */
+	Navi.prototype._checkQueue = function() {
+		if (this._queue.length === 0 || ui.isTransitioning()) {
+			return;
+		}
+
+		var item = this._queue.shift();
+
+		if (item.type === 'direct') {
+			this._open(item.module, item.action, item.parameters, item.isBack);
+		} else {
+			this.open(item.module, item.action, item.parameters);
+		}
 	};
 
 	return new Navi();
