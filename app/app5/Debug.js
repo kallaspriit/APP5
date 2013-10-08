@@ -31,12 +31,6 @@ function(_, EventEmitter, util) {
 			console: [],
 			alert: []
 		};
-		this._archive = {
-			error: [],
-			log: [],
-			console: [],
-			alert: []
-		};
 
 		var self = this;
 
@@ -188,8 +182,6 @@ function(_, EventEmitter, util) {
 					args: args,
 					source: source
 				});
-
-				this._archive.error.push(args);
 			}
 		}
 
@@ -204,8 +196,6 @@ function(_, EventEmitter, util) {
 					args: args,
 					source: source
 				});
-
-				this._archive.log.push(args);
 			}
 		}
 
@@ -220,8 +210,6 @@ function(_, EventEmitter, util) {
 					args: args,
 					source: source
 				});
-
-				this._archive.console.push(args);
 			}
 		}
 
@@ -236,8 +224,6 @@ function(_, EventEmitter, util) {
 					args: args,
 					source: source
 				});
-
-				this._archive.alert.push(args);
 			}
 		}
 	};

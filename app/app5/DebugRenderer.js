@@ -13,6 +13,8 @@ function($, _, dbg, resourceManager, util) {
 	var DebugRenderer = function() {
 		this.ui = null;
 		this._errorStack = [];
+		this._messageCount = 0;
+		this._wrap = null;
 	};
 
 	/**
@@ -147,14 +149,16 @@ function($, _, dbg, resourceManager, util) {
 	 * @private
 	 */
 	DebugRenderer.prototype._initHtml = function() {
-		$(document.body).append('<div id="debug-renderer"><button id="debug-renderer-clear-btn">clear</button></div>');
+		this.wrap = $('<div id="debug-renderer"><button id="debug-renderer-clear-btn">clear</button></div>');
+
+		$(document.body).append(this.wrap);
 
 		$('#debug-renderer-clear-btn').click(function() {
 			$(this).parent().find('DIV').remove();
 		});
 
 		if ($(document.body).hasClass('with-touch')) {
-			$('#debug-renderer').click(function() {
+			this.wrap.click(function() {
 				$(this).toggleClass('visible');
 			});
 		}
@@ -374,14 +378,17 @@ function($, _, dbg, resourceManager, util) {
 	 * @private
 	 */
 	DebugRenderer.prototype._appendMessage = function(type, message, source) {
-		var wrap = $('#debug-renderer'),
-			sourceContent,
-			lineLimit = 100,
-			lines = wrap.find('div'),
-			lineCount = lines.length;
+		var sourceContent,
+			//lineLimit = 100;
+			lineLimit = 10;
 
-		if (lineCount > lineLimit - 1) {
-			$(lines.splice(0, lineCount - (lineLimit - 1))).remove();
+		this._messageCount++;
+
+		if (this._messageCount > lineLimit) {
+			this.wrap.find('DIV:first').remove();
+			/*document.getElementById('debug-renderer').removeChild(
+				document.getElementById('debug-renderer').getElementsByTagName('div')[0]
+			);*/
 		}
 
 		if (util.isObject(source)) {
@@ -390,11 +397,19 @@ function($, _, dbg, resourceManager, util) {
 			sourceContent = '<em>unknown</em>';
 		}
 
-		wrap.append('<div class="' + type + '">' + message + '<span>' + sourceContent + '</span></div> ');
+		var messageDiv = document.createElement('div');
 
-		wrap.prop(
+		messageDiv.innerHTML = message;
+
+		//document.getElementById('debug-renderer').appendChild(messageDiv);
+
+		//this.wrap.append('<div class="' + type + '">' + message + '<span>' + sourceContent + '</span></div> ');
+//		this.wrap.append('<div class="' + type + '">' + message + '</div> ');
+		this.wrap.append($('<div/>').addClass(type).text(message));
+
+		this.wrap.prop(
 			'scrollTop',
-			wrap.prop('scrollHeight')
+			this.wrap.prop('scrollHeight')
 		);
 	};
 

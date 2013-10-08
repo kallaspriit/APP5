@@ -1,5 +1,5 @@
 /*
- * TODO Refactor APP5 to use the new custom events style
+ * TODO Refactor APP5 to use the new custom events style?
  * TODO Add support for IE
  * TODO Optimize for mobile browsers
  * TODO Add option to disable back-functionality (preserving previous views)
@@ -12,6 +12,7 @@
  * TODO Figure out better way to get action parameters
  * TODO Better document the events
  * TODO Review the build system
+ * TODO Create node scripts to generate modules, actions, views
  */
 
 // Configuration for RequireJS.
