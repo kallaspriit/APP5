@@ -379,16 +379,12 @@ function($, _, dbg, resourceManager, util) {
 	 */
 	DebugRenderer.prototype._appendMessage = function(type, message, source) {
 		var sourceContent,
-			//lineLimit = 100;
-			lineLimit = 10;
+			lineLimit = 100;
 
 		this._messageCount++;
 
 		if (this._messageCount > lineLimit) {
 			this.wrap.find('DIV:first').remove();
-			/*document.getElementById('debug-renderer').removeChild(
-				document.getElementById('debug-renderer').getElementsByTagName('div')[0]
-			);*/
 		}
 
 		if (util.isObject(source)) {
@@ -401,11 +397,11 @@ function($, _, dbg, resourceManager, util) {
 
 		messageDiv.innerHTML = message;
 
-		//document.getElementById('debug-renderer').appendChild(messageDiv);
-
-		//this.wrap.append('<div class="' + type + '">' + message + '<span>' + sourceContent + '</span></div> ');
-//		this.wrap.append('<div class="' + type + '">' + message + '</div> ');
-		this.wrap.append($('<div/>').addClass(type).text(message));
+		this.wrap.append(
+			$('<div/>').addClass(type).text(message).append(
+				$('<span/>').html(sourceContent)
+			)
+		);
 
 		this.wrap.prop(
 			'scrollTop',
