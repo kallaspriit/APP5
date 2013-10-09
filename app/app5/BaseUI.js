@@ -188,8 +188,7 @@ function(
 
 		this._transitioning = true;
 
-		var self = this,
-			prefix = config.cssPrefix,
+		var prefix = config.cssPrefix,
 			body = $(document.body),
 			transitionType = config.pageTransition,
 			simultaneousTransitions = ['slide', 'slideup', 'slidedown'],
@@ -241,7 +240,7 @@ function(
 					body.addClass(bodyClasses.join(' '));
 				}.bind(this), 0);
 
-				currentWrap.one(animationEndEvents, function() {
+				currentWrap.on(animationEndEvents, function() {
 					currentWrap.removeClass(
 						prefix + transitionType + ' ' + prefix + 'out ' + prefix + 'page-active ' + prefix + 'reverse'
 					);
@@ -250,15 +249,19 @@ function(
 						newWrap.addClass(prefix + 'page-active ' + prefix + transitionType + ' ' + prefix + 'in');
 					}
 
-					currentWrapAnimation.resolve();
-				});
+					this.wrap.off(animationEndEvents);
 
-				newWrap.one(animationEndEvents, function() {
+					currentWrapAnimation.resolve();
+				}.bind({ wrap: currentWrap }));
+
+				newWrap.on(animationEndEvents, function() {
 					newWrap.removeClass(prefix + transitionType + ' ' + prefix + 'in ' + prefix + 'reverse');
 					body.removeClass(prefix + 'transitioning ' + prefix + 'transition-' + transitionType);
 
+					this.wrap.off(animationEndEvents);
+
 					newWrapAnimation.resolve();
-				});
+				}.bind({ wrap: newWrap }));
 
 				Deferred.when(
 					currentWrapAnimation,

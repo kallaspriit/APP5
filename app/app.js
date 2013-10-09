@@ -1,6 +1,6 @@
 /*
  * TODO Refactor APP5 to use the new custom events style?
- * TODO Add support for IE
+ * TODO Add better support for IE
  * TODO Optimize for mobile browsers
  * TODO Add option to disable back-functionality (preserving previous views)
  * TODO Check for memory leaks
@@ -11,6 +11,7 @@
  * TODO Consider http://jsfiddle.net/gVEq5/ for model design
  * TODO Figure out better way to get action parameters
  * TODO Better document the events
+ * TODO Create documentation
  * TODO Review the build system
  * TODO Create node scripts to generate modules, actions, views
  */
