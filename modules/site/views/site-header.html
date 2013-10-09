@@ -1,0 +1,34 @@
+<div class="navbar-inner">
+	<div class="container-fluid">
+		<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</a>
+		<a class="brand" ng-class="{'back-possible' : backPossible}" href="javascript: void(0);" ng-tap="back()" translate>site.title</a>
+		<div class="nav-collapse collapse">
+			<ul id="language-choice" class="nav pull-right lang-nav">
+				<li ng-class="{selected : language == translator.getLanguage()}" ng-repeat="language in translator.getLanguages()">
+					<a href="javascript: void(0);" style="background-image: url('modules/site/images/flags/{{language}}.png');" ng-tap="translator.setLanguage(language)">{{translator.translate('lang.' + language)}}</a>
+				</li>
+			</ul>
+			<ul class="nav">
+				<li ng-repeat="menu in menus" ng-class="{active : menu.active}"><a href="javascript: void(0);" ng-tap="open($index)">{{translator.translate('site.menu.' + menu.name)}}</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<script>
+
+$('[data-toggle=collapse]').click(function (e) {
+	var $this = $(this), href
+			, target = $this.attr('data-target')
+					|| e.preventDefault()
+					|| (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
+			, option = $(target).data('collapse') ? 'toggle' : $this.data()
+	$this[$(target).hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
+	$(target).collapse(option)
+})
+
+</script>

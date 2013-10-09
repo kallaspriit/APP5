@@ -1,0 +1,28 @@
+<div class="container-fluid">
+	<h2 translate>phonebook.add-contact</h2>
+
+	<form class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="contact-name" translate>phonebook.name</label>
+			<div class="controls">
+				<input type="text" id="contact-name" ng-model="name">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="contact-number" translate>phonebook.number</label>
+			<div class="controls">
+				<input type="tel" id="contact-number" ng-model="number">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" translate>phonebook.birthdate</label>
+			<div class="controls">
+				<datepick ng-model="birthdate"></datepick>
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary" ng-tap="addContact(name, number, birthdate)" translate>save</button>
+			<button type="button" class="btn" ng-tap="navi.back()" translate>cancel</button>
+		</div>
+	</form>
+</div>

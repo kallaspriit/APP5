@@ -1,0 +1,37 @@
+<div class="container-fluid">
+	<div class="navbar">
+		<div class="navbar-inner">
+			<div class="pagination pagination-small span7">
+				<p class="pull-left" style="margin: 4px 10px 0 0"><span translate>phonebook.sort-by</span>:</p>
+				<ul>
+					<li ng-class="{active : orderOption == order}" ng-repeat="orderOption in orderOptions"><a href="javascript: void(0);" ng-tap="orderBy(orderOption)">{{translator.translate('phonebook.sort-by.' + orderOption)}}</a></li>
+				</ul>
+			</div>
+			<form class="navbar-form span3 pull-right" style="margin: 15px 0;">
+				<div class="input-append">
+					<input class="span2" placeholder="{{translator.translate('phonebook.filter-placeholder')}}" type="text" name="phonebook-filter" ng-model="filter">
+					<button class="btn" type="button" translate>phonebook.filter</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<paginate data="phonebook | filter: filter | orderBy: order" items-per-page="4">
+		<ul class="media-list">
+			<li class="media contacts" ng-repeat="contact in pagination">
+				<a class="pull-left" href="#">
+					<img class="media-object" alt="{{contact.name}}" style="width: 80px; height: 80px;" ng-src="data/profile-pictures/{{contact.image}}">
+				</a>
+				<div class="media-body">
+					<h4 class="media-heading">{{contact.name}}</h4>
+					<p><strong translate>phonebook.phone-number</strong>: <span class="nr">{{contact.number}}</span></p>
+					<p><strong translate>phonebook.birthdate</strong>: {{contact.birthdate}}</p>
+					<div class="btn-group">
+						<button class="btn btn-mini" ng-click="edit(contact.id)" translate>edit</button>
+						<button class="btn btn-mini" ng-click="remove(contact.id)" translate>delete</button>
+					</div>
+				</div>
+			</li>
+		</ul>
+		<p><em translate>phonebook.pagination-tip</em></p>
+	</paginate>
+</div>
