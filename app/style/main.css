@@ -47,7 +47,13 @@ BODY.app5-loading-view #loading-indicator {
 		position: relative;
 	}
 }
-
+@media screen and (max-width: 640px) {
+	A.brand {
+		width: 0;
+		padding-right: 0 !important;
+		overflow: hidden;
+	}
+}
 
 /* Bootstrap customizations */
 .sidebar-nav {
