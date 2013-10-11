@@ -206,6 +206,15 @@ function(EventEmitter, util) {
 	};
 
 	/**
+	 * Sets the number of reconnection attempts to infinite (-1).
+	 *
+	 * @method setInfiniteReconnects
+	 */
+	SocketClient.prototype.setInfiniteReconnects = function() {
+		this.setReconnectAttempts(-1);
+	};
+
+	/**
 	 * Returns whether the connection has been opened before.
 	 *
 	 * @method wasEverOpened
