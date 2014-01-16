@@ -14,6 +14,8 @@
  * TODO Create documentation
  * TODO Review the build system
  * TODO Create node scripts to generate modules, actions, views
+ * TODO Consider gruntjs for building automation
+ * TODO Consider yeoman and bower
  */
 
 // Configuration for RequireJS.

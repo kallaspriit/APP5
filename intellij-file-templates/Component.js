@@ -25,7 +25,7 @@ function(EventEmitter) {
 	 * @param {String} Event.??? Triggered ???
 	 */
 	${NAME}.prototype.Event = {
-		???: '???'
+		_: '_'
 	};
 
 	/**
