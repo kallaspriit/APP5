@@ -7,7 +7,7 @@ define(
 	'core/Debug',
 	'core/App',
 	'core/ResourceManager',
-	'core/router/ConfigRouter', // QueryRouter/PathRouter/ConfigRouter
+	'core/Router',
 	'core/Keyboard',
 	'core/Mouse',
 	'core/Translator',

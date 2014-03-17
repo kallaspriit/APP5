@@ -2,29 +2,23 @@ define(
 [
 	'config/main',
 	'config/routes',
-	'core/router/RouterBase',
 	'core/Navi',
 	'core/App',
 	'core/BaseUtil'
 ],
-function(config, routes, RouterBase, navi, app, util) {
+function(config, routes, navi, app, util) {
 	'use strict';
 
 	/**
-	 * Configuration-file based router strategy.
+	 * Base router implementation.
 	 *
-	 * @class ConfigRouter
-	 * @extends RouterBase
+	 * @class Router
 	 * @constructor
 	 * @module Core
 	 */
-	var ConfigRouter = function() {
-		RouterBase.call(this);
-
+	var Router = function() {
 		this._currentRouteName = null;
 	};
-
-	ConfigRouter.prototype = Object.create(RouterBase.prototype);
 
 	/**
 	 * Parameter types.
@@ -33,7 +27,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @param {String} Param.STRING String type
 	 * @param {String} Param.POS_INT Positive integer type
 	 */
-	ConfigRouter.prototype.Param = {
+	Router.prototype.Param = {
 		STRING: 'string',
 		INT: 'int',
 		POS_INT: '+int'
@@ -44,7 +38,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 *
 	 * @property ParamDefaults
 	 */
-	ConfigRouter.prototype.ParamDefaults = {
+	Router.prototype.ParamDefaults = {
 		'string': '',
 		'int': 0,
 		'+int': 1
@@ -56,7 +50,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @method init
 	 * @return {Router} Self
 	 */
-	ConfigRouter.prototype.init = function() {
+	Router.prototype.init = function() {
 		var self = this;
 
 		navi.on(navi.Event.URL_CHANGED, function(e) {
@@ -70,11 +64,11 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * Composes a URL that matches given module action.
 	 *
 	 * @method navigate
-	 * @param {String} module Module name or route name
-	 * @param {String} [action=index] Action name or route parameters
+	 * @param {String} module Module name
+	 * @param {String} [action=index] Action name
 	 * @param {Object} [parameters] Action parameters
 	 */
-	ConfigRouter.prototype.navigate = function(module, action, parameters) {
+	Router.prototype.navigate = function(module, action, parameters) {
 		if (util.isUndefined(action) || util.isObject(action)) {
 			var routeName = module,
 				routeParameters = action,
@@ -110,7 +104,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @param {Object} [parameters] Route parameters
 	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
 	 */
-	ConfigRouter.prototype.open = function(routeName, parameters, replace) {
+	Router.prototype.open = function(routeName, parameters, replace) {
 		if (!util.isObject(routes[routeName])) {
 			throw new Error('Route "' + routeName + '" not found');
 		}
@@ -161,7 +155,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @param {Boolean} [replace=false] Should the URL be replaced, e.g not create history step
 	 * @return {Boolean} Was setting the parameter successful
 	 */
-	ConfigRouter.prototype.setUrlParameter = function(name, value, replace) {
+	Router.prototype.setUrlParameter = function(name, value, replace) {
 		var currentItem = navi.getCurrentItem(),
 			newItem;
 
@@ -185,7 +179,7 @@ function(config, routes, RouterBase, navi, app, util) {
 				newItem.parameters
 			);
 		}
-	},
+	};
 
 	/**
 	 * Called when application URL changes.
@@ -204,7 +198,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @param {Object} parameters URL parameters
 	 * @private
 	 */
-	ConfigRouter.prototype._onUrlChanged = function(parameters) {
+	Router.prototype._onUrlChanged = function(parameters) {
 		var path = parameters.path,
 			routeName,
 			route,
@@ -298,7 +292,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @return {Object} Parsed route
 	 * @private
 	 */
-	ConfigRouter.prototype._parseRoute = function(route) {
+	Router.prototype._parseRoute = function(route) {
 		var pathParameters = [];
 
 		if (route.path.length > 0) {
@@ -335,7 +329,7 @@ function(config, routes, RouterBase, navi, app, util) {
 	 * @return {Object} Parsed parameter
 	 * @private
 	 */
-	ConfigRouter.prototype._parseRouteParameter = function(original) {
+	Router.prototype._parseRouteParameter = function(original) {
 		var parameter = original.substr(1);
 
 		if (parameter.indexOf('[') === -1) {
@@ -356,7 +350,7 @@ function(config, routes, RouterBase, navi, app, util) {
 		};
 	};
 
-	ConfigRouter.prototype._matchRoute = function(route, path) {
+	Router.prototype._matchRoute = function(route, path) {
 		if (path.substr(0, 1) === '/') {
 			path = path.substr(1);
 		}
@@ -398,7 +392,7 @@ function(config, routes, RouterBase, navi, app, util) {
 		}
 	};
 
-	ConfigRouter.prototype._matchTokens = function(pathToken, routeToken) {
+	Router.prototype._matchTokens = function(pathToken, routeToken) {
 		if (routeToken.type === 'static') {
 			if (pathToken !== routeToken.name) {
 				return false;
@@ -420,5 +414,5 @@ function(config, routes, RouterBase, navi, app, util) {
 		return true;
 	};
 
-	return new ConfigRouter();
+	return new Router();
 });

@@ -70,8 +70,7 @@ function(phonebook) {
 			$scope.addContact = function(name, number, birthdate) {
 				phonebook.add(name, number, birthdate);
 
-				//navi.open('phonebook', 'contacts');
-				navi.open('contacts'); // ConfigRouter
+				navi.open('contacts');
 			};
 		},
 
