@@ -60,7 +60,7 @@ function() {
 	};
 
 	/**
-	 * Registers a module action controller.
+	 * Registers a module activity controller.
 	 *
 	 * @method registerController
 	 * @param {String} name Name of the controller

@@ -15,35 +15,35 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	'use strict';
 
 	/**
-	 * Provides functionality to navigate between module actions.
+	 * Provides functionality to navigate between module activities.
 	 *
 	 * Can fire the following events:
 	 *
-	 *	> PRE_NAVIGATE - fired before navigating to a new module action
+	 *	> PRE_NAVIGATE - fired before navigating to a new module activity
 	 *		module - module name
-	 *		action - action name
-	 *		parameters - action parameters
-	 *	> POST_NAVIGATE - fired after navigating to a new module action
+	 *		activity - activity name
+	 *		parameters - activity parameters
+	 *	> POST_NAVIGATE - fired after navigating to a new module activity
 	 *		module - module name
-	 *		action - action name
-	 *		parameters - action parameters
+	 *		activity - activity name
+	 *		parameters - activity parameters
 	 *	> PRE_PARTIAL - fired before opening a partial view
 	 *		containerSelector - selector for the partial container
 	 *		module - module name
-	 *		action - action name
-	 *		parameters - action parameters
+	 *		activity - activity name
+	 *		parameters - activity parameters
 	 *	> POST_PARTIAL - fired after opening a partial view
 	 *		containerSelector - selector for the partial container
 	 *		module - module name
-	 *		action - action name
-	 *		parameters - action parameters
+	 *		activity - activity name
+	 *		parameters - activity parameters
 	 *	> STACK_CHANGED - fired when navigation stack changes
 	 *		stack - updated navigation stack
 	 *  > URL_CHANGED - fired when the URL changes
 	 *		parameters - URL parameters (url, hash, path, query, args, host, port, protocol)
-	 * > PARAMETERS_CHANGED - fired when current action parameters change
+	 * > PARAMETERS_CHANGED - fired when current activity parameters change
 	 *		module - name of the module
-	 *		action - name of the action
+	 *		activity - name of the activity
 	 *		parameters - new parameters values
 	 *
 	 * @class Navi
@@ -75,10 +75,10 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} Event.POST_PARTIAL Triggered just after opening partial
 	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
 	 * @param {String} Event.URL_CHANGED Called when URL changes
-	 * @param {String} Event.PARAMETERS_CHANGED Called when current action parameters change
-	 * @param {String} Event.SLEEP Called on scope when action is put to sleep
-	 * @param {String} Event.WAKEUP Called on scope when action is awaken
-	 * @param {String} Event.EXIT Called on scope when action is killed
+	 * @param {String} Event.PARAMETERS_CHANGED Called when current activity parameters change
+	 * @param {String} Event.SLEEP Called on scope when activity is put to sleep
+	 * @param {String} Event.WAKEUP Called on scope when activity is awaken
+	 * @param {String} Event.EXIT Called on scope when activity is killed
 	 */
 	Navi.prototype.Event = {
 		PRE_NAVIGATE: 'pre-navigate',
@@ -118,46 +118,46 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	};
 
 	/**
-	 * Navigates to a module action.
+	 * Navigates to a module activity.
 	 *
-	 * By default the action is opened in container defined by the configuration property viewSelector.
+	 * By default the activity is opened in container defined by the configuration property viewSelector.
 	 *
 	 * @method open
 	 * @param {String} module Module to open
-	 * @param {String} [action=index] Action to navigate to
-	 * @param {Array} [parameters] Action parameters
+	 * @param {String} [activity=index] Activity to navigate to
+	 * @param {Array} [parameters] Activity parameters
 	 */
-	Navi.prototype.open = function(module, action, parameters) {
+	Navi.prototype.open = function(module, activity, parameters) {
 		if (ui.isTransitioning()) {
 			// there's an ongoing transition to a view, queue this request
 			this._queue.push({
 				type: 'indirect',
 				module: module,
-				action: action,
+				activity: activity,
 				parameters: parameters
 			});
 
 			return;
 		}
 
-		this.router.navigate(module, action, parameters);
+		this.router.navigate(module, activity, parameters);
 	};
 
 	/**
-	 * Opens module action.
+	 * Opens module activity.
 	 *
-	 * By default the action is opened in container defined by the configuration property viewSelector.
+	 * By default the activity is opened in container defined by the configuration property viewSelector.
 	 *
 	 * @method _open
 	 * @param {String} module Module to open
-	 * @param {String} [action=index] Action to navigate to
-	 * @param {Array} [parameters] Action parameters
+	 * @param {String} [activity=index] Activity to navigate to
+	 * @param {Array} [parameters] Activity parameters
 	 * @param {Boolean} [isBack=false] Is the opening triggered by a back button
 	 * @return {Deferred} Deferred promise
 	 * @private
 	 */
-	Navi.prototype._open = function(module, action, parameters, isBack) {
-		action = action || 'index';
+	Navi.prototype._open = function(module, activity, parameters, isBack) {
+		activity = activity || 'index';
 		parameters = parameters || [];
 
 		if (!util.isBoolean(isBack)) {
@@ -169,7 +169,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			this._queue.push({
 				type: 'direct',
 				module: module,
-				action: action,
+				activity: activity,
 				parameters: parameters,
 				isBack: isBack
 			});
@@ -180,14 +180,14 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			actionName = util.convertCallableName(action) + 'Action',
+			activity = util.convertCallableName(activity) + 'Activity',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html';
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
 
 		this.emit({
 			type: this.Event.PRE_NAVIGATE,
 			module: module,
-			action: action,
+			activity: activity,
 			parameters: parameters
 		});
 
@@ -196,57 +196,57 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(moduleObj, viewContent) {
-			self._showAction(
+			self._showActivity(
 				module,
-				action,
+				activity,
 				moduleObj,
 				viewContent,
 				className,
-				actionName,
+				activity,
 				deferred,
 				parameters,
 				isBack
 			);
 		}).fail(function(reason) {
-			throw new Error('Attempting to open ' + module + '.' + actionName + ', but ' + reason.toLowerCase());
+			throw new Error('Attempting to open ' + module + '.' + activity + ', but ' + reason.toLowerCase());
 		});
 
 		return deferred.promise();
 	};
 
 	/**
-	 * Shows module action once the resources have been loaded.
+	 * Shows module activity once the resources have been loaded.
 	 *
-	 * @method _showAction
+	 * @method _showActivity
 	 * @param {String} module Module name
-	 * @param {String} action Module action name
+	 * @param {String} activity Module activity name
 	 * @param {Object} moduleObj Module object
-	 * @param {String} viewContent Action view content
+	 * @param {String} viewContent Activity view content
 	 * @param {String} className Name of the module class
-	 * @param {String} actionName Name of the module action
+	 * @param {String} activityName Name of the module activity
 	 * @param {Deferred} deferred Progress deferred
 	 * @param {Array} parameters List of parameters
 	 * @param {Boolean} isBack Is the view change triggered by back-button
 	 * @private
 	 */
-	Navi.prototype._showAction = function(
+	Navi.prototype._showActivity = function(
 		module,
-		action,
+		activity,
 		moduleObj,
 		viewContent,
 		className,
-		actionName,
+		activityName,
 		deferred,
 		parameters,
 		isBackBtn
 	) {
-		if (!util.isFunction(moduleObj[actionName]) && !util.isArray(moduleObj[actionName])) {
-			throw new Error('Invalid "' + module + '" module action "' + action + '" requested');
+		if (!util.isFunction(moduleObj[activityName]) && !util.isArray(moduleObj[activityName])) {
+			throw new Error('Invalid "' + module + '" module activity "' + activity + '" requested');
 		}
 
 		var self = this,
 			currentItem = this.getCurrentItem(),
-			existingItem = this.getExistingItem(module, action),
+			existingItem = this.getExistingItem(module, activity),
 			newItem = null,
 			isBack = false,
 			isReopen = false,
@@ -277,14 +277,14 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		if (currentItem !== null && currentItem === existingItem) {
 			currentItem.emit(this.Event.URL_CHANGED, {
 				module: module,
-				action: action,
+				activity: activity,
 				parameters: parameters
 			});
 
 			this.emit({
 				type: this.Event.PARAMETERS_CHANGED,
 				module: module,
-				action: action,
+				activity: activity,
 				parameters: parameters
 			});
 
@@ -351,9 +351,9 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		if (!isBack) {
 			app.parameters = parameters;
-			app.registerController(className + '.' + actionName, moduleObj[actionName]);
+			app.registerController(className + '.' + activityName, moduleObj[activityName]);
 
-			newItem = this.appendNavigation(module, action, parameters, true);
+			newItem = this.appendNavigation(module, activity, parameters, true);
 			stackChanged = true;
 
 			newItem.emit = function(type, parameters) {
@@ -374,9 +374,9 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		newItemContainer = ui.showView(
 			module,
-			action,
+			activity,
 			className,
-			actionName,
+			activityName,
 			parameters,
 			moduleObj,
 			viewContent,
@@ -395,7 +395,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				this.emit({
 					type: self.Event.POST_NAVIGATE,
 					module: module,
-					action: action,
+					activity: activity,
 					parameters: parameters
 				});
 
@@ -415,18 +415,18 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Opens a partial view.
 	 *
-	 * Partials can be used to load module actions in any container to display main menu etc.
+	 * Partials can be used to load activities in any container to display main menu etc.
 	 *
 	 * @method partial
 	 * @param {String} containerSelector Container selector
 	 * @param {String} module Module to open
-	 * @param {String} [action=index] Action to navigate to
-	 * @param {Object} [parameters] Action parameters
+	 * @param {String} [activity=index] Activity to navigate to
+	 * @param {Object} [parameters] Activity parameters
 	 * @param {Boolean} [append=false] Should the content be appended instead of replaced
 	 * @return {Deferred} Deferred promise
 	 */
-	Navi.prototype.partial = function(containerSelector, module, action, parameters, append) {
-		action = action || 'index';
+	Navi.prototype.partial = function(containerSelector, module, activity, parameters, append) {
+		activity = activity || 'index';
 		parameters = parameters || [];
 		append = util.isBoolean(append) ? append : false;
 
@@ -435,16 +435,16 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			actionName = util.convertCallableName(action) + 'Action',
+			activityName = util.convertCallableName(activity) + 'Activity',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + action + '.html',
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html',
 			item = null;
 
 		this.emit({
 			type: this.Event.PRE_PARTIAL,
 			containerSelector: containerSelector,
 			module: module,
-			action: action,
+			activity: activity,
 			parameters: parameters
 		});
 
@@ -455,9 +455,9 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		).done(function(moduleObj, viewContent) {
 			item = ui.showPartial(
 				module,
-				action,
+				activity,
 				className,
-				actionName,
+				activityName,
 				parameters,
 				moduleObj,
 				viewContent,
@@ -469,7 +469,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				type: self.Event.POST_PARTIAL,
 				containerSelector: containerSelector,
 				module: module,
-				action: action,
+				activity: activity,
 				parameters: parameters
 			});
 
@@ -486,7 +486,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	};
 
 	/**
-	 * Navigates back to previous action.
+	 * Navigates back to previous activity.
 	 *
 	 * @method back
 	 */
@@ -527,13 +527,13 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		this.open(
 			newItem.module,
-			newItem.action,
+			newItem.activity,
 			newItem.parameters
 		);
 	};
 
 	/**
-	 * Returns currently active action info.
+	 * Returns currently active activity info.
 	 *
 	 * @method getCurrentItem
 	 * @return {Object|null}
@@ -547,7 +547,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	};
 
 	/**
-	 * Returns previously active action info.
+	 * Returns previously active activity info.
 	 *
 	 * @method getPreviousItem
 	 * @return {Object|null}
@@ -565,17 +565,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 *
 	 * @method getExistingItem
 	 * @param {String} module Module name
-	 * @param {String} action Action name
+	 * @param {String} activity Activity name
 	 * @return {Object|null} Navi info or null if not exists
 	 */
-	Navi.prototype.getExistingItem = function(module, action) {
+	Navi.prototype.getExistingItem = function(module, activity) {
 		var i,
 			item;
 
 		for (i = 0; i < this._stack.length; i++) {
 			item = this._stack[i];
 
-			if (item.module === module && item.action === action) {
+			if (item.module === module && item.activity === activity) {
 				return item;
 			}
 		}
@@ -584,21 +584,21 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	};
 
 	/**
-	 * Returns whether currently active module action is as given.
+	 * Returns whether currently active module activity is as given.
 	 *
 	 * @method isCurrentView
 	 * @param {String} module Module name
-	 * @param {String} action Action name
+	 * @param {String} activity Activity name
 	 * @return {Boolean}
 	 */
-	Navi.prototype.isCurrentView = function(module, action) {
+	Navi.prototype.isCurrentView = function(module, activity) {
 		var currentItem = this.getCurrentItem();
 
 		if (currentItem === null) {
 			return false;
 		}
 
-		return currentItem.module === module && currentItem.action === action;
+		return currentItem.module === module && currentItem.activity === activity;
 	};
 
 	/**
@@ -662,17 +662,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Pops an item from the end of the navigation stack.
 	 *
-	 * @method _popLastAction
+	 * @method _popLastActivity
 	 * @param {Number} [steps=1] How many steps to jump back
-	 * @return {Object} Last action info
+	 * @return {Object} Last activity info
 	 * @private
 	 */
-	Navi.prototype._popLastAction = function(steps) {
+	Navi.prototype._popLastActivity = function(steps) {
 		steps = steps || 1;
 
 		if (this._stack.length >= 2) {
 			for (var i = 0; i < steps; i++) {
-				this._removeCurrentAction();
+				this._removeCurrentActivity();
 			}
 
 			var last = this._stack.pop();
@@ -692,7 +692,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * Peeks the last stack item without remocing it.
 	 *
 	 * @method peekLast
-	 * @return {Object} Last action info or null if not available
+	 * @return {Object} Last activity info or null if not available
 	 */
 	Navi.prototype.peekLast = function() {
 		if (this._stack.length === 0) {
@@ -706,7 +706,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * Pops and returns last stack item.
 	 *
 	 * @method popLast
-	 * @return {Object} Last action info or null if not available
+	 * @return {Object} Last activity info or null if not available
 	 */
 	Navi.prototype.popLast = function() {
 		if (this._stack.length === 0) {
@@ -726,10 +726,10 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Removes current item from the end of the navigation stack.
 	 *
-	 * @method removeCurrentAction
+	 * @method removeCurrentActivity
 	 * @private
 	 */
-	Navi.prototype._removeCurrentAction = function() {
+	Navi.prototype._removeCurrentActivity = function() {
 		if (this._stack.length >= 1) {
 			this._stack.pop();
 		}
@@ -745,16 +745,16 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 *
 	 * @method appendNavigation
 	 * @param {String} module Name of the module to use
-	 * @param {String} action Module action to call, defaults to index
-	 * @param {Object} parameters Map of parameters to pass to action
+	 * @param {String} activity Module activity to call, defaults to index
+	 * @param {Object} parameters Map of parameters to pass to activity
 	 * @param {Boolean} [quiet=false] If set to true, no stack change event is automatically emitted
 	 * @return {Object} New stack item
 	 */
-	Navi.prototype.appendNavigation = function(module, action, parameters, quiet) {
+	Navi.prototype.appendNavigation = function(module, activity, parameters, quiet) {
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
-			action: action,
+			activity: activity,
 			parameters: util.isObject(parameters) ? parameters : {},
 			level: this._stack.length,
 			container: null,
@@ -776,15 +776,15 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 *
 	 * @method prependNavigation
 	 * @param {String} module Name of the module to use
-	 * @param {String} action Module action to call, defaults to index
-	 * @param {Object} parameters Map of parameters to pass to action
+	 * @param {String} activity Module activity to call, defaults to index
+	 * @param {Object} parameters Map of parameters to pass to activity
 	 * @return {Object} New stack item
 	 */
-	Navi.prototype.prependNavigation = function(module, action, parameters) {
+	Navi.prototype.prependNavigation = function(module, activity, parameters) {
 		this._stack.unshift({
 			id: this._naviCounter++,
 			module: module,
-			action: action,
+			activity: activity,
 			parameters: util.isObject(parameters) ? parameters : {},
 			level: 0,
 			container: null,
@@ -806,7 +806,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Triggered on key events.
 	 *
-	 * Passes the key event on to currently active module action controller.
+	 * Passes the key event on to currently active module activity controller.
 	 *
 	 * @method _onKeyEvent
 	 * @param {Keyboard.KeyEvent} event Key event
@@ -825,7 +825,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	/**
 	 * Triggered on mouse events.
 	 *
-	 * Passes the key event on to currently active module action controller.
+	 * Passes the key event on to currently active module activity controller.
 	 *
 	 * @method _onMouseEvent
 	 * @param {Mouse.MouseEvent} event Key event
@@ -855,9 +855,9 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var item = this._queue.shift();
 
 		if (item.type === 'direct') {
-			this._open(item.module, item.action, item.parameters, item.isBack);
+			this._open(item.module, item.activity, item.parameters, item.isBack);
 		} else {
-			this.open(item.module, item.action, item.parameters);
+			this.open(item.module, item.activity, item.parameters);
 		}
 	};
 

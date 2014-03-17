@@ -13,14 +13,14 @@ function(phonebook) {
 	return {
 
 		/**
-		 * Contact list action.
+		 * Contact list activity.
 		 *
-		 * @method contactsAction
+		 * @method contactsActivity
 		 * @param {Scope} $scope Angular scope
-		 * @param {Function} $parameters Action parameters
+		 * @param {Function} $parameters Activity parameters
 		 * @param {UI} ui User interface
 		 */
-		contactsAction: function($scope, $parameters, ui) {
+		contactsActivity: function($scope, $parameters, ui) {
 			$scope.phonebook = phonebook;
 			$scope.filter = '';
 			$scope.order = 'name';
@@ -56,13 +56,13 @@ function(phonebook) {
 		},
 
 		/**
-		 * Add new contact action.
+		 * Add new contact activity.
 		 *
-		 * @method addContactAction
+		 * @method addContactActivity
 		 * @param {Scope} $scope Angular scope
 		 * @param {Navi} navi Navigation
 		 */
-		addContactAction: function($scope, navi) {
+		addContactActivity: function($scope, navi) {
 			$scope.setTitle('Add Contact');
 
 			//$scope.birthdate = '01.01.1990';
@@ -77,13 +77,13 @@ function(phonebook) {
 		/**
 		 * Enables editing contact information.
 		 *
-		 * @method addContactAction
+		 * @method addContactActivity
 		 * @param {Scope} $scope Angular scope
-		 * @param {Object} $parameters Action parameters
+		 * @param {Object} $parameters Activity parameters
 		 * @param {Navi} navi Navigation
 		 * @param {Util} util Utilities
 		 */
-		editContactAction: function($scope, $parameters, navi, util) {
+		editContactActivity: function($scope, $parameters, navi, util) {
 			// TODO Find a better way
 			var params = $parameters();
 

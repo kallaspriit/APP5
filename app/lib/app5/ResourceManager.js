@@ -55,7 +55,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	 * @param {String} ResourceType.FILE RequireJS file
 	 * @param {String} ResourceType.MODULE Application module
 	 * @param {String} ResourceType.MODULE_TRANSLATIONS Application module translations
-	 * @param {String} ResourceType.VIEW Action view
+	 * @param {String} ResourceType.VIEW Activity view
 	 * @param {String} ResourceType.CSS Css file
 	 * @param {String} ResourceType.REQUEST Http request
 	 */
@@ -292,7 +292,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 				module.$name = name;
 
 				for (var key in module) {
-					if (key.substr(key.length - 6) !== 'Action') {
+					if (key.substr(key.length - 8) !== 'Activity') {
 						continue;
 					}
 

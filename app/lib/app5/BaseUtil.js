@@ -655,7 +655,7 @@ function(angular, Deferred, _) {
 		},
 
 		/**
-		 * Converts from action-name to actionName style.
+		 * Converts from activity-name to activityName style.
 		 *
 		 * @method convertCallableName
 		 * @param {String} name Name to convert

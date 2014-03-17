@@ -61,17 +61,17 @@ function(config, routes, navi, app, util) {
 	};
 
 	/**
-	 * Composes a URL that matches given module action.
+	 * Composes a URL that matches given module activity.
 	 *
 	 * @method navigate
 	 * @param {String} module Module name
-	 * @param {String} [action=index] Action name
-	 * @param {Object} [parameters] Action parameters
+	 * @param {String} [activity=index] Activity name
+	 * @param {Object} [parameters] Activity parameters
 	 */
-	Router.prototype.navigate = function(module, action, parameters) {
-		if (util.isUndefined(action) || util.isObject(action)) {
+	Router.prototype.navigate = function(module, activity, parameters) {
+		if (util.isUndefined(activity) || util.isObject(activity)) {
 			var routeName = module,
-				routeParameters = action,
+				routeParameters = activity,
 				replaceUrl = typeof(parameters) !== 'undefined' ? parameters : false;
 
 			this.open(routeName, routeParameters, replaceUrl);
@@ -79,7 +79,7 @@ function(config, routes, navi, app, util) {
 			return;
 		}
 
-		var path = '/' + module + '/' + action,
+		var path = '/' + module + '/' + activity,
 			key;
 
 		if (util.isObject(parameters) && !util.isEmpty(parameters)) {
@@ -97,7 +97,7 @@ function(config, routes, navi, app, util) {
 	};
 
 	/**
-	 * Composes a URL that matches given module action.
+	 * Composes a URL that matches given module activity.
 	 *
 	 * @method navigate
 	 * @param {String} routeName Name of the route
@@ -175,7 +175,7 @@ function(config, routes, navi, app, util) {
 		} else {
 			navi.open(
 				newItem.module,
-				newItem.action,
+				newItem.activity,
 				newItem.parameters
 			);
 		}
@@ -218,7 +218,7 @@ function(config, routes, navi, app, util) {
 
 			navi._open(
 				route.module,
-				route.action,
+				route.activity,
 				matchParameters,
 				parameters.isBack
 			);
@@ -230,8 +230,8 @@ function(config, routes, navi, app, util) {
 
 		var tokens = path.split('/'),
 			module = config.index.module,
-			action = config.index.action,
-			actionParameters = config.index.parameters,
+			activity = config.index.activity,
+			activityParameters = config.index.parameters,
 			isDefault = true,
 			i,
 			paramParts,
@@ -240,12 +240,12 @@ function(config, routes, navi, app, util) {
 
 		if (tokens.length >= 2 && tokens[1].length > 0) {
 			module = tokens[1];
-			actionParameters = {};
+			activityParameters = {};
 			isDefault = false;
 		}
 
 		if (tokens.length >= 3 && tokens[2].length > 0) {
-			action = tokens[2];
+			activity = tokens[2];
 			isDefault = false;
 		}
 
@@ -260,7 +260,7 @@ function(config, routes, navi, app, util) {
 					paramValue = true;
 				}
 
-				actionParameters[paramName] = paramValue;
+				activityParameters[paramName] = paramValue;
 			}
 
 			isDefault = false;
@@ -270,12 +270,12 @@ function(config, routes, navi, app, util) {
 			this._currentRouteName = config.index.route;
 		}
 
-		util.normalizeType(actionParameters);
+		util.normalizeType(activityParameters);
 
 		navi._open(
 			module,
-			action,
-			actionParameters,
+			activity,
+			activityParameters,
 			parameters.isBack
 		);
 	};
@@ -283,7 +283,7 @@ function(config, routes, navi, app, util) {
 	/**
 	 * Parses a route definition into a more detailed state including:
 	 * - module
-	 * - action
+	 * - activity
 	 * - parameters
 	 * - tokens
 	 *
@@ -315,7 +315,7 @@ function(config, routes, navi, app, util) {
 		return {
 			path: route.path,
 			module: route.module,
-			action: route.action,
+			activity: route.activity,
 			parameters: route.parameters || {},
 			tokens: pathParameters
 		};

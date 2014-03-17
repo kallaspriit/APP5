@@ -4,15 +4,15 @@ function(navi, keyboard, util) {
 	'use strict';
 
 	var link = function($scope, $element, $attrs/*, $controller*/) {
-		var currentAction = navi.getCurrentItem(),
+		var currentActivity = navi.getCurrentItem(),
 			page = 1;
 
 		if (
-			util.isObject(currentAction)
-			&& util.isObject(currentAction.parameters)
-			&& !util.isUndefined(currentAction.parameters.page)
+			util.isObject(currentActivity)
+			&& util.isObject(currentActivity.parameters)
+			&& !util.isUndefined(currentActivity.parameters.page)
 		) {
-			page = parseInt(currentAction.parameters.page, 10);
+			page = parseInt(currentActivity.parameters.page, 10);
 
 			if (isNaN(page) || page < 1) {
 				page = 1;

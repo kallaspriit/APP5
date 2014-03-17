@@ -90,14 +90,14 @@ function(
 	};
 
 	/**
-	 * Renders module action view.
+	 * Renders activity view.
 	 *
 	 * @method showView
 	 * @param {String} module Name of the module
-	 * @param {String} action Name of the action
+	 * @param {String} activity Name of the activity
 	 * @param {String} className Class name of the module
-	 * @param {String} actionName Method name of the action
-	 * @param {Array} parameters Action parameters
+	 * @param {String} activityName Method name of the activity
+	 * @param {Array} parameters Activity parameters
 	 * @param {Object} moduleObj Module object
 	 * @param {String} viewContent View content to render
 	 * @param {DOMElement} currentContainer Current view container to animate to
@@ -110,9 +110,9 @@ function(
 	 */
 	BaseUI.prototype.showView = function(
 		module,
-		action,
+		activity,
 		className,
-		actionName,
+		activityName,
 		parameters,
 		moduleObj,
 		viewContent,
@@ -139,8 +139,8 @@ function(
 
 		newWrap = $('<div/>', {
 			'id': newWrapId,
-			'class': prefix + 'page ' + module + '-module ' + action + '-action ' + prefix + 'page-loading',
-			'ng-controller': className + '.' + actionName,
+			'class': prefix + 'page ' + module + '-module ' + activity + '-activity ' + prefix + 'page-loading',
+			'ng-controller': className + '.' + activityName,
 			'style': 'z-index: ' + (1000 - this._pageViewCount) // TODO Find a better way
 		}).html(viewContent).appendTo(parentWrap);
 
@@ -298,10 +298,10 @@ function(
 	 *
 	 * @method showPartial
 	 * @param {String} module Name of the module
-	 * @param {String} action Name of the action
+	 * @param {String} activity Name of the activity
 	 * @param {String} className Class name of the module
-	 * @param {String} actionName Method name of the action
-	 * @param {Array} parameters Action parameters
+	 * @param {String} activityName Method name of the activity
+	 * @param {Array} parameters Activity parameters
 	 * @param {Object} moduleObj Module object
 	 * @param {String} viewContent View content to render
 	 * @param {String} containerSelector Container selector to place the content into
@@ -310,9 +310,9 @@ function(
 	 */
 	BaseUI.prototype.showPartial = function(
 		module,
-		action,
+		activity,
 		className,
-		actionName,
+		activityName,
 		parameters,
 		moduleObj,
 		viewContent,
@@ -321,7 +321,7 @@ function(
 	) {
 		var prefix = config.cssPrefix,
 			container = $(containerSelector),
-			controllerName = className + '-' + actionName,
+			controllerName = className + '-' + activityName,
 			containerId;
 
 		if (container.length === 0) {
@@ -339,12 +339,12 @@ function(
 		}
 
 		container.addClass(
-			prefix + 'partial ' + module + '-module ' + action + '-action ' + prefix + 'partial-loading'
+			prefix + 'partial ' + module + '-module ' + activity + '-activity ' + prefix + 'partial-loading'
 		);
 
 		app.parameters = parameters;
 
-		app.registerController(controllerName, moduleObj[actionName]);
+		app.registerController(controllerName, moduleObj[activityName]);
 
 		try {
 			app.compile(container)(app.baseScope);

@@ -15,13 +15,13 @@ function(menus) {
 		/**
 		 * Displays main menu.
 		 *
-		 * @method headerAction
+		 * @method headerActivity
 		 * @param {Scope} $scope Angular scope
 		 * @param {Location} $location Angular location service
 		 * @param {Debug} dbg Debugger
 		 * @param {Navi} navi Navigation
 		 */
-		headerAction: function($scope, $location, dbg, navi) {
+		headerActivity: function($scope, $location, dbg, navi) {
 			$scope.menus = menus;
 			$scope.backPossible = false;
 
@@ -36,7 +36,7 @@ function(menus) {
 					return;
 				}
 
-				menus.markActive(page.module, page.action);
+				menus.markActive(page.module, page.activity);
 
 				$scope.backPossible = navi.isBackPossible();
 			};

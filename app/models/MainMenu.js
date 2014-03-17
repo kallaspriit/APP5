@@ -12,20 +12,20 @@ function() {
 	var MainMenu = [{
 			name: 'contacts',
 			module: 'phonebook',
-			action: 'contacts',
+			activity: 'contacts',
 			route: 'contacts'
 		}, {
 			name: 'add-contact',
 			module: 'phonebook',
-			action: 'add-contact',
+			activity: 'add-contact',
 			route: 'add-contact'
 		}];
 
-	MainMenu.markActive = function(module, action) {
+	MainMenu.markActive = function(module, activity) {
 		for (var i = 0; i < this.length; i++) {
 			this[i].active = false;
 
-			if (this[i].module === module && this[i].action === action) {
+			if (this[i].module === module && this[i].activity === activity) {
 				this[i].active = true;
 			}
 		}

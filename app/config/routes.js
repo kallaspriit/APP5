@@ -10,18 +10,18 @@ function(config) {
 		'index': {
 			path: 'contacts/:page[+int]',
 			module: config.index.module,
-			action: config.index.action,
+			activity: config.index.activity,
 			parameters: config.index.parameters
 		},
 		'add-contact': {
 			path: 'add-contact',
 			module: 'phonebook',
-			action: 'add-contact'
+			activity: 'add-contact'
 		},
 		'contacts': {
 			path: 'contacts/:page[+int]',
 			module: 'phonebook',
-			action: 'contacts',
+			activity: 'contacts',
 			parameters: {
 				page: 1 // +int actually defaults to 1 so not needed
 			}

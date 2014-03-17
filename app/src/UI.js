@@ -42,17 +42,17 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 *
 	 * @method openModal
 	 * @param {String} module Module to open
-	 * @param {String} [action=index] Action to navigate to
-	 * @param {Object} [parameters] Action parameters
+	 * @param {String} [activity=index] Activity to navigate to
+	 * @param {Object} [parameters] Activity parameters
 	 * @param {Object} [options] Optional modal options
 	 * @param {Function} [readyCallback] Callback to call once modal is displayed
 	 */
-	UI.prototype.openModal = function(module, action, parameters, options, readyCallback) {
+	UI.prototype.openModal = function(module, activity, parameters, options, readyCallback) {
 		this.showModal('<div id="modal-content"></div>', options, function() {
-			navi.partial('#modal-content', module, action, parameters);
+			navi.partial('#modal-content', module, activity, parameters);
 
 			if (util.isFunction(readyCallback)) {
-				readyCallback.call(readyCallback, module, action, parameters, options);
+				readyCallback.call(readyCallback, module, activity, parameters, options);
 			}
 		});
 	};

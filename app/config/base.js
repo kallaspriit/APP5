@@ -28,7 +28,7 @@ define(function() {
 		 */
 		index: {
 			module: 'phonebook',
-			action: 'contacts',
+			activity: 'contacts',
 			parameters: {'page': 1},
 			route: 'contacts'
 		},
