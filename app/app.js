@@ -16,6 +16,7 @@
  * TODO Create node scripts to generate modules, actions, views
  * TODO Consider gruntjs for building automation
  * TODO Consider yeoman and bower
+ * TODO Use latest bootstrap 3 ui
  */
 
 // Configuration for RequireJS.
