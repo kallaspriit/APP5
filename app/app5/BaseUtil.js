@@ -23,9 +23,44 @@ function(angular, Deferred, _) {
 		 * @return {Number}
 		 */
 		round: function(value, decimals) {
+			decimals = decimals || 0;
+
 			var d = Math.pow(10, decimals);
 
 			return Math.round(value * d) / d;
+		},
+
+		/**
+		 * Trims given string from both sides.
+		 *
+		 * @method trim
+		 * @param {String} str String to trip
+		 * @return {String}
+		 */
+		trim: function(str) {
+			return str.replace(/^\s+|\s+$/g, '');
+		},
+
+		/**
+		 * Trims given string from left.
+		 *
+		 * @method ltrim
+		 * @param {String} str String to trip
+		 * @return {String}
+		 */
+		ltrim: function(str) {
+			return str.replace(/^\s+/, '');
+		},
+
+		/**
+		 * Trims given string from right.
+		 *
+		 * @method rtrim
+		 * @param {String} str String to trip
+		 * @return {String}
+		 */
+		rtrim: function(str) {
+			return str.replace(/\s+$/, '');
 		},
 
 		/**
@@ -36,6 +71,16 @@ function(angular, Deferred, _) {
 		 */
 		date: function() {
 			return new Date();
+		},
+
+		/**
+		 * Returns current time in milliseconds.
+		 *
+		 * @method millitime
+		 * @return {Number}
+		 */
+		millitime: function() {
+			return this.date().getTime();
 		},
 
 		/**
@@ -57,6 +102,59 @@ function(angular, Deferred, _) {
 		 */
 		clone: function(obj) {
 			return _.clone(obj);
+		},
+
+		/**
+		 * Performs deep clone of given object
+		 *
+		 * @method cloneDeep
+		 * @param {Object} obj Object to clone
+		 * @return {Object}
+		 */
+		cloneDeep: function(obj) {
+			return JSON.parse(this.stringify(obj));
+		},
+
+		/**
+		 * Clones an object.
+		 *
+		 * @param {Object} obj Object to clone
+		 * @param {Boolean} [skipStartingUnderscore=false] Should attributes starting with _underscore be skipped
+		 * @return {Object}
+		 */
+		cloneObj: function(obj, skipStartingUnderscore) {
+			var copy = obj;
+
+			// Handle the 3 simple types, and null or undefined
+			if (obj === null || typeof obj !== 'object') {
+				return obj;
+			} else if (obj instanceof Date) {
+				copy = new Date(obj);
+			} else if (obj instanceof Array) {
+				copy = [];
+
+				for (var i = 0, len = obj.length; i < len; i++) {
+					copy[i] = this.cloneObj(obj[i], skipStartingUnderscore);
+				}
+			} else if (obj instanceof Object) {
+				copy = {};
+
+				for (var attr in obj) {
+                    if (typeof(attr) === 'string' && attr.substr(0, 2) === '$$') {
+                        continue;
+                    }
+
+					if (skipStartingUnderscore === true && typeof(attr) === 'string' && attr.substr(0, 1) === '_') {
+						continue;
+					}
+
+					if (obj.hasOwnProperty(attr)){
+						copy[attr] = this.cloneObj(obj[attr], skipStartingUnderscore);
+					}
+				}
+			}
+
+			return copy;
 		},
 
 		/**
@@ -101,7 +199,8 @@ function(angular, Deferred, _) {
 				try {
 					return angular.toJson(arg);
 				} catch (e) {
-					return '[obj]';
+					throw e;
+					//return '[obj]';
 				}
 			}
 		},

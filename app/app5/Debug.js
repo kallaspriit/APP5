@@ -238,8 +238,6 @@ function(_, EventEmitter, util) {
 	 * @private
 	 */
 	Debug.prototype._onError = function(message, filename, line) {
-		window.console.log('error', arguments);
-
 		this.error(message, filename, line);
 	};
 

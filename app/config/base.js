@@ -82,7 +82,7 @@ define(function() {
 		 * Navigation settings.
 		 *
 		 * @property navigation
-		 * @type Boolean
+		 * @type Object
 		 */
 		navigation: {
 			html5Mode: true,

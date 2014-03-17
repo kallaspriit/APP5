@@ -72,12 +72,13 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 
 		// TODO Not sure if this is great..
 		if (existing.length > 0) {
+			$('.modal-backdrop').remove();
 			existing.remove();
 		}
 
 		resourceManager.loadView(filename)
 			.done(function(template) {
-				$(document.body).append(template);
+				$(document.body).addClass('modal-open').append(template);
 
 				$('#modal')
 					.html(content)
@@ -112,6 +113,8 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 */
 	UI.prototype.hideModal = function() {
 		$('#modal').modal('hide');
+
+		$(document.body).removeClass('modal-open');
 	};
 
 	/**
@@ -155,14 +158,18 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 
 		resourceManager.loadView(filename)
 			.done(function(template) {
+				var confirmed = false;
+
 				$(document.body).append(template);
 
 				$('#confirm-title').html(title);
 				$('#confirm-content').html(content);
 				$('#confirm-btn').click(function() {
 					if (util.isFunction(callback)) {
-						callback();
+						callback(true);
 					}
+
+					confirmed = true;
 
 					$('#confirm').modal('hide');
 				});
@@ -177,7 +184,11 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 
 						app.validate();
 					})
-					.on('hidden', function() {
+					.on('hidden.bs.modal', function() {
+						if (!confirmed && util.isFunction(callback)) {
+							callback(false);
+						}
+
 						$(this).remove();
 
 						self.emit({

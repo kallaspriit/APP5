@@ -207,8 +207,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				parameters,
 				isBack
 			);
-		}).fail(function() {
-			throw new Error('Loading module "' + module + '" resources failed');
+		}).fail(function(reason) {
+			throw new Error('Attempting to open ' + module + '.' + actionName + ', but ' + reason.toLowerCase());
 		});
 
 		return deferred.promise();
@@ -275,7 +275,11 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		if (currentItem !== null && currentItem === existingItem) {
-			currentItem.emit(this.Event.URL_CHANGED);
+			currentItem.emit(this.Event.URL_CHANGED, {
+				module: module,
+				action: action,
+				parameters: parameters
+			});
 
 			this.emit({
 				type: this.Event.PARAMETERS_CHANGED,
@@ -577,6 +581,24 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		return null;
+	};
+
+	/**
+	 * Returns whether currently active module action is as given.
+	 *
+	 * @method isCurrentView
+	 * @param {String} module Module name
+	 * @param {String} action Action name
+	 * @return {Boolean}
+	 */
+	Navi.prototype.isCurrentView = function(module, action) {
+		var currentItem = this.getCurrentItem();
+
+		if (currentItem === null) {
+			return false;
+		}
+
+		return currentItem.module === module && currentItem.action === action;
 	};
 
 	/**

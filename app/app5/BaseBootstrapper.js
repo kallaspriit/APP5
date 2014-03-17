@@ -84,7 +84,7 @@ function(
 		}
 
 		navi.router = components.router;
-		app.module = angular.module('app', ['ui.bootstrap']);
+		app.module = angular.module('app', this.getModuleDependencies());
 
 		app.module.config([
 			'$provide', '$locationProvider', '$controllerProvider',
@@ -126,6 +126,18 @@ function(
 			}
 		]);
 
+        app.module.factory('$exceptionHandler', function () {
+            return function (exception, cause) {
+                if (typeof(cause) !== 'undefined') {
+                    exception.message += ' (caused by "' + cause + '")';
+                }
+
+                dbg.error(exception.message);
+
+                throw exception;
+            };
+        });
+
 		// register directives
 		for (directiveName in directives) {
 			app.module.directive(directiveName, directives[directiveName]);
@@ -165,6 +177,17 @@ function(
 			this.postBootstrap();
 		}
 	};
+
+    /**
+     * Returns the list of module dependencies for current application.
+     *
+     * Override this in your bootstrapper to include additional resources.
+     *
+     * @return {Array}
+     */
+    BaseBootstrapper.prototype.getModuleDependencies = function() {
+        return ['ui.bootstrap'];
+    };
 
 	/**
 	 * Called when all base bootstrapping has been completed and DOM is ready.

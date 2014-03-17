@@ -15,7 +15,7 @@
 	-moz-transition: width 300ms ease-in;
 	-o-transition: width 300ms ease-in;
 	transition: width 300ms ease-in;
-	z-index: 100;
+	z-index: 10000;
 }
 @media screen and (max-width: 480px) {
 	#debug-renderer {
@@ -95,7 +95,7 @@
 	margin-left: -320px;
 	background-color: rgba(0, 0, 0, 0.5);
 	border-radius: 10px;
-	z-index: 51
+	z-index: 1000;
 }
 #debug-renderer-error .debug-renderer-error-inner {
 	position: relative;

@@ -43,6 +43,7 @@ function(
 		EventEmitter.call(this);
 
 		this._transitioning = false;
+		this._pageViewCount = 0;
 	};
 
 	BaseUI.prototype = Object.create(EventEmitter.prototype);
@@ -127,6 +128,8 @@ function(
 			return null;
 		}
 
+		this._pageViewCount++;
+
 		var prefix = config.cssPrefix,
 			newWrapId = 'content-' + newItemId,
 			parentWrap = $(config.viewSelector),
@@ -136,8 +139,9 @@ function(
 
 		newWrap = $('<div/>', {
 			'id': newWrapId,
-			'class': prefix + 'page ' + module + '-module ' + action + '-action',
-			'ng-controller': className + '.' + actionName
+			'class': prefix + 'page ' + module + '-module ' + action + '-action ' + prefix + 'page-loading',
+			'ng-controller': className + '.' + actionName,
+			'style': 'z-index: ' + (1000 - this._pageViewCount) // TODO Find a better way
 		}).html(viewContent).appendTo(parentWrap);
 
 		//newWrap.addClass(prefix + 'page-loading');
@@ -153,13 +157,17 @@ function(
 
 				createdScope.$evalAsync(function() {
 					//newWrap.removeClass(prefix + 'page-loading');
-					body.removeClass(prefix + 'loading-view');
+					body.removeClass(prefix + 'loading-view first-load');
+					newWrap.removeClass(prefix + 'page-loading');
+
 					this.transitionView(currentWrap, newWrap, isBack, doneCallback);
 				}.bind(this));
 
 				app.validate();
 			} else {
-				body.removeClass(prefix + 'loading-view');
+				body.removeClass(prefix + 'loading-view first-load');
+				newWrap.removeClass(prefix + 'page-loading');
+
 				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
 			}
 		} catch (e) {
@@ -330,7 +338,9 @@ function(
 			container.html(viewContent).attr('ng-controller', controllerName);
 		}
 
-		container.addClass(prefix + 'partial ' + module + '-module ' + action + '-action');
+		container.addClass(
+			prefix + 'partial ' + module + '-module ' + action + '-action ' + prefix + 'partial-loading'
+		);
 
 		app.parameters = parameters;
 
@@ -338,6 +348,18 @@ function(
 
 		try {
 			app.compile(container)(app.baseScope);
+
+			if (typeof($(container).scope) === 'function') {
+				var createdScope = $(container).scope();
+
+				createdScope.$evalAsync(function() {
+					$(container).removeClass(prefix + 'partial-loading');
+				}.bind(this));
+
+				app.validate();
+			} else {
+				$(container).removeClass(prefix + 'partial-loading');
+			}
 		} catch (e) {
 			dbg.error(e);
 		}

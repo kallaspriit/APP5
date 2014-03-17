@@ -26,6 +26,10 @@ function() {
 			type = [type];
 		}
 
+        if (typeof(listener) !== 'function') {
+            throw new Error('Expected a function as "' + type + '" listener');
+        }
+
 		var self = this,
 			i;
 
@@ -36,11 +40,11 @@ function() {
 			}
 
 			// check for an already existing listener for the same type
-			for (var j = 0; j < this._listeners[type[i]].length; j++) {
+			/*for (var j = 0; j < this._listeners[type[i]].length; j++) {
 				if (this._listeners[type[i]][j] === listener) {
 					return listener;
 				}
-			}
+			}*/
 
 			this._listeners[type[i]].push(listener);
 		}

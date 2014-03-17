@@ -9,12 +9,13 @@ HTML, BODY {
 
 /* Pages */
 #header {
-
+	z-index: 2;
 }
 #pages {
 	position: relative;
 	width: 100%;
 	min-height: 100%;
+	z-index: 1;
 }
 #loading-indicator {
 	position: absolute;
