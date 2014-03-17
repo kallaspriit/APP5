@@ -28,7 +28,7 @@ require.config({
 	paths: {
 		// application resource directories
 		lib:                '../lib',
-		core:               '../app5',
+		core:               '../lib/app5',
 		modules:            '../modules',
 		models:             '../models',
 		config:             '../config',
