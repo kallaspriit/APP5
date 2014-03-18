@@ -112,5 +112,5 @@ function() {
 	 */
 	Activity.prototype.onMouseUp = function() {};
 
-
+	return Activity;
 });

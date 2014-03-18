@@ -8,14 +8,12 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	 *
 	 * Can fire the following events:
 	 *
-	 *	> MODULE_LOADED - fired when a application module is loaded
-	 *		name - name of the module
-	 *		module - module object
+	 *	> ACTIVITY_LOADED - fired when a application activity is loaded
+	 *		name - name of the activity
+	 *		activity - activity object
 	 *	> VIEW_LOADED - fired when a application view is loaded
 	 *		filename - filename of the view
 	 *		content - view content
-	 *	> LOAD_ERROR - fired when loading a resource failed
-	 *		resource - type of resource
 	 *
 	 * @class ResourceManager
 	 * @extends EventEmitter
@@ -25,7 +23,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	var ResourceManager = function() {
 		EventEmitter.call(this);
 
-		this._modules = {};
+		this._activities = {};
 		this._views = {};
 		this._loadedCssFiles = {};
 	};
@@ -37,14 +35,12 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	 *
 	 * @event Event
 	 * @param {Object} Event
-	 * @param {String} Event.MODULE_LOADED Application module was loaded
+	 * @param {String} Event.ACTIVITY_LOADED Application module was loaded
 	 * @param {String} Event.VIEW_LOADED Application view was loaded
-	 * @param {String} Event.LOAD_ERROR Loading a resource failed
 	 */
 	ResourceManager.prototype.Event = {
-		MODULE_LOADED: 'module-loaded',
-		VIEW_LOADED: 'view-loaded',
-		LOAD_ERROR: 'load-error'
+		ACTIVITY_LOADED: 'activity-loaded',
+		VIEW_LOADED: 'view-loaded'
 	};
 
 	/**
@@ -88,14 +84,8 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	 * @return {ResourceManager} Self
 	 */
 	ResourceManager.prototype.init = function() {
-		var self = this;
-
 		require.onError = function(error) {
-			self.emit({
-				type: self.Event.LOAD_ERROR,
-				resource: self.ResourceType.FILE,
-				error: error
-			});
+			throw new Error('Loading resource failed (' + error + ')');
 		};
 
 		return this;
@@ -121,8 +111,6 @@ function($, config, EventEmitter, Deferred, util, translator) {
 		callback,
 		dataType
 	) {
-		var self = this;
-
 		type = type || this.HTTP.GET;
 		dataType = dataType || 'json';
 		data = data || null;
@@ -144,21 +132,12 @@ function($, config, EventEmitter, Deferred, util, translator) {
 			if (util.isFunction(callback)) {
 				callback(data);
 			}
-		}).fail(function(xhr, message, error) {
+		}).fail(function(/*xhr, message, error*/) {
 			if (util.isFunction(callback)) {
 				callback(null);
 			}
 
-			self.emit({
-				type: self.Event.LOAD_ERROR,
-				resource: self.ResourceType.REQUEST,
-				url: url,
-				dataType: type,
-				data: data,
-				xhr: xhr,
-				message: message,
-				error: error
-			});
+			throw new Error('Requesting "' + url + '" failed');
 		});
 	};
 
@@ -224,102 +203,78 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	 * Loads a module.
 	 *
 	 * @method loadModule
-	 * @param {String} name Full name of the module to load
+	 * @param {String} activityName Full name of the module to load
 	 * @param {Function} callback Callback to call
 	 * @return {jQuery.Deferred} Deferred
 	 */
-	ResourceManager.prototype.loadModule = function(name, callback) {
+	ResourceManager.prototype.loadActivity = function(moduleName, activityName, callback) {
 		var self = this,
 			deferred = new Deferred(),
-			className = util.convertEntityName(name) + 'Module',
-			translationsName = name + '-translations.js',
-			moduleFilename = 'modules/' + name + '/' + className,
-			translationsFilename = 'modules/' + name + '/' + translationsName;
+			activityClassName = util.convertEntityName(activityName) + 'Activity',
+			translationsName = moduleName + '-translations.js',
+			activityFilename = 'modules/' + moduleName + '/' + activityClassName,
+			translationsFilename = 'modules/' + moduleName + '/' + translationsName;
 
-		if (util.isObject(this._modules[name])) {
-			deferred.resolve(this._modules[name]);
+		if (util.isObject(this._activities[activityName])) {
+			deferred.resolve(this._activities[activityName]);
 
 			if (util.isFunction(callback)) {
-				callback(this._modules[name]);
+				callback(this._activities[activityName]);
 			}
 
 			return deferred.promise();
 		}
 
 		require(
-			[moduleFilename, translationsFilename],
-			function(module, translations) {
-				if (!util.isObject(module)) {
-					self.emit({
-						type: self.Event.LOAD_ERROR,
-						resource: self.ResourceType.MODULE,
-						name: name,
-						filename: moduleFilename
-					});
-
+			[activityFilename, translationsFilename],
+			function(activityClass, translations) {
+				if (!util.isFunction(activityClass)) {
 					throw new Error(
-						'Loading module "' + name + '" from "' + moduleFilename + '" failed'
+						'Loading activity "' + activityName + '" from "' + activityFilename + '" failed'
 					);
 				}
 
 				if (!util.isObject(translations)) {
-					self.emit({
-						type: self.Event.LOAD_ERROR,
-						resource: self.ResourceType.MODULE_TRANSLATIONS,
-						name: name,
-						filename: translationsFilename
-					});
-
 					throw new Error(
-						'Loading module "' + name + '" translations from "' + translationsFilename + '" failed'
+						'Loading module "' + activityName + '" translations from "' + translationsFilename + '" failed'
 					);
 				}
 
-				var translationKey,
+				var classes = {'activity': activityClass},
+					activityInstance = new classes.activity(),
+					translationKey,
 					translationLanguage;
 
 				if (util.isObject(translations)) {
 					for (translationKey in translations) {
 						for (translationLanguage in translations[translationKey]) {
 							translator.addTranslation(
-								name + '.' + translationKey,
+								moduleName + '.' + translationKey,
 								translationLanguage, translations[translationKey][translationLanguage]
 							);
 						}
 					}
 				}
 
-				module.$name = name;
-
-				for (var key in module) {
-					if (key.substr(key.length - 8) !== 'Activity') {
-						continue;
-					}
-
-					module[key].$module = name;
-					module[key].$name = key;
-				}
+				activityInstance.$module = moduleName;
+				activityInstance.$name = activityName;
 
 				if (config.debug) {
-					window.app.modules[className] = module;
+					window.app.activities[activityClassName] = activityInstance;
 				}
 
 				self.emit({
-					type: self.Event.MODULE_LOADED,
-					name: name,
-					module: module
+					type: self.Event.ACTIVITY_LOADED,
+					name: activityName,
+					activity: activityInstance
 				});
 
-				if (!util.isObject(module)) {
-					throw new Error('Invalid module "' + name + '" requested');
-				}
+				self._activities[activityName] = activityInstance;
 
-				self._modules[name] = module;
-
-				deferred.resolve(module);
+				deferred.resolve(activityInstance);
 
 				if (util.isFunction(callback)) {
-					callback(module);
+					callback(activityInstance);
 				}
 			}
 		);
@@ -365,13 +320,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 					callback(html);
 				}
 			}).error(function() {
-				self.emit({
-					type: self.Event.LOAD_ERROR,
-					resource: self.ResourceType.VIEW,
-					filename: filename
-				});
-
-				deferred.reject('Loading view from ' + filename + ' failed');
+				throw new Error('Loading view from ' + filename + ' failed');
 			});
 
 		return deferred.promise();
@@ -470,17 +419,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 
 			head.removeChild(link);
 
-			self.emit({
-				type: self.Event.LOAD_ERROR,
-				resource: self.ResourceType.CSS,
-				filename: filename
-			});
-
-			deferred.reject('Loading css "' + filename + '" failed');
-
-			if (util.isFunction(loadedCallback)) {
-				loadedCallback.call(loadedCallback, false, link);
-			}
+			throw new Error('Loading css "' + filename + '" failed');
 		}, 10000);
 
 		head.appendChild(link);

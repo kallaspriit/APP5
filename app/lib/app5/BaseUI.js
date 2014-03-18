@@ -302,7 +302,7 @@ function(
 	 * @param {String} className Class name of the module
 	 * @param {String} activityName Method name of the activity
 	 * @param {Array} parameters Activity parameters
-	 * @param {Object} moduleObj Module object
+	 * @param {Object} activityInstance Module object
 	 * @param {String} viewContent View content to render
 	 * @param {String} containerSelector Container selector to place the content into
 	 * @param {Boolean} append Should the content be appended instead of replaced
@@ -314,7 +314,7 @@ function(
 		className,
 		activityName,
 		parameters,
-		moduleObj,
+		activityInstance,
 		viewContent,
 		containerSelector,
 		append
@@ -330,9 +330,7 @@ function(
 
 		if (append) {
 			containerId = $(viewContent).attr('id');
-
 			container.append(viewContent);
-
 			$('#' + containerId).attr('ng-controller', controllerName);
 		} else {
 			container.html(viewContent).attr('ng-controller', controllerName);
@@ -344,7 +342,7 @@ function(
 
 		app.parameters = parameters;
 
-		app.registerController(controllerName, moduleObj[activityName]);
+		app.registerController(controllerName, activityInstance.onCreate);
 
 		try {
 			app.compile(container)(app.baseScope);

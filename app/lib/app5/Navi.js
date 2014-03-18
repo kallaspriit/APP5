@@ -180,7 +180,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			activity = util.convertCallableName(activity) + 'Activity',
+			activityName = util.convertCallableName(activity) + 'Activity',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
 
@@ -192,23 +192,23 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		});
 
 		util.when(
-			resourceManager.loadModule(module),
+			resourceManager.loadActivity(module, activity),
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
-		).done(function(moduleObj, viewContent) {
+		).done(function(activityInstance, viewContent) {
 			self._showActivity(
 				module,
 				activity,
-				moduleObj,
+				activityInstance,
 				viewContent,
 				className,
-				activity,
+				activityName,
 				deferred,
 				parameters,
 				isBack
 			);
 		}).fail(function(reason) {
-			throw new Error('Attempting to open ' + module + '.' + activity + ', but ' + reason.toLowerCase());
+			throw new Error('Attempting to open ' + module + '.' + activityName + ', but ' + reason.toLowerCase());
 		});
 
 		return deferred.promise();
@@ -220,7 +220,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @method _showActivity
 	 * @param {String} module Module name
 	 * @param {String} activity Module activity name
-	 * @param {Object} moduleObj Module object
+	 * @param {Object} activityInstance Module object
 	 * @param {String} viewContent Activity view content
 	 * @param {String} className Name of the module class
 	 * @param {String} activityName Name of the module activity
@@ -232,7 +232,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	Navi.prototype._showActivity = function(
 		module,
 		activity,
-		moduleObj,
+		activityInstance,
 		viewContent,
 		className,
 		activityName,
@@ -240,7 +240,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		parameters,
 		isBackBtn
 	) {
-		if (!util.isFunction(moduleObj[activityName]) && !util.isArray(moduleObj[activityName])) {
+		if (!util.isFunction(activityInstance.onCreate)) {
 			throw new Error('Invalid "' + module + '" module activity "' + activity + '" requested');
 		}
 
@@ -351,7 +351,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		if (!isBack) {
 			app.parameters = parameters;
-			app.registerController(className + '.' + activityName, moduleObj[activityName]);
+			app.registerController(className + '.' + activityName, activityInstance.onCreate);
 
 			newItem = this.appendNavigation(module, activity, parameters, true);
 			stackChanged = true;
@@ -378,7 +378,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			className,
 			activityName,
 			parameters,
-			moduleObj,
+			activityInstance,
 			viewContent,
 			currentItem !== null ? currentItem.container : null,
 			existingItem !== null ? existingItem.container : null,
@@ -449,17 +449,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		});
 
 		util.when(
-			resourceManager.loadModule(module),
+			resourceManager.loadActivity(module, activity),
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
-		).done(function(moduleObj, viewContent) {
+		).done(function(activityInstnace, viewContent) {
 			item = ui.showPartial(
 				module,
 				activity,
 				className,
 				activityName,
 				parameters,
-				moduleObj,
+				activityInstnace,
 				viewContent,
 				containerSelector,
 				append

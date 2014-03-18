@@ -18,7 +18,7 @@ function() {
 		this.baseScope = null;
 		this.controllerProvider = null;
 		this.models = {};
-		this.modules = {};
+		this.activities = {};
 		this.parameters = {};
 		this._validateTimeout = null;
 	};
