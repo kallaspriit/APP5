@@ -7,7 +7,7 @@ function(Activity, menus) {
 	'use strict';
 
 	/**
-	 * Contacts list activity.
+	 * Site header activity.
 	 *
 	 * @class HeaderActivity
 	 * @extends Activity

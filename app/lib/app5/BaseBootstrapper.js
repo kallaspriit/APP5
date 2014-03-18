@@ -64,7 +64,7 @@ function(
 				resourceManager:    resourceManager.init(),
 				router:             router.init(config.navigation.mode),
 				keyboard:           keyboard.init(),
-				//mouse:              mouse.init(),
+				mouse:              mouse.init(),
 				ui:                 ui.init(),
 				translator:         translator.init(translations, config.language),
 				navi:               navi.init(),

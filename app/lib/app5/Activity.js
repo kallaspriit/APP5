@@ -26,16 +26,16 @@ function() {
 	 * displayed to the user. It will be followed by onResume().
 	 *
 	 * @method onStart
-	 */
-	Activity.prototype.onStart = function() {};
+	 *
+	Activity.prototype.onStart = function() {};*/
 
 	/**
 	 * Called after onStop() when the current activity is being re-displayed to the user (the user has navigated back
 	 * to it). It will be followed by onStart() and then onResume().
 	 *
 	 * @method onRestart
-	 */
-	Activity.prototype.onRestart = function() {};
+	 *
+	Activity.prototype.onRestart = function() {};*/
 
 	/**
 	 * Called after onRestart(), or onPause(), for your activity to start interacting with the user.
@@ -60,8 +60,8 @@ function() {
 	 * depending on later user activity.
 	 *
 	 * @method onStop
-	 */
-	Activity.prototype.onStop = function() {};
+	 *
+	Activity.prototype.onStop = function() {};*/
 
 	/**
 	 * Perform any final cleanup before an activity is destroyed.

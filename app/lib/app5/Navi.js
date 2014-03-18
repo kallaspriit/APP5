@@ -76,9 +76,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} Event.STACK_CHANGED Called when navigation stack updates
 	 * @param {String} Event.URL_CHANGED Called when URL changes
 	 * @param {String} Event.PARAMETERS_CHANGED Called when current activity parameters change
-	 * @param {String} Event.SLEEP Called on scope when activity is put to sleep
-	 * @param {String} Event.WAKEUP Called on scope when activity is awaken
-	 * @param {String} Event.EXIT Called on scope when activity is killed
 	 */
 	Navi.prototype.Event = {
 		PRE_NAVIGATE: 'pre-navigate',
@@ -87,10 +84,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		POST_PARTIAL: 'post-partial',
 		STACK_CHANGED: 'stack-changed',
 		URL_CHANGED: 'url-changed',
-		PARAMETERS_CHANGED: 'parameters-changed',
-		SLEEP: 'sleep',
-		WAKEUP: 'wakeup',
-		EXIT: 'exit'
+		PARAMETERS_CHANGED: 'parameters-changed'
 	};
 
 	/**
@@ -275,11 +269,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		if (currentItem !== null && currentItem === existingItem) {
-			currentItem.emit(this.Event.URL_CHANGED, {
-				module: module,
-				activity: activity,
-				parameters: parameters
-			});
+			currentItem.instance.onParametersChanged(parameters);
 
 			this.emit({
 				type: this.Event.PARAMETERS_CHANGED,
@@ -307,7 +297,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 					}
 
 					if (stackItem == existingItem) {
-						existingItem.emit(this.Event.WAKEUP);
+						existingItem.instance.onResume();
 
 						isBack = true;
 
@@ -317,7 +307,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 					this._stack.pop();
 					stackChanged = true;
 
-					stackItem.emit(this.Event.EXIT);
+					stackItem.instance.onDestroy();
 
 					if (stackItem.container !== null) {
 						stackItem.container.remove();
@@ -334,7 +324,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 						continue;
 					}
 
-					stackItem.emit(this.Event.EXIT);
+					stackItem.instance.onDestroy();
 
 					if (stackItem.container !== null) {
 						stackItem.container.remove();
@@ -353,7 +343,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			app.parameters = parameters;
 			app.registerController(className + '.' + activityName, activityInstance.onCreate);
 
-			newItem = this.appendNavigation(module, activity, parameters, true);
+			newItem = this.appendNavigation(module, activity, parameters, activityInstance, true);
 			stackChanged = true;
 
 			newItem.emit = function(type, parameters) {
@@ -386,10 +376,10 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			isBack,
 			function() {
 				if (isBack || isReopen) {
-					currentItem.emit(this.Event.EXIT);
+					currentItem.instance.onDestroy();
 					currentItem.container.remove();
 				} else if (currentItem !== null) {
-					currentItem.emit(this.Event.SLEEP);
+					currentItem.instance.onPause();
 				}
 
 				this.emit({
@@ -747,15 +737,17 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {String} module Name of the module to use
 	 * @param {String} activity Module activity to call, defaults to index
 	 * @param {Object} parameters Map of parameters to pass to activity
+	 * @param {Object} activityInstance Activity class instance
 	 * @param {Boolean} [quiet=false] If set to true, no stack change event is automatically emitted
 	 * @return {Object} New stack item
 	 */
-	Navi.prototype.appendNavigation = function(module, activity, parameters, quiet) {
+	Navi.prototype.appendNavigation = function(module, activity, parameters, activityInstance, quiet) {
 		this._stack.push({
 			id: this._naviCounter++,
 			module: module,
 			activity: activity,
 			parameters: util.isObject(parameters) ? parameters : {},
+			instance: activityInstance,
 			level: this._stack.length,
 			container: null,
 			emit: function() {}
@@ -819,7 +811,11 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			return;
 		}
 
-		currentItem.emit(event.type, event);
+		if (event.type === keyboard.Event.KEYDOWN) {
+			currentItem.instance.onKeyDown(event);
+		} else if (event.type === keyboard.Event.KEYUP) {
+			currentItem.instance.onKeyUp(event);
+		}
 	};
 
 	/**
@@ -838,7 +834,13 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			return;
 		}
 
-		currentItem.emit(event.type, event);
+		if (event.type === mouse.Event.MOUSEDOWN) {
+			currentItem.instance.onMouseDown(event);
+		} else if (event.type === mouse.Event.MOUSEMOVE) {
+			currentItem.instance.onMouseMove(event);
+		} else if (event.type === mouse.Event.MOUSEUP) {
+			currentItem.instance.onMouseUp(event);
+		}
 	};
 
 	/**
