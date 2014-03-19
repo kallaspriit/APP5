@@ -174,7 +174,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			activityName = util.convertCallableName(activity) + 'Activity',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
 
@@ -196,13 +195,12 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				activityInstance,
 				viewContent,
 				className,
-				activityName,
 				deferred,
 				parameters,
 				isBack
 			);
 		}).fail(function(reason) {
-			throw new Error('Attempting to open ' + module + '.' + activityName + ', but ' + reason.toLowerCase());
+			throw new Error('Attempting to open ' + module + '.' + activity + ', but ' + reason.toLowerCase());
 		});
 
 		return deferred.promise();
@@ -217,7 +215,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 	 * @param {Object} activityInstance Module object
 	 * @param {String} viewContent Activity view content
 	 * @param {String} className Name of the module class
-	 * @param {String} activityName Name of the module activity
 	 * @param {Deferred} deferred Progress deferred
 	 * @param {Array} parameters List of parameters
 	 * @param {Boolean} isBack Is the view change triggered by back-button
@@ -229,7 +226,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		activityInstance,
 		viewContent,
 		className,
-		activityName,
 		deferred,
 		parameters,
 		isBackBtn
@@ -341,7 +337,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		if (!isBack) {
 			app.parameters = parameters;
-			app.registerController(className + '.' + activityName, activityInstance.onCreate);
+			app.registerController(module + '.' + activity, activityInstance.onCreate);
 
 			newItem = this.appendNavigation(module, activity, parameters, activityInstance, true);
 			stackChanged = true;
@@ -366,7 +362,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			module,
 			activity,
 			className,
-			activityName,
 			parameters,
 			activityInstance,
 			viewContent,
@@ -425,7 +420,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			activityName = util.convertCallableName(activity) + 'Activity',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
 			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html',
 			item = null;
@@ -447,7 +441,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 				module,
 				activity,
 				className,
-				activityName,
 				parameters,
 				activityInstnace,
 				viewContent,

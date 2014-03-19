@@ -96,7 +96,6 @@ function(
 	 * @param {String} module Name of the module
 	 * @param {String} activity Name of the activity
 	 * @param {String} className Class name of the module
-	 * @param {String} activityName Method name of the activity
 	 * @param {Array} parameters Activity parameters
 	 * @param {Object} moduleObj Module object
 	 * @param {String} viewContent View content to render
@@ -112,7 +111,6 @@ function(
 		module,
 		activity,
 		className,
-		activityName,
 		parameters,
 		moduleObj,
 		viewContent,
@@ -140,7 +138,7 @@ function(
 		newWrap = $('<div/>', {
 			'id': newWrapId,
 			'class': prefix + 'page ' + module + '-module ' + activity + '-activity ' + prefix + 'page-loading',
-			'ng-controller': className + '.' + activityName,
+			'ng-controller': module + '.' + activity,
 			'style': 'z-index: ' + (1000 - this._pageViewCount) // TODO Find a better way
 		}).html(viewContent).appendTo(parentWrap);
 
@@ -300,7 +298,6 @@ function(
 	 * @param {String} module Name of the module
 	 * @param {String} activity Name of the activity
 	 * @param {String} className Class name of the module
-	 * @param {String} activityName Method name of the activity
 	 * @param {Array} parameters Activity parameters
 	 * @param {Object} activityInstance Module object
 	 * @param {String} viewContent View content to render
@@ -312,7 +309,6 @@ function(
 		module,
 		activity,
 		className,
-		activityName,
 		parameters,
 		activityInstance,
 		viewContent,
@@ -321,7 +317,7 @@ function(
 	) {
 		var prefix = config.cssPrefix,
 			container = $(containerSelector),
-			controllerName = className + '-' + activityName,
+			controllerName = module + '.' + activity,
 			containerId;
 
 		if (container.length === 0) {
