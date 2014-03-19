@@ -7,6 +7,9 @@ HTML, BODY {
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+/* Recommended by bootstrap-ui */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+
 /* Pages */
 #header {
 	z-index: 2;
@@ -36,78 +39,9 @@ BODY.app5-loading-view #loading-indicator {
 	padding: 60px 0 0 0;
 	margin: 0;
 }
-/*.app5-page-loading {
+.app5-page-loading {
 	display: block;
 	overflow: visible;
 	left: -10000px;
 	background-color: #FF0 !important;
-}*/
-
-@media (max-width: 979px) {
-	.navbar-fixed-top, .navbar-fixed-bottom {
-		position: relative;
-	}
-}
-@media screen and (max-width: 640px) {
-	A.brand {
-		width: 0;
-		padding-right: 0 !important;
-		overflow: hidden;
-	}
-}
-
-/* Bootstrap customizations */
-.sidebar-nav {
-	padding: 9px 0;
-}
-.navbar {
-	z-index: 20;
-}
-.navbar-static-top {
-	margin-bottom: 20px;
-}
-.navbar .lang-nav {
-	font-size: .8em;
-	margin-left: 30px;
-}
-.navbar .lang-nav > li > a {
-	padding: 0;
-	margin: 3px 5px;
-	width: 32px;
-	height: 32px;
-	line-height: 100px;
-	overflow: hidden;
-	background-position: 50% 50%;
-	background-repeat: no-repeat;
-	opacity: .6;
-}
-.navbar .lang-nav > li.active > a,
-.navbar .lang-nav > li > a:hover {
-	opacity: 1;
-}
-
-.navbar .nav-collapse .lang-nav {
-	overflow: hidden;
-	text-align: right;
-}
-.navbar .nav-collapse .lang-nav > li {
-	display: inline-block;
-}
-.navbar-inverse .nav > li > a:focus,
-.navbar-inverse .nav > li > a:hover,
-.navbar-inverse .brand:hover,
-.navbar-inverse .nav > li > a:hover,
-.navbar-inverse .brand:focus,
-.navbar-inverse .nav > li > a:focus,
-.navbar .nav > li > a:focus,
-.navbar .nav > li > a:hover {
-	color: #999;
-}
-
-/* Brand back button */
-.brand {
-	padding-left: 42px !important;
-}
-.brand.back-possible {
-	background: url(../images/back-icon.png) no-repeat 12px 9px;
 }

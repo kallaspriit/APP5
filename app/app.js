@@ -41,8 +41,7 @@ require.config({
 		underscore:         '../lib/underscore/underscore',
 		angular:            '../lib/angular/angular',
 		jquery:             '../lib/jquery/jquery',
-		twitterBootstrap:   '../lib/bootstrap/js/bootstrap',
-		twitterBootstrapUI:   '../lib/bootstrap/js/ui-bootstrap-tpls-0.4.0'
+		twitterBootstrapUI: '../lib/bootstrap/js/ui-bootstrap-tpls-0.10.0'
 	},
 
 	// shim configuration for external non-requirejs dependencies
@@ -53,11 +52,8 @@ require.config({
         angular: {
             exports: 'angular'
         },
-		twitterBootstrap: {
-			deps: ['jquery']
-		},
 		twitterBootstrapUI: {
-			deps: ['twitterBootstrap', 'angular']
+			deps: ['angular']
 		}
 	}
 });
@@ -66,7 +62,6 @@ require.config({
 require(
 	[
 		'Bootstrapper',
-		'twitterBootstrap',
 		'twitterBootstrapUI'
 	],
 	function(bootstrapper) {

@@ -1,12 +1,10 @@
 <div>
 	<div class="paginated-content" ng-transclude></div>
-	<div class="pagination" ng-show="pageCount > 1">
-		<ul>
-			<li ng-class="{disabled: currentPage == 1}"><a href="javascript: void(0);" ng-tap="showPreviousPage()">&laquo;</a></li>
-			<li ng-repeat="pageNr in pageNumbers" ng-class="{active: pageNr == currentPage}">
-				<a href="javascript: void(0);" ng-tap="navi.setUrlParameter('page', pageNr, true)">{{pageNr}}</a>
-			</li>
-			<li ng-class="{disabled: currentPage == pageCount}"><a href="javascript: void(0);" ng-tap="showNextPage()">&raquo;</a></li>
-		</ul>
-	</div>
+	<ul class="pagination" ng-show="pageCount > 1">
+		<li ng-class="{disabled: currentPage == 1}"><a href="javascript: void(0);" ng-tap="showPreviousPage()">&laquo;</a></li>
+		<li ng-repeat="pageNr in pageNumbers" ng-class="{active: pageNr == currentPage}">
+			<a href="javascript: void(0);" ng-tap="navi.setUrlParameter('page', pageNr, true)">{{pageNr}}</a>
+		</li>
+		<li ng-class="{disabled: currentPage == pageCount}"><a href="javascript: void(0);" ng-tap="showNextPage()">&raquo;</a></li>
+	</ul>
 </div>
