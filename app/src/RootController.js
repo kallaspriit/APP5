@@ -12,10 +12,11 @@ function(app) {
 	 * @constructor
 	 * @module App
 	 */
-	return ['$scope', 'translator', 'navi',
-		function($scope, translator, navi) {
+	return ['$scope', '$modal', 'translator', 'navi',
+		function($scope, $modal, translator, navi) {
 		// register the base scope that is used for compiling module actions
 		app.baseScope = $scope;
+		app.modalService = $modal;
 
 		// data accessible to all controllers
 		$scope.title = 'APP5 Demo Application';
@@ -29,11 +30,5 @@ function(app) {
 		// components accessible to all controllers
 		$scope.translator = translator;
 		$scope.navi = navi;
-
-		navi.partial(
-			'#header',
-			'site',
-			'header'
-		);
 	}];
 });

@@ -128,46 +128,36 @@ function(
 
 		this._pageViewCount++;
 
-		var prefix = config.cssPrefix,
+		var cssPrefix = config.cssPrefix,
 			newWrapId = 'content-' + newItemId,
 			parentWrap = $(config.viewSelector),
-			currentWrap = parentWrap.find('.' + prefix + 'page-active'),
+			currentWrap = parentWrap.find('.' + cssPrefix + 'page-active'),
 			body = $(document.body),
-			newWrap;
+			newWrap,
+			scope;
 
 		newWrap = $('<div/>', {
 			'id': newWrapId,
-			'class': prefix + 'page ' + module + '-module ' + activity + '-activity ' + prefix + 'page-loading',
+			'class': cssPrefix + 'page ' + module + '-module ' + activity + '-activity ' + cssPrefix + 'page-loading',
 			'ng-controller': module + '.' + activity,
 			'style': 'z-index: ' + (1000 - this._pageViewCount) // TODO Find a better way
 		}).html(viewContent).appendTo(parentWrap);
 
 		//newWrap.addClass(prefix + 'page-loading');
-		body.addClass(prefix + 'loading-view');
+		body.addClass(cssPrefix + 'loading-view');
 
 		try {
-			app.compile(newWrap)(app.baseScope);
+			scope = app.baseScope.$new(false);
+
+			app.compile(newWrap)(scope);
 			app.validate();
 
-			// TODO Why is this sometimes not true?
-			if (typeof($(newWrap).scope) === 'function') {
-				var createdScope = $(newWrap).scope();
-
-				createdScope.$evalAsync(function() {
-					//newWrap.removeClass(prefix + 'page-loading');
-					body.removeClass(prefix + 'loading-view first-load');
-					newWrap.removeClass(prefix + 'page-loading');
-
-					this.transitionView(currentWrap, newWrap, isBack, doneCallback);
-				}.bind(this));
-
-				app.validate();
-			} else {
-				body.removeClass(prefix + 'loading-view first-load');
-				newWrap.removeClass(prefix + 'page-loading');
+			scope.$evalAsync(function() {
+				body.removeClass(cssPrefix + 'loading-view first-load');
+				newWrap.removeClass(cssPrefix + 'page-loading');
 
 				this.transitionView(currentWrap, newWrap, isBack, doneCallback);
-			}
+			}.bind(this));
 		} catch (e) {
 			dbg.error(e);
 		}
@@ -315,10 +305,11 @@ function(
 		containerSelector,
 		append
 	) {
-		var prefix = config.cssPrefix,
+		var cssPrefix = config.cssPrefix,
 			container = $(containerSelector),
 			controllerName = module + '.' + activity,
-			containerId;
+			containerId,
+			scope;
 
 		if (container.length === 0) {
 			throw new Error('Partial container for "' + containerSelector + '" not found');
@@ -333,7 +324,7 @@ function(
 		}
 
 		container.addClass(
-			prefix + 'partial ' + module + '-module ' + activity + '-activity ' + prefix + 'partial-loading'
+			cssPrefix + 'partial ' + module + '-module ' + activity + '-activity ' + cssPrefix + 'partial-loading'
 		);
 
 		app.parameters = parameters;
@@ -341,19 +332,13 @@ function(
 		app.registerController(controllerName, activityInstance.onCreate);
 
 		try {
-			app.compile(container)(app.baseScope);
+			scope = app.baseScope.$new(false);
 
-			if (typeof($(container).scope) === 'function') {
-				var createdScope = $(container).scope();
+			app.compile(container)(scope);
 
-				createdScope.$evalAsync(function() {
-					$(container).removeClass(prefix + 'partial-loading');
-				}.bind(this));
-
-				app.validate();
-			} else {
-				$(container).removeClass(prefix + 'partial-loading');
-			}
+			scope.$evalAsync(function() {
+				$(container).removeClass(cssPrefix + 'partial-loading');
+			}.bind(this));
 		} catch (e) {
 			dbg.error(e);
 		}

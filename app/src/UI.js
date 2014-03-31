@@ -44,16 +44,21 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 * @param {String} module Module to open
 	 * @param {String} [activity=index] Activity to navigate to
 	 * @param {Object} [parameters] Activity parameters
-	 * @param {Object} [options] Optional modal options
-	 * @param {Function} [readyCallback] Callback to call once modal is displayed
+	 * @param {Function} [resultCallback] Optional callback called on modal close
 	 */
-	UI.prototype.openModal = function(module, activity, parameters, options, readyCallback) {
-		this.showModal('<div id="modal-content"></div>', options, function() {
-			navi.partial('#modal-content', module, activity, parameters);
+	UI.prototype.openModal = function(module, activity, parameters, resultCallback) {
+		var self = this,
+			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
 
-			if (util.isFunction(readyCallback)) {
-				readyCallback.call(readyCallback, module, activity, parameters, options);
-			}
+		// TODO Handle parameters
+
+		util.when(
+			resourceManager.loadActivity(module, activity),
+			resourceManager.loadView(viewFilename),
+			resourceManager.loadCss(moduleCssFilename)
+		).done(function(activityInstance, viewContent) {
+			self.showModal(viewContent, activityInstance.onCreate, resultCallback);
 		});
 	};
 
@@ -63,47 +68,21 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 * @method showModal
 	 * @param {String} content Modal content
 	 * @param {Object} [options] Optional modal options
-	 * @param {Function} [readyCallback] Callback to call once modal is displayed
+	 * @param {Function} [resultCallback] Optional callback called on modal close
 	 */
-	UI.prototype.showModal = function(content, options, readyCallback) {
-		var self = this,
-			filename = 'partials/modal.html',
-			existing = $('#modal');
+	UI.prototype.showModal = function(content, controller, resultCallback) {
+		var modalInstance = app.modalService.open({
+			template: content,
+			controller: controller || null
+		});
 
-		// TODO Not sure if this is great..
-		if (existing.length > 0) {
-			$('.modal-backdrop').remove();
-			existing.remove();
-		}
+		modalInstance.result.then(function (result) {
+			resultCallback(result);
+		}, function () {
+			resultCallback(null);
+		});
 
-		resourceManager.loadView(filename)
-			.done(function(template) {
-				$(document.body).addClass('modal-open').append(template);
-
-				$('#modal')
-					.html(content)
-					.modal(util.isObject(options) ? options : {})
-					.on('shown', function() {
-						self.emit({
-							type: self.Event.MODAL_SHOWN,
-							modal: $(this)
-						});
-					})
-					.on('hidden', function() {
-						$(this).remove();
-
-						self.emit({
-							type: self.Event.MODAL_HIDDEN
-						});
-					});
-
-				if (util.isFunction(readyCallback)) {
-					readyCallback();
-				}
-			})
-			.fail(function() {
-				throw new Error('Loading modal template from ' + filename + ' failed');
-			});
+		return modalInstance;
 	};
 
 	/**

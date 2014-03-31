@@ -436,13 +436,13 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			resourceManager.loadActivity(module, activity),
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
-		).done(function(activityInstnace, viewContent) {
+		).done(function(activityInstance, viewContent) {
 			item = ui.showPartial(
 				module,
 				activity,
 				className,
 				parameters,
-				activityInstnace,
+				activityInstance,
 				viewContent,
 				containerSelector,
 				append

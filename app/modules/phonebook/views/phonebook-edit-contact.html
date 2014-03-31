@@ -1,30 +1,52 @@
 <div class="modal-header">
 	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-	<h3 id="myModalLabel" translate>phonebook.edit-contact</h3>
+	<h4 id="myModalLabel" translate>phonebook.edit-contact</h4>
 </div>
 <div class="modal-body">
 	<form class="form-horizontal">
-		<div class="control-group">
+		<div class="form-group">
+			<label class="control-label col-sm-6" for="contact-name" translate>phonebook.name</label>
+			<div class="col-sm-6">
+				<input class="form-control" type="text" id="contact-name" ng-model="contact.name">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-6" for="contact-number" translate>phonebook.number</label>
+			<div class="col-sm-6">
+				<input class="form-control" type="tel" id="contact-number" ng-model="contact.number">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-6" translate>phonebook.birthdate</label>
+			<div class="col-sm-6">
+				<datepick class="form-control" ng-model="contact.birthdate"></datepick>
+			</div>
+		</div>
+	</form>
+
+	<!--<form class="form-horizontal">
+		<div class="form-group">
 			<label class="control-label" for="contact-name" translate>phonebook.name</label>
 			<div class="controls">
 				<input type="text" id="contact-name" ng-model="contact.name">
 			</div>
 		</div>
-		<div class="control-group">
+		<div class="form-group">
 			<label class="control-label" for="contact-number" translate>phonebook.number</label>
 			<div class="controls">
 				<input type="tel" id="contact-number" ng-model="contact.number">
 			</div>
 		</div>
-		<div class="control-group">
+		<div class="form-group">
 			<label class="control-label" translate>phonebook.birthdate</label>
 			<div class="controls">
 				<datepick ng-model="contact.birthdate"></datepick>
 			</div>
 		</div>
-	</form>
+	</form>-->
+
 </div>
 <div class="modal-footer">
-	<button class="btn" data-dismiss="modal" aria-hidden="true" translate>cancel</button>
+	<button class="btn btn-default" ng-click="cancel()" translate>cancel</button>
 	<button class="btn btn-primary" ng-click="update(contact)" translate>save</button>
 </div>

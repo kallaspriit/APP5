@@ -20,18 +20,16 @@ function(Activity, phonebook) {
 
 	EditContactActivity.prototype = Object.create(Activity.prototype);
 
-	EditContactActivity.prototype.onCreate = function($scope, $parameters, navi, util) {
+	EditContactActivity.prototype.onCreate = function($scope, $modalInstance, $parameters, navi, util) {
 		// TODO Find a better way
 		var params = $parameters();
 
 		$scope.contact = util.clone(phonebook.get(params.id));
 
 		$scope.update = function(contact) {
-			phonebook.update(contact.id, contact);
+			//phonebook.update(contact.id, contact);
 
-			if (util.isFunction(params.callback)) {
-				params.callback();
-			}
+			$modalInstance.close('xxx');
 		};
 	};
 

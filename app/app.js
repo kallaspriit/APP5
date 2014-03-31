@@ -1,24 +1,3 @@
-/*
- * TODO Refactor APP5 to use the new custom events style?
- * TODO Add better support for IE
- * TODO Optimize for mobile browsers
- * TODO Add option to disable back-functionality (preserving previous views)
- * TODO Check for memory leaks
- * TODO Get rid of self.. in favor of .bind?
- * TODO Rename resources based on class/instance e.g. Navi > navi so it's clear whether we get a class or instance?
- * TODO Merge & compress CSS
- * TODO Timeouts & Intervals on deferred
- * TODO Consider http://jsfiddle.net/gVEq5/ for model design
- * TODO Figure out better way to get action parameters
- * TODO Better document the events
- * TODO Create documentation
- * TODO Review the build system
- * TODO Create node scripts to generate modules, actions, views
- * TODO Consider gruntjs for building automation
- * TODO Consider yeoman and bower
- * TODO Use latest bootstrap 3 ui
- */
-
 // Configuration for RequireJS.
 require.config({
 

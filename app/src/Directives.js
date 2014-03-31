@@ -4,6 +4,7 @@ define(
 	'directives/translate',
 	'directives/ngTap',
 	'directives/paginate',
+	'directives/partial',
 	'addons/datepick/datepick'
 ],
 function(
@@ -11,6 +12,7 @@ function(
 	translate,
 	ngTap,
 	paginate,
+	partial,
     datepick
 ) {
 	'use strict';
@@ -22,6 +24,7 @@ function(
 		translate: translate,
 		ngTap: ngTap,
 		paginate: paginate,
+		partial: partial,
 		datepick: datepick
 	};
 });

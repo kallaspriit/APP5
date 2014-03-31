@@ -31,18 +31,19 @@ function(Activity, phonebook) {
 		$scope.orderBy = function(property) {
 			$scope.order = property;
 		};
+
 		$scope.edit = function(id) {
 			ui.openModal(
 				'phonebook',
-				'edit-contact',
-				{
-					id : id,
-					callback: function() {
-						ui.hideModal();
-					}
+				'edit-contact', {
+					id : id
+				},
+				function(result) {
+					console.log('edit closed', result);
 				}
 			);
 		};
+
 		$scope.remove = function(id) {
 			var contact = phonebook.get(id);
 

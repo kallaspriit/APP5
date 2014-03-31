@@ -259,7 +259,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 				activityInstance.$module = moduleName;
 				activityInstance.$name = activityName;
 
-				if (config.debug) {
+				if (config.debug && typeof(window.app) === 'object') {
 					window.app.activities[activityClassName] = activityInstance;
 				}
 
