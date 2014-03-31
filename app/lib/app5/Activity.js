@@ -11,7 +11,7 @@ function() {
 	 * @module Core
 	 */
 	var Activity = function() {
-
+		this.parameters = {};
 	};
 
 	/**
@@ -111,6 +111,22 @@ function() {
 	 * @method onMouseUp
 	 */
 	Activity.prototype.onMouseUp = function() {};
+
+	/**
+	 * Sets activity parameters.
+	 *
+	 * @method setParameters
+	 * @param {Object} parameters Map of parameters
+	 */
+	Activity.prototype.setParameters = function(parameters) {
+		if (typeof(parameters) !== 'object' || parameters === null) {
+			this.parameters = {};
+
+			return;
+		}
+
+		this.parameters = parameters;
+	};
 
 	return Activity;
 });

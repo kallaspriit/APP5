@@ -25,7 +25,10 @@ function(app, resourceManager, util, config) {
 					resourceManager.loadView(viewFilename),
 					resourceManager.loadCss(moduleCssFilename)
 				).done(function(activityInstance, viewContent) {
-					app.registerController(controllerName, activityInstance.onCreate);
+					app.registerController(
+						controllerName,
+						app.getAnnotatedController(activityInstance.onCreate, activityInstance)
+					);
 
 					var viewElement = $(viewContent);
 

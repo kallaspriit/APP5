@@ -20,7 +20,7 @@ function(Activity, phonebook) {
 
 	ContactsActivity.prototype = Object.create(Activity.prototype);
 
-	ContactsActivity.prototype.onCreate = function($scope, $parameters, ui) {
+	ContactsActivity.prototype.onCreate = function($scope, ui) {
 		console.log('onCreate', arguments);
 
 		$scope.phonebook = phonebook;

@@ -58,7 +58,9 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 			resourceManager.loadView(viewFilename),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(activityInstance, viewContent) {
-			self.showModal(viewContent, activityInstance.onCreate, resultCallback);
+			activityInstance.setParameters(parameters);
+
+			self.showModal(viewContent, activityInstance.onCreate, parameters, resultCallback, activityInstance);
 		});
 	};
 
@@ -68,12 +70,21 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 * @method showModal
 	 * @param {String} content Modal content
 	 * @param {Object} [options] Optional modal options
+	 * @param {Object} [parameters] Activity parameters
 	 * @param {Function} [resultCallback] Optional callback called on modal close
+	 * @param {Object} [context] Optional context to bind to
 	 */
-	UI.prototype.showModal = function(content, controller, resultCallback) {
+	UI.prototype.showModal = function(content, controller, parameters, resultCallback, context) {
+		var preannotatedController = null,
+			bindContext = context || controller;
+
+		if (typeof(controller) === 'function') {
+			preannotatedController = app.getAnnotatedController(controller, bindContext);
+		}
+
 		var modalInstance = app.modalService.open({
 			template: content,
-			controller: controller || null
+			controller: preannotatedController
 		});
 
 		modalInstance.result.then(function (result) {

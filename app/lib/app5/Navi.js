@@ -336,8 +336,12 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		}
 
 		if (!isBack) {
-			app.parameters = parameters;
-			app.registerController(module + '.' + activity, activityInstance.onCreate);
+			activityInstance.setParameters(parameters);
+
+			app.registerController(
+				module + '.' + activity,
+				app.getAnnotatedController(activityInstance.onCreate, activityInstance)
+			);
 
 			newItem = this.appendNavigation(module, activity, parameters, activityInstance, true);
 			stackChanged = true;

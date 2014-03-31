@@ -75,6 +75,34 @@ function() {
 	};
 
 	/**
+	 * Preannotates the controller and sets correct _this_ context.
+	 *
+	 * @method getAnnotatedController
+	 * @param {Function} controller Controller method to annotate
+	 * @param {Object} [context] Optional context to bind to
+	 * @param
+	 */
+	App.prototype.getAnnotatedController = function(controller, context) {
+		// angular caches previous inject, remove it
+		if (typeof(controller.$inject) !== 'undefined') {
+			delete controller.$inject;
+		}
+
+		// preannotate the controller so it can be binded to the right instance
+		var preannotatedController = this.injector.annotate(controller);
+
+		// add controller binded to the actual activity instance if available
+		if (typeof(context) === 'object') {
+			preannotatedController.push(controller.bind(context));
+		} else {
+			preannotatedController.push(controller);
+		}
+
+
+		return preannotatedController;
+	};
+
+	/**
 	 * Broadcasts a global application event.
 	 *
 	 * @method broadcast

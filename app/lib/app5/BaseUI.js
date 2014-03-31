@@ -327,9 +327,12 @@ function(
 			cssPrefix + 'partial ' + module + '-module ' + activity + '-activity ' + cssPrefix + 'partial-loading'
 		);
 
-		app.parameters = parameters;
+		activityInstance.setParameters(parameters);
 
-		app.registerController(controllerName, activityInstance.onCreate);
+		app.registerController(
+			controllerName,
+			app.getAnnotatedController(activityInstance.onCreate, activityInstance)
+		);
 
 		try {
 			scope = app.baseScope.$new(false);
