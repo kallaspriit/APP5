@@ -7,3 +7,5 @@
 /backend
 /assets
 /.idea
+/dist
+/node_modules
