@@ -83,6 +83,10 @@ function() {
 	 * @param
 	 */
 	App.prototype.getAnnotatedController = function(controller, context) {
+		if (typeof(controller) === 'object' && controller !== null && typeof(controller.length) === 'number') {
+			return controller; // already annotated
+		}
+
 		// angular caches previous inject, remove it
 		if (typeof(controller.$inject) !== 'undefined') {
 			delete controller.$inject;
