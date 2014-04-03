@@ -116,6 +116,15 @@
 
 			fs.write(file, contents);
 			fs.close(file);
+		},
+		replaceInFile: function(filename, find, replace) {
+			var contents = this.readFile(filename);
+
+			while (contents.indexOf(find) !== -1) {
+				contents = contents.replace(find, replace);
+			}
+
+			this.writeFile(filename, contents);
 		}
 	};
 

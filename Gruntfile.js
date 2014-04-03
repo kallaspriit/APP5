@@ -5,7 +5,9 @@ module.exports = function (grunt) {
 	var appDirectory = 'app',
 		distDirectory = 'dist',
 		modulesDirectory = distDirectory + '/modules',
-		applicationModule = 'app';
+		appName = 'app',
+		compiledJsFile = distDirectory + '/' + appName + '.compiled.js',
+		jsMapFile = distDirectory + '/' + appName + '.map';
 
 	// helpers
 	var util = require('./tools/grunt/grunt-util.js');
@@ -28,38 +30,49 @@ module.exports = function (grunt) {
 				}]
 			}
 		},
-		annotate: {
-			main: {
-				modules: modulesDirectory
-			}
-		},
 		requirejs: {
 			compile: {
 				options: {
 					baseUrl: distDirectory + '/src',
-					mainConfigFile: distDirectory + '/' + applicationModule + '.js',
+					mainConfigFile: distDirectory + '/' + appName + '.js',
 					optimize: 'none',
 					optimizeCss: 'none',
 					skipDirOptimize: true,
-					removeCombined: true,
 					useStrict: true,
-					name: '../' + applicationModule,
+					name: '../' + appName,
 					include: requireIncludes,
-					out: distDirectory + '/' + applicationModule + '.js'
+					out: compiledJsFile
 				}
 			}
 		},
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+				sourceMap: true,
+				sourceMapIncludeSources: true,
+				sourceMapName: jsMapFile
 			},
 			build: {
 				files: [{
-					expand: true,
-					cwd: distDirectory,
-					src: '**/*.js',
-					dest: distDirectory,
+					// TODO Make it use config
+					'dist/app.min.js': [compiledJsFile]
 				}]
+			}
+		},
+		cssmin: {
+			combine: {
+				options: {
+					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+					report: 'gzip'
+				},
+				files: {
+					// TODO Make it use config
+					'dist/style/merged.css': [
+						distDirectory + '/style/*.css',
+						distDirectory + '/lib/**/*.css',
+						distDirectory + '/modules/**/*.css'
+					]
+				}
 			}
 		}
 	});
@@ -69,11 +82,10 @@ module.exports = function (grunt) {
 	 * So ContactsActivity.prototype.onCreate = function($scope, ui) {
 	 * becomes ContactsActivity.prototype.onCreate = ['$scope', 'ui', function($scope, ui) {
 	*/
-	grunt.registerMultiTask('annotate', 'Annotates activities for compression', function() {
-		grunt.log.writeln('Annotate target: ' + this.target);
+	grunt.registerTask('annotate', 'Annotates activities for compression', function() {
 		grunt.log.writeln('  Modules:');
 
-		var modules = util.getModules(this.data.modules),
+		var modules = util.getModules(modulesDirectory),
 			activities,
 			activityInfo,
 			activityCode,
@@ -102,6 +114,10 @@ module.exports = function (grunt) {
 		}
 	});
 
+	grunt.registerTask('use-minified', 'Renames the app.js in index.html to app.min.js', function() {
+		util.replaceInFile(distDirectory + '/index.html', appName + '.js', appName + '.min.js');
+	});
+
 	// Used to clean directories
 	grunt.loadNpmTasks('grunt-contrib-clean');
 
@@ -109,17 +125,16 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Require.js build tool
-	//grunt.loadNpmTasks('grunt-contrib-requirejs');
-	grunt.loadNpmTasks('grunt-requirejs');
-
-	// Load the plugin that provides the angular minification preprocessing task
-	grunt.loadNpmTasks('grunt-ngmin');
+	grunt.loadNpmTasks('grunt-contrib-requirejs');
 
 	// Load the plugin that provides the "uglify" task
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 
-	// TODO Next append activities, models, views then uglify
+	// Load the plugin that provides the "uglify" task
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
+
+	// TODO append views, merge and compress CSS, jshint, yuidoc
 
 	// Default task
-	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs'/*, 'uglify'*/]);
+	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs', 'uglify', 'use-minified', 'cssmin']);
 };
