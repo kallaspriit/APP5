@@ -202,7 +202,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	/**
 	 * Loads a module.
 	 *
-	 * @method loadModule
+	 * @method loadActivity
 	 * @param {String} activityName Full name of the module to load
 	 * @param {Function} callback Callback to call
 	 * @return {jQuery.Deferred} Deferred

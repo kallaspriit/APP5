@@ -1,36 +1,51 @@
 module.exports = function (grunt) {
 	'use strict';
 
+	// configuration
+	var appDirectory = 'app',
+		distDirectory = 'dist',
+		modulesDirectory = distDirectory + '/modules',
+		applicationModule = 'app';
+
+	// helpers
+	var util = require('./tools/grunt/grunt-util.js');
+
+	// build a list of module activities to merge in build
+	var activities = util.getActivityNames(modulesDirectory, distDirectory),
+		requireIncludes = activities;
+
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		clean: ['dist'],
+		clean: [distDirectory],
 		copy: {
 			main: {
 				files: [{
 					expand: true,
-					cwd: 'app',
+					cwd: appDirectory,
 					src: ['**'],
-					dest: 'dist'
+					dest: distDirectory
 				}]
 			}
 		},
 		annotate: {
 			main: {
-				modules: 'dist/modules'
+				modules: modulesDirectory
 			}
 		},
 		requirejs: {
 			compile: {
 				options: {
-					baseUrl: 'dist/src',
-					mainConfigFile: 'dist/app.js',
+					baseUrl: distDirectory + '/src',
+					mainConfigFile: distDirectory + '/' + applicationModule + '.js',
 					optimize: 'none',
 					optimizeCss: 'none',
 					skipDirOptimize: true,
+					removeCombined: true,
 					useStrict: true,
-					name: '../app',
-					out: 'dist/app.compiled.js'
+					name: '../' + applicationModule,
+					include: requireIncludes,
+					out: distDirectory + '/' + applicationModule + '.js'
 				}
 			}
 		},
@@ -41,117 +56,24 @@ module.exports = function (grunt) {
 			build: {
 				files: [{
 					expand: true,
-					cwd: 'dist',
+					cwd: distDirectory,
 					src: '**/*.js',
-					dest: 'dist2',
+					dest: distDirectory,
 				}]
 			}
 		}
 	});
 
-	// Annotates activities
-	// ContactsActivity.prototype.onCreate = function($scope, ui) {
-	// ContactsActivity.prototype.onCreate = ['$scope', 'ui', function($scope, ui) {
+	/**
+	 * Annotates activities
+	 * So ContactsActivity.prototype.onCreate = function($scope, ui) {
+	 * becomes ContactsActivity.prototype.onCreate = ['$scope', 'ui', function($scope, ui) {
+	*/
 	grunt.registerMultiTask('annotate', 'Annotates activities for compression', function() {
-		var fs = require('fs'),
-			getModules = function(moduleBaseDir) {
-				var moduleDirectories = fs.readdirSync(moduleBaseDir),
-					modules = [],
-					i;
-
-				for (i = 0; i < moduleDirectories.length; i++) {
-					if (!fs.lstatSync(moduleBaseDir + '/' + moduleDirectories[i])) {
-						continue;
-					}
-
-					modules.push(moduleBaseDir + '/' + moduleDirectories[i]);
-				}
-
-				return modules;
-			},
-			getActivities = function(moduleDirectory) {
-				var activityFiles = fs.readdirSync(moduleDirectory),
-					activityFile,
-					activities = [],
-					i;
-
-				for (i = 0; i < activityFiles.length; i++) {
-					activityFile = moduleDirectory + '/' + activityFiles[i];
-
-					if (activityFile.substr(-11) !== 'Activity.js') {
-						continue;
-					}
-
-					activities.push(activityFile);
-				}
-
-				return activities;
-			},
-			getActivityInfo = function(activityFilename, activityCode) {
-				var activityFilenameTokens = activityFilename.split('/'),
-					activityNameToken = activityFilenameTokens[activityFilenameTokens.length - 1],
-					activityName = activityNameToken.substr(0, activityNameToken.length - 11),
-					regex = new RegExp(
-						'([\\t]*)(' + activityName + 'Activity.prototype.onCreate = function\\()([\\w, $]*)(\\))'
-					),
-					matches = activityCode.match(regex);
-
-				if (matches === null) {
-					grunt.log.error('Failed to find activity definition in "' + activityFilename + '"');
-
-					return false;
-				}
-
-				// TODO Find a better way to find the closing brace position
-				var args = [],
-					argTokens = matches[3].split(','),
-					i,
-					actionPos = activityCode.indexOf(matches[0]),
-					actionContents = activityCode.substr(actionPos),
-					closingPosition = actionContents.indexOf('\n' + matches[1] + '}')
-						+ matches[1].length + actionPos + 1;
-
-				for (i = 0; i < argTokens.length; i++) {
-					args.push(argTokens[i].trim());
-				}
-
-				var result = {
-					declaration: matches[0],
-					name: activityName,
-					args: args,
-					whitespace: matches[1],
-					closingPosition: closingPosition
-				};
-
-				//grunt.log.writeln('matches', activityName/*, matches*/, result);
-
-				return result;
-			},
-			annotateActivity = function(code, activityInfo) {
-				annotatedCode = code.substr(0, activityInfo.closingPosition) + '}]'
-					+ code.substr(activityInfo.closingPosition + 1);
-
-				annotatedCode = annotatedCode.replace(
-					activityInfo.declaration,
-					activityInfo.whitespace
-						+ activityInfo.name + 'Activity.prototype.onCreate = '
-						+ '[\'' + activityInfo.args.join('\', \'')
-						+ '\', function(' + activityInfo.args.join(', ') + ')'
-				);
-
-				return annotatedCode;
-			},
-			writeFile = function(filename, contents) {
-				var file = fs.openSync(filename, 'w');
-
-				fs.write(file, contents);
-				fs.close(file);
-			};
-
 		grunt.log.writeln('Annotate target: ' + this.target);
 		grunt.log.writeln('  Modules:');
 
-		var modules = getModules(this.data.modules),
+		var modules = util.getModules(this.data.modules),
 			activities,
 			activityInfo,
 			activityCode,
@@ -161,23 +83,21 @@ module.exports = function (grunt) {
 		for (i = 0; i < modules.length; i++) {
 			grunt.log.writeln('  > ' + modules[i]);
 
-			activities = getActivities(modules[i]);
+			activities = util.getActivityFiles(modules[i]);
 
 			for (j = 0; j < activities.length; j++) {
 				grunt.log.writeln('    > ' + activities[j]);
 
-				activityCode = fs.readFileSync(activities[j], 'utf-8');
-				activityInfo = getActivityInfo(activities[j], activityCode);
+				activityCode = util.readFile(activities[j]);
+				activityInfo = util.getActivityInfo(activities[j], activityCode);
 
 				if (!activityInfo) {
 					continue;
 				}
 
-				annotatedCode = annotateActivity(activityCode, activityInfo);
+				annotatedCode = util.annotateActivity(activityCode, activityInfo);
 
-				writeFile(activities[j], annotatedCode);
-
-				//grunt.log.writeln('      > ', activityInfo, annotatedCode);
+				util.writeFile(activities[j], annotatedCode);
 			}
 		}
 	});
@@ -201,5 +121,5 @@ module.exports = function (grunt) {
 	// TODO Next append activities, models, views then uglify
 
 	// Default task
-	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs'/*, 'ngmin', 'uglify'*/]);
+	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs'/*, 'uglify'*/]);
 };
