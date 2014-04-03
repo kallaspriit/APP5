@@ -72,8 +72,14 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 		var preannotatedController = null,
 			bindContext = context || controller;
 
-		if (typeof(controller) === 'function') {
+		if (util.isFunction(controller)) {
 			preannotatedController = app.getAnnotatedController(controller, bindContext);
+		} else if (util.isArray(controller)) {
+			preannotatedController = controller;
+
+			preannotatedController[preannotatedController.length - 1] = preannotatedController[
+				preannotatedController.length - 1
+			].bind(bindContext);
 		}
 
 		var modalInstance = app.modalService.open({

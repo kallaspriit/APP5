@@ -23,9 +23,13 @@ module.exports = function (grunt) {
 		requirejs: {
 			compile: {
 				options: {
-					baseUrl: './',
-					mainConfigFile: 'app/app.build.js',
-					//name: 'tools/almond/almond.js', // assumes a production build using almond
+					baseUrl: 'dist/src',
+					mainConfigFile: 'dist/app.js',
+					optimize: 'none',
+					optimizeCss: 'none',
+					skipDirOptimize: true,
+					useStrict: true,
+					name: '../app',
 					out: 'dist/app.compiled.js'
 				}
 			}
@@ -173,7 +177,7 @@ module.exports = function (grunt) {
 
 				writeFile(activities[j], annotatedCode);
 
-				grunt.log.writeln('      > ', activityInfo, annotatedCode);
+				//grunt.log.writeln('      > ', activityInfo, annotatedCode);
 			}
 		}
 	});
@@ -185,13 +189,16 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-copy');
 
 	// Require.js build tool
-	grunt.loadNpmTasks('grunt-contrib-requirejs');
+	//grunt.loadNpmTasks('grunt-contrib-requirejs');
+	grunt.loadNpmTasks('grunt-requirejs');
 
 	// Load the plugin that provides the angular minification preprocessing task
 	grunt.loadNpmTasks('grunt-ngmin');
 
 	// Load the plugin that provides the "uglify" task
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+
+	// TODO Next append activities, models, views then uglify
 
 	// Default task
 	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs'/*, 'ngmin', 'uglify'*/]);

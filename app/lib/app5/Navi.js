@@ -230,7 +230,8 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		parameters,
 		isBackBtn
 	) {
-		if (!util.isFunction(activityInstance.onCreate)) {
+		// the onCreate can be an array if it has been pre-annotated
+		if (!util.isFunction(activityInstance.onCreate) && !util.isArray(activityInstance.onCreate)) {
 			throw new Error('Invalid "' + module + '" module activity "' + activity + '" requested');
 		}
 
