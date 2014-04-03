@@ -70,10 +70,8 @@ function(
 	BaseUI.prototype.init = function() {
 		var self = this;
 
-		require(['core/Navi'], function() {
-			$(document).ready(function() {
-				self._onDocumentReady();
-			});
+		$(document).ready(function() {
+			self._onDocumentReady();
 		});
 
 		return this;

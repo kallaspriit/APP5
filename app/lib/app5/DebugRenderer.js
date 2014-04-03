@@ -173,17 +173,6 @@ function($, _, dbg, resourceManager, util) {
 	DebugRenderer.prototype._initEvents = function() {
 		var self = this;
 
-		// not required at the top as this would create a dependency loop
-		require(['core/Navi'], function(navi) {
-			navi.on(navi.Event.PRE_NAVIGATE, function(e) {
-				dbg.log('! Navigating to ' + e.module + '::' + e.activity, e.parameters);
-			});
-
-			/*navi.on(navi.Event.POST_NAVIGATE, function(e) {
-				dbg.log('+ Navigated to ' + e.module + '::' + e.activity);
-			});*/
-		});
-
 		resourceManager.on(resourceManager.Event.ACTIVITY_LOADED, function(e) {
 			dbg.log('+ Loaded activity ' + e.name);
 		});

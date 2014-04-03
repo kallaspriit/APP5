@@ -259,6 +259,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 				activityInstance.$module = moduleName;
 				activityInstance.$name = activityName;
 
+				// TODO Is this a good idea
 				if (config.debug && typeof(window.app) === 'object') {
 					window.app.activities[activityClassName] = activityInstance;
 				}

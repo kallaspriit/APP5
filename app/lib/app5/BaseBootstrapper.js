@@ -65,7 +65,7 @@ function(
 				router:             router.init(config.navigation.mode),
 				keyboard:           keyboard.init(),
 				mouse:              mouse.init(),
-				ui:                 ui.init(),
+				ui:                 ui,
 				translator:         translator.init(translations, config.language),
 				navi:               navi.init(),
 				scheduler:          scheduler.init(),
@@ -156,12 +156,13 @@ function(
 			self._onDomReady();
 		});
 
-		// register the core application components in global scope for debugging, never rely on this
-		if (config.debug) {
-			util.extend(app, components);
+		// register the core application components in global scope through window.app
+		util.extend(app, components);
 
-			window.app = app;
-		}
+		window.app = app;
+
+		// initialize the ui
+		ui.init();
 
 		if (util.isFunction(this.postBootstrap)) {
 			this.postBootstrap();

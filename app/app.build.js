@@ -1,7 +1,7 @@
 ({
-    appDir: '../../_app',
-	mainConfigFile: '../../_app/app.js',
-    dir: '../../build',
+    appDir: 'dist',
+	mainConfigFile: 'dist/app.js',
+    dir: 'dist2',
 	baseUrl: 'src',
     //optimize: "none",
 	optimize: "uglify2",

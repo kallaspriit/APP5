@@ -3,8 +3,6 @@ define(
 function(_, BaseUI, resourceManager, translator, app, util) {
 	'use strict';
 
-	var navi = null;
-
 	/**
 	 * Manages the user interface.
 	 *
@@ -22,10 +20,6 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 */
 	var UI = function() {
 		BaseUI.call(this);
-
-		require(['core/Navi'], function(naviManager) {
-			navi = naviManager;
-		});
 
 		util.extend(this.Event, {
 			MODAL_SHOWN: 'modal-shown',
