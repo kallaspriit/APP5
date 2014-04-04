@@ -37,7 +37,6 @@ module.exports = function (grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
-		clean: [distDirectory],
 		jshint: {
 			options: {
 				jshintrc: '.jshintrc'
@@ -49,6 +48,12 @@ module.exports = function (grunt) {
 				appDirectory + '/directives/**/*.js',
 			]
 		},
+		karma: {
+            unit: {
+                configFile: 'karma.conf.js'
+            }
+        },
+		clean: [distDirectory],
 		copy: {
 			main: {
 				files: [{
@@ -124,6 +129,9 @@ module.exports = function (grunt) {
 
 	// Lints the code
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+
+	// Test-runner
+	grunt.loadNpmTasks('grunt-karma');
 
 	/**
 	 * Annotates activities
