@@ -84,7 +84,6 @@ module.exports = function (grunt) {
 			},
 			build: {
 				files: [{
-					// TODO Make it use config
 					'dist/app.min.js': [compiledJsFile]
 				}]
 			}
@@ -96,7 +95,6 @@ module.exports = function (grunt) {
 					//report: 'gzip' // take a long time..
 				},
 				files: {
-					// TODO Make it use config
 					'dist/style/min.css': [
 						distDirectory + '/style/*.css',
 						distDirectory + '/lib/**/*.css',
@@ -190,7 +188,7 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
-	// TODO append views, yuidoc
+	// TODO append partials, yuidoc
 
 	// Default task
 	grunt.registerTask(

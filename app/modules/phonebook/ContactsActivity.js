@@ -45,16 +45,7 @@ function(Activity, phonebook) {
 		};
 
 		$scope.remove = function(id) {
-			var contact = phonebook.get(id);
-
-			ui.confirm(
-				function() {
-					phonebook.remove(id);
-				},
-				'phonebook.confirm-delete',
-				'phonebook.confirm-delete-text(name)',
-				contact.name
-			);
+			phonebook.remove(id);
 		};
 	};
 
