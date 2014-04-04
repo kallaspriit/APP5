@@ -13,10 +13,22 @@ module.exports = function (grunt) {
 	var util = require('./tools/grunt/grunt-util.js');
 
 	// build a list of module activities to merge in build
-	var activities = util.getActivityNames(appDirectory + '/modules'),
-		requireIncludes = activities;
+	var modules = util.getModules(appDirectory + '/modules'),
+		activities = util.getActivityNames(appDirectory + '/modules'),
+		requireIncludes = activities,
+		moduleTokens,
+		moduleName,
+		i;
 
-	console.log('activities', activities);
+	// add translation files to require includes list
+	for (i = 0; i < modules.length; i++) {
+		moduleTokens = modules[i].split('/');
+		moduleName = moduleTokens[moduleTokens.length - 1];
+
+		requireIncludes.push('modules/' + moduleName + '/' + moduleName + '-translations');
+	}
+
+	console.log('modules', modules, requireIncludes);
 
 	// Project configuration.
 	grunt.initConfig({

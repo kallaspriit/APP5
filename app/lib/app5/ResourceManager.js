@@ -211,7 +211,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 		var self = this,
 			deferred = new Deferred(),
 			activityClassName = util.convertEntityName(activityName) + 'Activity',
-			translationsName = moduleName + '-translations.js',
+			translationsName = moduleName + '-translations',
 			activityFilename = 'modules/' + moduleName + '/' + activityClassName,
 			translationsFilename = 'modules/' + moduleName + '/' + translationsName;
 
