@@ -55,7 +55,8 @@ module.exports = function (grunt) {
 					expand: true,
 					cwd: appDirectory,
 					src: ['**'],
-					dest: distDirectory
+					dest: distDirectory,
+					dot: true
 				}]
 			}
 		},
@@ -98,7 +99,8 @@ module.exports = function (grunt) {
 					'dist/style/min.css': [
 						distDirectory + '/style/*.css',
 						distDirectory + '/lib/**/*.css',
-						distDirectory + '/modules/**/*.css'
+						distDirectory + '/modules/**/*.css',
+						distDirectory + '/addons/**/*.css'
 					]
 				}
 			}
