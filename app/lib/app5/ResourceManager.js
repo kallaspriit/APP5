@@ -372,8 +372,9 @@ function($, config, EventEmitter, Deferred, util, translator) {
 		var self = this,
 			deferred = new Deferred();
 
-		if (!util.isUndefined(this._loadedCssFiles[filename])) {
-			deferred.resolve(this._loadedCssFiles[filename]);
+		// in distribution build, the CSS file is already merged into a single file so no need to load it
+		if (config.distributionBuild || !util.isUndefined(this._loadedCssFiles[filename])) {
+			deferred.resolve();
 
 			return deferred.promise();
 		}
@@ -405,7 +406,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 
 					self._loadedCssFiles[filename] = link;
 
-					deferred.resolve(link);
+					deferred.resolve();
 
 					if (util.isFunction(loadedCallback)) {
 						loadedCallback.call(loadedCallback, true, link);

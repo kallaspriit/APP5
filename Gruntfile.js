@@ -77,6 +77,21 @@ module.exports = function (grunt) {
 		}
 	});
 
+	// Used to clean directories
+	grunt.loadNpmTasks('grunt-contrib-clean');
+
+	// Provides file copying
+	grunt.loadNpmTasks('grunt-contrib-copy');
+
+	// Require.js build tool
+	grunt.loadNpmTasks('grunt-contrib-requirejs');
+
+	// Load the plugin that provides the "uglify" task
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+
+	// Load the plugin that provides the "uglify" task
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
+
 	/**
 	 * Annotates activities
 	 * So ContactsActivity.prototype.onCreate = function($scope, ui) {
@@ -118,23 +133,23 @@ module.exports = function (grunt) {
 		util.replaceInFile(distDirectory + '/index.html', appName + '.js', appName + '.min.js');
 	});
 
-	// Used to clean directories
-	grunt.loadNpmTasks('grunt-contrib-clean');
-
-	// Provides file copying
-	grunt.loadNpmTasks('grunt-contrib-copy');
-
-	// Require.js build tool
-	grunt.loadNpmTasks('grunt-contrib-requirejs');
-
-	// Load the plugin that provides the "uglify" task
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-
-	// Load the plugin that provides the "uglify" task
-	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.registerTask('augment-index', 'Renames the app.js in index.html to app.min.js', function() {
+		util.augmentIndex(distDirectory + '/index.html');
+	});
 
 	// TODO append views, merge and compress CSS, jshint, yuidoc
 
 	// Default task
-	grunt.registerTask('default', ['clean', 'copy', 'annotate', 'requirejs', 'uglify', 'use-minified', 'cssmin']);
+	grunt.registerTask(
+		'default', [
+			'clean',
+			'copy',
+			'annotate',
+			'requirejs',
+			'uglify',
+			'use-minified',
+			'cssmin',
+			'augment-index'
+		]
+	);
 };

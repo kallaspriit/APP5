@@ -21,6 +21,14 @@ define(function() {
 		debug: false,
 
 		/**
+		 * Are we running in a distribution minimized and combined version
+		 *
+		 * @property distributionBuild
+		 * @type Boolean
+		 */
+		distributionBuild: false,
+
+		/**
 		 * Index module options.
 		 *
 		 * @property index

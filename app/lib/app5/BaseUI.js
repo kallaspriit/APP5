@@ -358,6 +358,7 @@ function(
 			window.app.debugRenderer = debugRenderer;
 		}
 
+		// add class with-touch if the device is touch-capable
 		if ('ontouchstart' in document) {
 			$(document.body).removeClass('no-touch').addClass('with-touch');
 		}

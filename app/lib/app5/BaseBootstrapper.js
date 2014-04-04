@@ -187,6 +187,8 @@ function(
 	 * @private
 	 */
 	BaseBootstrapper.prototype._onDomReady = function() {
+		config.distributionBuild = this._isDistributionBuild();
+
 		// bootstrap the application, results in _onModuleRun below
 		app.injector = angular.bootstrap($('HTML'), ['app']);
 	};
@@ -236,6 +238,29 @@ function(
 
 			navi._onUrlChanged(parameters);
 		});
+	};
+
+	/**
+	 * Returns whether we're running a distribution minimized and combined version
+	 *
+	 * @method _isDistributionBuild
+	 * @private
+	 * @return {Boolean}
+	 */
+	BaseBootstrapper.prototype._isDistributionBuild = function() {
+		var scriptTag = $('SCRIPT[data-main]'),
+			mainScriptName;
+
+		if (scriptTag.length > 0) {
+			mainScriptName = scriptTag.data('main');
+
+			// distribution build has a name like "app.min.js"
+			if (typeof(mainScriptName) === 'string' && mainScriptName.indexOf('.min.js') !== -1) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	return BaseBootstrapper;

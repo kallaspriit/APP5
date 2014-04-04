@@ -1,7 +1,8 @@
 (function(module) {
 	'use strict';
 
-	var fs = require('fs');
+	var fs = require('fs'),
+		cheerio = require('cheerio');
 
 	module.exports = {
 		getModules: function(moduleBaseDir) {
@@ -125,6 +126,27 @@
 			}
 
 			this.writeFile(filename, contents);
+		},
+		augmentIndex: function(filename) {
+			var contents = this.readFile(filename),
+				$ = cheerio.load(contents),
+				stylesheetElements = $('LINK[rel="stylesheet"]'),
+				updatedContents,
+				i;
+
+			// add merged stylesheet
+			$(stylesheetElements[stylesheetElements.length - 1]).after(
+				'<link rel="stylesheet" type="text/css" href="style/merged.css">'
+			);
+
+			// remove others
+			for (i = 0; i < stylesheetElements.length; i++) {
+				$(stylesheetElements[i]).remove();
+			}
+
+			updatedContents = $.html();
+
+			this.writeFile(filename, updatedContents);
 		}
 	};
 
