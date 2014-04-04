@@ -14,6 +14,7 @@ require.config({
 		config:             '../config',
 		directives:         '../directives',
 		addons:             '../addons',
+		views:				'../views',
 		translations:       '../translations/core-translations',
 
 		// individual components

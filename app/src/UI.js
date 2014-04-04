@@ -42,14 +42,11 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 */
 	UI.prototype.openModal = function(module, activity, parameters, resultCallback) {
 		var self = this,
-			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
-
-		// TODO Handle parameters
+			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css';
 
 		util.when(
 			resourceManager.loadActivity(module, activity),
-			resourceManager.loadView(viewFilename),
+			resourceManager.loadActivityView(module, activity),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(activityInstance, viewContent) {
 			activityInstance.setParameters(parameters);
@@ -146,7 +143,7 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 			content = translator.translate.apply(translator, translationArgs);
 		}
 
-		resourceManager.loadView(filename)
+		resourceManager.loadViewFile(filename)
 			.done(function(template) {
 				var confirmed = false;
 

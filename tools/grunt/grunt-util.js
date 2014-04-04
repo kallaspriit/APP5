@@ -2,6 +2,8 @@
 	'use strict';
 
 	var fs = require('fs'),
+		glob = require('glob'),
+		mkdirp = require('mkdirp'),
 		cheerio = require('cheerio');
 
 	module.exports = {
@@ -104,6 +106,49 @@
 
 			return result;
 		},
+		getViews: function(directory) {
+			var modules = this.getModules(directory),
+				views = [],
+				module,
+				viewTokens,
+				viewBasename,
+				viewNameTokens,
+				view,
+				i;
+
+			var viewFiles = glob.sync(directory + '/**/views/*.html')
+
+			for (i = 0; i < viewFiles.length; i++) {
+				viewTokens = viewFiles[i].split('/');
+				viewBasename = viewTokens[viewTokens.length - 1];
+				viewNameTokens = viewBasename.split('-');
+
+				// remove module name
+				module = viewNameTokens.shift();
+				view = viewNameTokens.join('-');
+				view = view.substr(0, view.length - 5);
+
+				views.push({
+					module: module,
+					view: view,
+					filename: viewFiles[i]
+				});
+			}
+
+			return views;
+		},
+		getViewDefinition: function(viewInfo) {
+			var contents = this.readFile(viewInfo.filename);
+
+			return 'define(\'views/' + viewInfo.module + '.' + viewInfo.view + '\', [], function() {\n'
+				+ '\treturn \''
+				+ contents
+					.replace(/\r/g, '')
+					.replace(/'/g, '\\\'')
+					.replace(/\n/g, '\' +\n\t\t\'')
+				+ '\';\n'
+				+ '});';
+		},
 		annotateActivity: function(code, activityInfo) {
 			var annotatedCode = code.substr(0, activityInfo.closingPosition) + '}]'
 				+ code.substr(activityInfo.closingPosition + 1);
@@ -117,6 +162,9 @@
 			);
 
 			return annotatedCode;
+		},
+		createDirectory: function(directory) {
+			return mkdirp.sync(directory);
 		},
 		readFile: function(filename) {
 			return fs.readFileSync(filename, 'utf-8');
@@ -145,7 +193,7 @@
 
 			// add merged stylesheet
 			$(stylesheetElements[stylesheetElements.length - 1]).after(
-				'<link rel="stylesheet" type="text/css" href="style/merged.css">'
+				'<link rel="stylesheet" type="text/css" href="style/min.css">'
 			);
 
 			// remove others

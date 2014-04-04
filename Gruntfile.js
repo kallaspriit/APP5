@@ -15,6 +15,7 @@ module.exports = function (grunt) {
 	// build a list of module activities to merge in build
 	var modules = util.getModules(appDirectory + '/modules'),
 		activities = util.getActivityNames(appDirectory + '/modules'),
+		views = util.getViews(appDirectory + '/modules'),
 		requireIncludes = activities,
 		moduleTokens,
 		moduleName,
@@ -28,7 +29,10 @@ module.exports = function (grunt) {
 		requireIncludes.push('modules/' + moduleName + '/' + moduleName + '-translations');
 	}
 
-	console.log('modules', modules, requireIncludes);
+	// add merged view files to include list
+	for (i = 0; i < views.length; i++) {
+		requireIncludes.push('views/' + views[i].module + '.' + views[i].view);
+	}
 
 	// Project configuration.
 	grunt.initConfig({
@@ -75,7 +79,8 @@ module.exports = function (grunt) {
 				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 				sourceMap: true,
 				sourceMapIncludeSources: true,
-				sourceMapName: jsMapFile
+				sourceMapName: jsMapFile,
+				//report: 'gzip' // take a long time..
 			},
 			build: {
 				files: [{
@@ -88,11 +93,11 @@ module.exports = function (grunt) {
 			combine: {
 				options: {
 					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
-					report: 'gzip'
+					//report: 'gzip' // take a long time..
 				},
 				files: {
 					// TODO Make it use config
-					'dist/style/merged.css': [
+					'dist/style/min.css': [
 						distDirectory + '/style/*.css',
 						distDirectory + '/lib/**/*.css',
 						distDirectory + '/modules/**/*.css'
@@ -157,6 +162,26 @@ module.exports = function (grunt) {
 		}
 	});
 
+	grunt.registerTask('combine-views', 'Combined the view html files into a single javascript file', function() {
+		grunt.log.writeln('  Views:');
+
+		var views = util.getViews(modulesDirectory),
+			viewDefinition,
+			jsFilename,
+			i;
+
+		util.createDirectory(distDirectory + '/views');
+
+		for (i = 0; i < views.length; i++) {
+			viewDefinition = util.getViewDefinition(views[i]);
+			jsFilename = distDirectory + '/views/' + views[i].module + '.' + views[i].view + '.js';
+
+			util.writeFile(jsFilename, viewDefinition);
+
+			grunt.log.writeln('  > ' + views[i].module + '.' + views[i].view + ' to ' + jsFilename);
+		}
+	});
+
 	grunt.registerTask('use-minified', 'Renames the app.js in index.html to app.min.js', function() {
 		util.replaceInFile(distDirectory + '/index.html', appName + '.js', appName + '.min.js');
 	});
@@ -165,7 +190,7 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
-	// TODO append views, jshint, yuidoc
+	// TODO append views, yuidoc
 
 	// Default task
 	grunt.registerTask(
@@ -174,6 +199,7 @@ module.exports = function (grunt) {
 			'jshint',
 			'copy',
 			'annotate',
+			'combine-views',
 			'requirejs',
 			'uglify',
 			'use-minified',

@@ -284,14 +284,14 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	};
 
 	/**
-	 * Loads a module view.
+	 * Loads a view from any file.
 	 *
-	 * @method loadView
+	 * @method loadViewFile
 	 * @param {String} filename Filename of the view
 	 * @param {Function} [callback] Callback to call with loaded
 	 * @return {jQuery.Deferred} jQuery deferred
 	 */
-	ResourceManager.prototype.loadView = function(filename, callback) {
+	ResourceManager.prototype.loadViewFile = function(filename, callback) {
 		var self = this,
 			deferred = new Deferred();
 
@@ -325,6 +325,35 @@ function($, config, EventEmitter, Deferred, util, translator) {
 			});
 
 		return deferred.promise();
+	};
+
+	/**
+	 * Loads a module activity view.
+	 *
+	 * @method loadActivityView
+	 * @param {String} module Activity module
+	 * @param {String} activity Activity name
+	 * @param {Function} [callback] Callback to call with loaded
+	 * @return {jQuery.Deferred} jQuery deferred
+	 */
+	ResourceManager.prototype.loadActivityView = function(module, activity, callback) {
+		if (!config.distributionBuild) {
+			var viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
+
+			return this.loadViewFile(viewFilename, callback);
+		} else {
+			var deferred = new Deferred();
+
+			require(['views/' + module + '.' + activity], function(html) {
+				deferred.resolve(html);
+
+				if (util.isFunction(callback)) {
+					callback(html);
+				}
+			});
+
+			return deferred.promise();
+		}
 	};
 
 	/**

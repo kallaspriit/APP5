@@ -174,8 +174,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html';
+			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css';
 
 		this.emit({
 			type: this.Event.PRE_NAVIGATE,
@@ -186,7 +185,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		util.when(
 			resourceManager.loadActivity(module, activity),
-			resourceManager.loadView(viewFilename),
+			resourceManager.loadActivityView(module, activity),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(activityInstance, viewContent) {
 			self._showActivity(
@@ -426,7 +425,6 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
 			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-			viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html',
 			item = null;
 
 		this.emit({
@@ -439,7 +437,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 
 		util.when(
 			resourceManager.loadActivity(module, activity),
-			resourceManager.loadView(viewFilename),
+			resourceManager.loadActivityView(module, activity),
 			resourceManager.loadCss(moduleCssFilename)
 		).done(function(activityInstance, viewContent) {
 			item = ui.showPartial(

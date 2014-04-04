@@ -17,7 +17,6 @@ function(app, resourceManager, util, config) {
 					parameters = {},
 					controllerName = module + '.' + activity,
 					moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
-					viewFilename = 'modules/' + module + '/views/' + module + '-' + activity + '.html',
 					cssPrefix = config.cssPrefix,
 					viewElement,
 					key;
@@ -32,7 +31,7 @@ function(app, resourceManager, util, config) {
 
 				util.when(
 					resourceManager.loadActivity(module, activity),
-					resourceManager.loadView(viewFilename),
+					resourceManager.loadActivityView(module, activity),
 					resourceManager.loadCss(moduleCssFilename)
 				).done(function(activityInstance, viewContent) {
 					activityInstance.setParameters(parameters);
