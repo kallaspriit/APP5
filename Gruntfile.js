@@ -13,13 +13,26 @@ module.exports = function (grunt) {
 	var util = require('./tools/grunt/grunt-util.js');
 
 	// build a list of module activities to merge in build
-	var activities = util.getActivityNames(modulesDirectory, distDirectory),
+	var activities = util.getActivityNames(appDirectory + '/modules'),
 		requireIncludes = activities;
+
+	console.log('activities', activities);
 
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		clean: [distDirectory],
+		jshint: {
+			options: {
+				jshintrc: '.jshintrc'
+			},
+			all: [
+				appDirectory + '/app.js',
+				appDirectory + '/lib/app5/**/*.js',
+				appDirectory + '/modules/**/*.js',
+				appDirectory + '/directives/**/*.js',
+			]
+		},
 		copy: {
 			main: {
 				files: [{
@@ -92,6 +105,9 @@ module.exports = function (grunt) {
 	// Load the plugin that provides the "uglify" task
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 
+	// Lints the code
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+
 	/**
 	 * Annotates activities
 	 * So ContactsActivity.prototype.onCreate = function($scope, ui) {
@@ -137,12 +153,13 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
-	// TODO append views, merge and compress CSS, jshint, yuidoc
+	// TODO append views, jshint, yuidoc
 
 	// Default task
 	grunt.registerTask(
 		'default', [
 			'clean',
+			'jshint',
 			'copy',
 			'annotate',
 			'requirejs',

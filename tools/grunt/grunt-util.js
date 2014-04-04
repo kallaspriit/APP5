@@ -38,10 +38,12 @@
 
 			return activities;
 		},
-		getActivityNames: function(moduleDirectory, distDirectory) {
+		getActivityNames: function(moduleDirectory) {
 			var modules = this.getModules(moduleDirectory),
 				activityFiles = [],
 				activities = [],
+				activityFileTokens,
+				activityFile,
 				i;
 
 			for (i = 0; i < modules.length; i++) {
@@ -49,9 +51,16 @@
 			}
 
 			for (i = 0; i < activityFiles.length; i++) {
-				activities.push(activityFiles[i].substr(
-					distDirectory.length + 1,
-					activityFiles[i].length - distDirectory.length - 4
+				activityFileTokens = activityFiles[i].split('/');
+
+				// remove first part
+				activityFileTokens.splice(0, 1);
+
+				activityFile = activityFileTokens.join('/');
+
+				activities.push(activityFile.substr(
+					0,
+					activityFile.length - 3
 				));
 			}
 
