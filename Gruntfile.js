@@ -53,7 +53,10 @@ module.exports = function (grunt) {
                 configFile: 'karma.conf.js'
             }
         },
-		clean: [distDirectory],
+		clean: [
+			distDirectory,
+			'docs'
+		],
 		copy: {
 			main: {
 				files: [{
@@ -109,6 +112,28 @@ module.exports = function (grunt) {
 					]
 				}
 			}
+		},
+		yuidoc: {
+			compile: {
+				name: '<%= pkg.name %>',
+				description: '<%= pkg.description %>',
+				version: '<%= pkg.version %>',
+				url: '<%= pkg.homepage %>',
+				logo: 'media/logo-doc.png',
+				options: {
+					paths: [
+						appDirectory + '/src',
+						appDirectory + '/modules',
+						appDirectory + '/directives',
+						appDirectory + '/config',
+						appDirectory + '/models',
+						appDirectory + '/addons',
+						appDirectory + '/lib/app5'
+					],
+					outdir: 'docs',
+					linkNatives: 'true'
+				}
+			}
 		}
 	});
 
@@ -129,6 +154,9 @@ module.exports = function (grunt) {
 
 	// Lints the code
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+
+	// Generates documentation
+	grunt.loadNpmTasks('grunt-contrib-yuidoc');
 
 	// Test-runner
 	grunt.loadNpmTasks('grunt-karma');
@@ -198,7 +226,7 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
-	// TODO append partials, yuidoc
+	// TODO append partials, yuidoc, create activities
 
 	// Default task
 	grunt.registerTask(
@@ -212,7 +240,11 @@ module.exports = function (grunt) {
 			'uglify',
 			'use-minified',
 			'cssmin',
-			'augment-index'
+			'augment-index',
+			'yuidoc'
 		]
 	);
+
+	// Alias yuidoc to just doc
+	grunt.registerTask('doc', ['yuidoc']);
 };
