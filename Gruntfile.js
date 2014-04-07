@@ -226,7 +226,7 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
-	// TODO append partials, yuidoc, create activities
+	// TODO append partials, create activities
 
 	// Default task
 	grunt.registerTask(
