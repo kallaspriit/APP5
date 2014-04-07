@@ -25,6 +25,21 @@ function(config) {
 			parameters: {
 				page: 1 // +int actually defaults to 1 so not needed
 			}
-		}
+		},
+		'manage-users': {
+			path: 'admin/manage-users',
+			module: 'admin',
+			activity: 'manage-users',
+		},
+		'users': {
+			path: 'admin/users',
+			module: 'admin',
+			activity: 'users',
+		},
+		'user-list': {
+			path: 'admin/user-list',
+			module: 'admin',
+			activity: 'user-list',
+		} // routes
 	};
 });

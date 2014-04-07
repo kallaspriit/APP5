@@ -210,6 +210,15 @@
 
 			this.writeFile(filename, updatedContents);
 		},
+		convertEntityName: function(name) {
+			var dashPos;
+
+			while ((dashPos = name.indexOf('-')) != -1) {
+				name = name.substr(0, dashPos) + (name.substr(dashPos + 1, 1)).toUpperCase() + name.substr(dashPos + 2);
+			}
+
+			return name.substr(0, 1).toUpperCase() + name.substr(1);
+		},
 		copyTemplate: function(from, to, replace) {
 			var contents = this.readFile(from),
 				key,
@@ -228,17 +237,64 @@
 			this.writeFile(to, contents);
 		},
 		createModule: function(dir, name) {
+			// create module and views directories
 			this.createDirectory(dir + '/' + name);
+			this.createDirectory(dir + '/' + name + '/views');
 
+			// create stylesheet file
 			this.copyTemplate(
 				'tools/grunt/generator-templates/module.css',
 				dir + '/' + name + '/' + name + '-module.css', {
-					moduleName: name
+					module: name,
+					Module: this.convertEntityName(name)
+				}
+			);
+
+			// create translations file
+			this.copyTemplate(
+				'tools/grunt/generator-templates/translations.js',
+				dir + '/' + name + '/' + name + '-translations.js', {
+					module: name,
+					Module: this.convertEntityName(name)
 				}
 			);
 		},
-		createActivity: function(dir, name) {
-			
+		createActivity: function(dir, moduleName, activityName) {
+			var activityClassName = this.convertEntityName(activityName) + 'Activity';
+
+			this.copyTemplate(
+				'tools/grunt/generator-templates/activity.js',
+				dir + '/' + moduleName + '/' + activityClassName + '.js', {
+					module: moduleName,
+					Module: this.convertEntityName(moduleName),
+					activity: activityName,
+					Activity: this.convertEntityName(activityName)
+				}
+			);
+
+			this.copyTemplate(
+				'tools/grunt/generator-templates/view.html',
+				dir + '/' + moduleName + '/views/' + moduleName + '-' + activityName + '.html', {
+					module: moduleName,
+					Module: this.convertEntityName(moduleName),
+					activity: activityName,
+					Activity: this.convertEntityName(activityName)
+				}
+			);
+		},
+		createRoute: function(routesFile, path, module, activity) {
+			var contents = this.readFile(routesFile),
+				tabs = '\t\t\t',
+				def = tabs + 'path: \'' + path + '\',\n' +
+					tabs + 'module: \'' + module + '\',\n' +
+					tabs + 'activity: \'' + activity + '\',\n';
+
+			contents = contents.replace(
+				'\t\t} // routes',
+				'\t\t},\n\t\t\'' + activity + '\': {\n' + def + '\t\t} // routes'
+			);
+
+			this.writeFile(routesFile, contents);
 		}
 	};
 

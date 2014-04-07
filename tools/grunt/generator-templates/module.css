@@ -1,1 +1,4 @@
-.$(moduleName)-module {}
+/**
+ * Stylesheet for $(module) module.
+ */
+.$(module)-module {}

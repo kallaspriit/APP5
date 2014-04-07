@@ -148,13 +148,6 @@ module.exports = function (grunt) {
 							modules.push('Create new module');
 
 							return modules;
-						},
-						filter: function(value) {
-							if (value === 'Create new module') {
-								// set new
-							}
-
-							return value;
 						}
 					}, {
 						message: 'Module name',
@@ -169,14 +162,22 @@ module.exports = function (grunt) {
 						message: 'Activity name',
 						config: '_activity.main.activity',
 						type: 'input'
+					}, {
+						message: 'Route path',
+						config: '_activity.main.route',
+						type: 'input',
+						default: function(answers) {
+							return answers['_activity.main.module'] + '/' + answers['_activity.main.activity'];
+						}
 					}]
 				}
 			}
 		},
 		_activity: {
 			main: {
-				module: 'Default',
-				activity: 'Default'
+				module: '',
+				activity: '',
+				route: ''
 			}
 		}
 	});
@@ -290,17 +291,21 @@ module.exports = function (grunt) {
 			util.createModule(appDirectory + '/modules', this.data.module);
 		}
 
-		util.createActivity(appDirectory + '/modules/' + this.data.module, this.data.activity);
+		util.createActivity(appDirectory + '/modules/', this.data.module, this.data.activity);
+
+		if (this.data.route.length > 0) {
+			util.createRoute(appDirectory + '/config/routes.js', this.data.route, this.data.module, this.data.activity);
+		}
 
 		console.log(
-			'create activity',
-			this.data.module,
-			this.data.activity,
-			newModule ? 'new' : 'existing'
+			'Created activity ' +
+			(newModule ? ' and module ' : '') +
+			util.convertEntityName(this.data.module) + '.' + util.convertEntityName(this.data.activity) + 'Activity' +
+			(this.data.route.length > 0 ? ', route: /' + this.data.route : ', didn\'t create a route')
 		);
 	});
 
-	// TODO append partials, create activities
+	// TODO append partials
 
 	// Default task
 	grunt.registerTask(
