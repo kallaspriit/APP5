@@ -42,7 +42,7 @@ function(_, BaseUI, resourceManager, translator, app, util) {
 	 */
 	UI.prototype.openModal = function(module, activity, parameters, resultCallback) {
 		var self = this,
-			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css';
+			moduleCssFilename = 'modules/' + module + '/' + module + '-module.css';
 
 		util.when(
 			resourceManager.loadActivity(module, activity),

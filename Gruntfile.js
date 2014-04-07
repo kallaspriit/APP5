@@ -134,6 +134,50 @@ module.exports = function (grunt) {
 					linkNatives: 'true'
 				}
 			}
+		},
+		prompt: {
+			activity: {
+				options: {
+					questions: [{
+						message: 'Module',
+						config: '_activity.main.module',
+						type: 'list',
+						choices: function() {
+							var modules = util.getModules(appDirectory + '/modules', true);
+
+							modules.push('Create new module');
+
+							return modules;
+						},
+						filter: function(value) {
+							if (value === 'Create new module') {
+								// set new
+							}
+
+							return value;
+						}
+					}, {
+						message: 'Module name',
+						config: '_activity.main.module',
+						type: 'input',
+						when: function(answers) {
+							console.log('module when', answers);
+
+							return answers['_activity.main.module'] === 'Create new module';
+						}
+					}, {
+						message: 'Activity name',
+						config: '_activity.main.activity',
+						type: 'input'
+					}]
+				}
+			}
+		},
+		_activity: {
+			main: {
+				module: 'Default',
+				activity: 'Default'
+			}
 		}
 	});
 
@@ -160,6 +204,9 @@ module.exports = function (grunt) {
 
 	// Test-runner
 	grunt.loadNpmTasks('grunt-karma');
+
+	// Used to prompt the user for some input
+	grunt.loadNpmTasks('grunt-prompt');
 
 	/**
 	 * Annotates activities
@@ -198,7 +245,8 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask('combine-views', 'Combined the view html files into a single javascript file', function() {
+	// Combines the view html files into a single javascript file
+	grunt.registerTask('combine-views', 'Combines the view html files into a single javascript file', function() {
 		grunt.log.writeln('  Views:');
 
 		var views = util.getViews(modulesDirectory),
@@ -218,12 +266,38 @@ module.exports = function (grunt) {
 		}
 	});
 
+	// Renames the app.js in index.html to app.min.js
 	grunt.registerTask('use-minified', 'Renames the app.js in index.html to app.min.js', function() {
 		util.replaceInFile(distDirectory + '/index.html', appName + '.js', appName + '.min.js');
 	});
 
-	grunt.registerTask('augment-index', 'Renames the app.js in index.html to app.min.js', function() {
+	// Augments the index.html file by replacing all stylesheet decorations with a single combined one etc
+	grunt.registerTask('augment-index', 'Augments the index.html file', function() {
 		util.augmentIndex(distDirectory + '/index.html');
+	});
+
+	// Generates a new activity using a template
+	grunt.registerMultiTask('_activity', 'Generates a new activity', function() {
+		if (this.data.module === '' || this.data.activity === '') {
+			grunt.log.writeln('Empty module or activity name, quitting');
+
+			return;
+		}
+
+		var newModule = !util.moduleExists(appDirectory + '/modules', this.data.module);
+
+		if (newModule) {
+			util.createModule(appDirectory + '/modules', this.data.module);
+		}
+
+		util.createActivity(appDirectory + '/modules/' + this.data.module, this.data.activity);
+
+		console.log(
+			'create activity',
+			this.data.module,
+			this.data.activity,
+			newModule ? 'new' : 'existing'
+		);
 	});
 
 	// TODO append partials, create activities
@@ -247,4 +321,7 @@ module.exports = function (grunt) {
 
 	// Alias yuidoc to just doc
 	grunt.registerTask('doc', ['yuidoc']);
+
+	// Generate an activity
+	grunt.registerTask('activity', ['prompt:activity', '_activity']);
 };

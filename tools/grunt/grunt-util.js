@@ -7,7 +7,7 @@
 		cheerio = require('cheerio');
 
 	module.exports = {
-		getModules: function(moduleBaseDir) {
+		getModules: function(moduleBaseDir, namesOnly) {
 			var moduleDirectories = fs.readdirSync(moduleBaseDir),
 				modules = [],
 				i;
@@ -17,10 +17,17 @@
 					continue;
 				}
 
-				modules.push(moduleBaseDir + '/' + moduleDirectories[i]);
+				if (namesOnly === true) {
+					modules.push(moduleDirectories[i]);
+				} else {
+					modules.push(moduleBaseDir + '/' + moduleDirectories[i]);
+				}
 			}
 
 			return modules;
+		},
+		moduleExists: function(moduleBaseDir, name) {
+			return this.getModules(moduleBaseDir, true).indexOf(name) !== -1;
 		},
 		getActivityFiles: function(moduleDirectory) {
 			var activityFiles = fs.readdirSync(moduleDirectory),
@@ -107,7 +114,7 @@
 			return result;
 		},
 		getViews: function(directory) {
-			var modules = this.getModules(directory),
+			var viewFiles = glob.sync(directory + '/**/views/*.html'),
 				views = [],
 				module,
 				viewTokens,
@@ -115,8 +122,6 @@
 				viewNameTokens,
 				view,
 				i;
-
-			var viewFiles = glob.sync(directory + '/**/views/*.html')
 
 			for (i = 0; i < viewFiles.length; i++) {
 				viewTokens = viewFiles[i].split('/');
@@ -204,6 +209,36 @@
 			updatedContents = $.html();
 
 			this.writeFile(filename, updatedContents);
+		},
+		copyTemplate: function(from, to, replace) {
+			var contents = this.readFile(from),
+				key,
+				token,
+				value;
+
+			for (key in replace) {
+				value = replace[key];
+				token = '$(' + key + ')';
+
+				while (contents.indexOf(token) !== -1) {
+					contents = contents.replace(token, value);
+				}
+			}
+
+			this.writeFile(to, contents);
+		},
+		createModule: function(dir, name) {
+			this.createDirectory(dir + '/' + name);
+
+			this.copyTemplate(
+				'tools/grunt/generator-templates/module.css',
+				dir + '/' + name + '/' + name + '-module.css', {
+					moduleName: name
+				}
+			);
+		},
+		createActivity: function(dir, name) {
+			
 		}
 	};
 

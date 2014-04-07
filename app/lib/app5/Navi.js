@@ -174,7 +174,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css';
+			moduleCssFilename = 'modules/' + module + '/' + module + '-module.css';
 
 		this.emit({
 			type: this.Event.PRE_NAVIGATE,
@@ -424,7 +424,7 @@ function(_, EventEmitter, Deferred, app, dbg, util, resourceManager, keyboard, m
 		var self = this,
 			deferred = new Deferred(),
 			className = util.convertEntityName(module) + 'Module',
-			moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+			moduleCssFilename = 'modules/' + module + '/' + module + '-module.css',
 			item = null;
 
 		this.emit({

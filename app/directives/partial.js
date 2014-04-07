@@ -16,7 +16,7 @@ function(app, resourceManager, util, config) {
 					activity = $attrs.activity,
 					parameters = {},
 					controllerName = module + '.' + activity,
-					moduleCssFilename = 'modules/' + module + '/style/' + module + '-module.css',
+					moduleCssFilename = 'modules/' + module + '/' + module + '-module.css',
 					cssPrefix = config.cssPrefix,
 					viewElement,
 					key;
