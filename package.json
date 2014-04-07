@@ -1,6 +1,6 @@
 {
   "name": "APP5",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Modular HTML5 Application Framework",
   "main": "app/app.js",
   "directories": {
@@ -26,7 +26,7 @@
     "url": "https://github.com/kallaspriit/APP5/issues"
   },
   "devDependencies": {
-	"cheerio": "^0.14.0",
+    "cheerio": "^0.14.0",
     "glob": "^3.2.9",
     "mkdirp": "^0.3.5",
     "karma": "^0.12.3",
@@ -39,7 +39,7 @@
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-cssmin": "^0.9.0",
     "grunt-contrib-jshint": "^0.10.0",
-	"grunt-contrib-yuidoc": "^0.5.2",
+    "grunt-contrib-yuidoc": "^0.5.2",
     "karma-script-launcher": "^0.1.0",
     "karma-chrome-launcher": "^0.1.3",
     "karma-firefox-launcher": "^0.1.3",
