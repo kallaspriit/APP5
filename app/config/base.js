@@ -12,6 +12,20 @@ define(function() {
 	 * @static
 	 */
 	return {
+
+        /**
+         * Application version number (http://semver.org/ format).
+         *
+         * This value is automatically incremented by
+         * > grunt bump-patch
+         * > grunt bump-minor
+         * > grunt bump-major
+         *
+         * @property version
+         * @type string
+         */
+        version: '0.15.0',
+
 		/**
 		 * Is debug-mode enabled.
 		 *
