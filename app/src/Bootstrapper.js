@@ -1,6 +1,7 @@
 define(
 [
-	'core/BaseBootstrapper'
+	'core/BaseBootstrapper',
+    'twitterBootstrapUI'
 ],
 function(
 	BaseBootstrapper
@@ -34,6 +35,17 @@ function(
 	 * @method preBootstrap
 	 */
 	Bootstrapper.prototype.postBootstrap = function() {};
+
+    /**
+     * Returns the list of module dependencies for current application.
+     *
+     * Override this in your bootstrapper to include additional resources.
+     *
+     * @return {Array}
+     */
+    Bootstrapper.prototype.getModuleDependencies = function() {
+        return ['ui.bootstrap'];
+    };
 
 	return new Bootstrapper();
 });

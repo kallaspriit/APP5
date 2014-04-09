@@ -177,7 +177,7 @@ function(
      * @return {Array}
      */
     BaseBootstrapper.prototype.getModuleDependencies = function() {
-        return ['ui.bootstrap'];
+        return [];
     };
 
 	/**

@@ -39,12 +39,7 @@ require.config({
 });
 
 // require resources needed for startup
-require(
-	[
-		'Bootstrapper',
-		'twitterBootstrapUI'
-	],
-	function(bootstrapper) {
+require(['Bootstrapper'], function(bootstrapper) {
 		'use strict';
 
 		// bootstrap the application
