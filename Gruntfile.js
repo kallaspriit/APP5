@@ -42,12 +42,19 @@ module.exports = function (grunt) {
 				jshintrc: '.jshintrc'
 			},
 			all: [
+				'Gruntfile.js',
+				'karma.conf.js',
 				appDirectory + '/app.js',
 				appDirectory + '/lib/app5/**/*.js',
 				appDirectory + '/modules/**/*.js',
-				appDirectory + '/directives/**/*.js',
+				appDirectory + '/directives/**/*.js'
 			]
 		},
+        jsonlint: {
+            main: {
+                src: ['package.json']
+            }
+        },
 		karma: {
             unit: {
                 configFile: 'karma.conf.js'
@@ -88,7 +95,7 @@ module.exports = function (grunt) {
 				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
 				sourceMap: true,
 				sourceMapIncludeSources: true,
-				sourceMapName: jsMapFile,
+				sourceMapName: jsMapFile
 				//report: 'gzip' // take a long time..
 			},
 			build: {
@@ -100,7 +107,7 @@ module.exports = function (grunt) {
 		cssmin: {
 			combine: {
 				options: {
-					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+					banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 					//report: 'gzip' // take a long time..
 				},
 				files: {
@@ -209,6 +216,9 @@ module.exports = function (grunt) {
 	// Used to prompt the user for some input
 	grunt.loadNpmTasks('grunt-prompt');
 
+    // used to lint json files
+    grunt.loadNpmTasks('grunt-jsonlint');
+
 	/**
 	 * Annotates activities
 	 * So ContactsActivity.prototype.onCreate = function($scope, ui) {
@@ -310,8 +320,9 @@ module.exports = function (grunt) {
 	// Default task
 	grunt.registerTask(
 		'default', [
-			'clean',
 			'jshint',
+			'jsonlint',
+            'clean',
 			'copy',
 			'annotate',
 			'combine-views',
