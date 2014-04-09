@@ -142,6 +142,21 @@ module.exports = function (grunt) {
 				}
 			}
 		},
+        bump: {
+            options: {
+                files: ['package.json'],
+                updateConfigs: [],
+                commit: true,
+                commitMessage: 'Release v%VERSION%',
+                commitFiles: ['package.json'],
+                createTag: true,
+                tagName: 'v%VERSION%',
+                tagMessage: 'Version %VERSION%',
+                push: true,
+                pushTo: 'master',
+                gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
+            }
+        },
 		prompt: {
 			activity: {
 				options: {
@@ -216,8 +231,11 @@ module.exports = function (grunt) {
 	// Used to prompt the user for some input
 	grunt.loadNpmTasks('grunt-prompt');
 
-    // used to lint json files
+    // Used to lint json files
     grunt.loadNpmTasks('grunt-jsonlint');
+
+    // Used to bump version numbers
+    grunt.loadNpmTasks('grunt-bump');
 
 	/**
 	 * Annotates activities
