@@ -31,6 +31,12 @@ HTML, BODY {
 	z-index: 1000;
 	display: none;
 }
+#version {
+    position: fixed;
+    right: 20px;
+    bottom: 4px;
+    color: #CCC;
+}
 BODY.app5-loading-view #loading-indicator {
 	display: block;
 }

@@ -148,12 +148,12 @@ module.exports = function (grunt) {
                 updateConfigs: [],
                 commit: true,
                 commitMessage: 'Release v%VERSION%',
-                commitFiles: ['package.json'],
+                commitFiles: ['package.json', 'app/config/base.js'],
                 createTag: true,
                 tagName: 'v%VERSION%',
                 tagMessage: 'Version %VERSION%',
-                push: true,
-                pushTo: 'master',
+                push: false,
+                pushTo: 'origin',
                 gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d'
             }
         },
@@ -176,8 +176,6 @@ module.exports = function (grunt) {
 						config: '_activity.main.module',
 						type: 'input',
 						when: function(answers) {
-							console.log('module when', answers);
-
 							return answers['_activity.main.module'] === 'Create new module';
 						}
 					}, {
@@ -333,6 +331,25 @@ module.exports = function (grunt) {
 		);
 	});
 
+    // Generates a new activity using a template
+    grunt.registerTask('_update_version', 'Updates the application version number in application config', function() {
+        var pkg = require('./package.json'),
+            version = pkg.version,
+            baseConfigFilename = appDirectory + '/config/base.js',
+            baseConfigContents = util.readFile(baseConfigFilename),
+            regex = /version: \'([0-9\.]+)\',/,
+            matches = baseConfigContents.match(regex),
+            updatedContents;
+
+        if (matches === null) {
+            grunt.fail.warn('Failed to find version definition in ' + baseConfigFilename);
+        }
+
+        updatedContents = baseConfigContents.replace(matches[0], 'version: \'' + version + '\',');
+
+        util.writeFile(baseConfigFilename, updatedContents);
+    });
+
 	// TODO append partials
 
 	// Default task
@@ -355,6 +372,11 @@ module.exports = function (grunt) {
 
 	// Alias yuidoc to just doc
 	grunt.registerTask('doc', ['yuidoc']);
+
+    // Bump version number and copy the new version number to application config once bumped
+    grunt.registerTask('bump-patch', ['bump-only:patch', '_update_version', 'bump-commit']);
+    grunt.registerTask('bump-minor', ['bump-only:minor', '_update_version', 'bump-commit']);
+    grunt.registerTask('bump-major', ['bump-only:major', '_update_version', 'bump-commit']);
 
 	// Generate an activity
 	grunt.registerTask('activity', ['prompt:activity', '_activity']);

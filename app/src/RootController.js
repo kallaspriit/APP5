@@ -1,6 +1,6 @@
 define(
-['core/App'],
-function(app) {
+['core/App', 'config/main'],
+function(app, config) {
 	'use strict';
 
 	/**
@@ -20,6 +20,7 @@ function(app) {
 
 		// data accessible to all controllers
 		$scope.title = 'APP5 Demo Application';
+        $scope.version = config.version;
 
 		// methods accessible to all controllers
 		$scope.setTitle = function(/*title*/) {
