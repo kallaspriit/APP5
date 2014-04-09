@@ -1,6 +1,6 @@
 {
     "name": "APP5",
-    "version": "0.16.0",
+    "version": "0.17.0",
     "description": "Modular HTML5 Application Framework",
     "main": "app/app.js",
     "directories": {
