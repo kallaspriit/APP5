@@ -24,7 +24,7 @@ define(function() {
          * @property version
          * @type string
          */
-        version: '0.17.0',
+        version: '0.18.0',
 
 		/**
 		 * Is debug-mode enabled.
