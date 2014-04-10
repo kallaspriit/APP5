@@ -287,7 +287,7 @@
 				tabs = '\t\t\t',
 				def = tabs + 'path: \'' + path + '\',\n' +
 					tabs + 'module: \'' + module + '\',\n' +
-					tabs + 'activity: \'' + activity + '\',\n';
+					tabs + 'activity: \'' + activity + '\'\n';
 
 			contents = contents.replace(
 				'\t\t} // routes',

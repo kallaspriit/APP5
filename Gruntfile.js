@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 	// configuration
 	var appDirectory = 'app',
 		distDirectory = 'dist',
+		testDirectory = 'test',
 		modulesDirectory = distDirectory + '/modules',
 		appName = 'app',
 		compiledJsFile = distDirectory + '/' + appName + '.compiled.js',
@@ -350,6 +351,45 @@ module.exports = function (grunt) {
         util.writeFile(baseConfigFilename, updatedContents);
     });
 
+    // Prepares karma testing
+    grunt.registerTask('_prepare_karma', 'Prepares karma testing', function() {
+        var appConfigContents = util.readFile(appDirectory + '/app.js'),
+            testConfigContents = appConfigContents.replace(/\r/g, '');
+
+        // prepends spec files list code
+        testConfigContents = 'var tests = [];\n' +
+            '\n' +
+            'for (var file in window.__karma__.files) {\n' +
+            '    if (window.__karma__.files.hasOwnProperty(file)) {\n' +
+            '        if (/Spec\\.js$/.test(file)) {\n' +
+            '            tests.push(file);\n' +
+            '        }\n' +
+            '    }\n' +
+            '}\n\n' + testConfigContents;
+
+        // replace the base url
+        testConfigContents = testConfigContents.replace('baseUrl: \'src\',', 'baseUrl: \'/base/app/src\',');
+
+        // add test dependencies and karma callback
+        testConfigContents = testConfigContents.replace(
+            '}\n\n\t// test configuration dependencies and callback are added here, don\'t remove this comment',
+            '},\n\n\t// ask Require.js to load these files (all our tests)\n' +
+            '\tdeps: tests,\n' +
+            '\n' +
+            '\t// start test run, once Require.js is done\n' +
+            '\tcallback: window.__karma__.start'
+        );
+
+		// remove the bootstrapping code
+		testConfigContents = testConfigContents.replace(/\n\nrequire\([\s\S]*\);/, '');
+
+		// restore windows newline
+		testConfigContents = testConfigContents.replace(/\n/g, '\r\n');
+
+		// write test/test.js file
+        util.writeFile(testDirectory + '/test.js', testConfigContents);
+    });
+
 	// TODO append partials
 
 	// Default task
@@ -380,4 +420,7 @@ module.exports = function (grunt) {
 
 	// Generate an activity
 	grunt.registerTask('activity', ['prompt:activity', '_activity']);
+
+    // Test application
+    grunt.registerTask('test', ['_prepare_karma', 'karma']);
 };

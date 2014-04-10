@@ -36,9 +36,10 @@ require.config({
 			deps: ['angular']
 		}
 	}
+
+	// test configuration dependencies and callback are added here, don't remove this comment
 });
 
-// require resources needed for startup
 require(['Bootstrapper'], function(bootstrapper) {
 		'use strict';
 

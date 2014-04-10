@@ -159,7 +159,12 @@ function(
 		// register the core application components in global scope through window.app
 		util.extend(app, components);
 
-		window.app = app;
+		// app may already be defined before this point
+        if (typeof(window.app) === 'undefined') {
+            window.app = app;
+        } else {
+            util.extend(window.app, app);
+        }
 
 		// initialize the ui
 		ui.init();
