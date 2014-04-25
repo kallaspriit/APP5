@@ -362,7 +362,7 @@ module.exports = function (grunt) {
 
 		util.createModel(appDirectory + '/models', this.data.name, this.data.type);
 
-		console.log('Created model called "' + this.data.name + '"');
+		console.log('Created model called "' + this.data.name + '" of type "' + this.data.type + '"');
 	});
 
     // Generates a new activity using a template

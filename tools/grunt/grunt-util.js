@@ -302,7 +302,7 @@
 
 			contents = contents.replace(
 				'\t\t} // routes',
-				'\t\t},\n\t\t\'' + activity + '\': {\n' + def + '\t\t} // routes'
+				'\t\t},\n\t\t\'' + module + '-' + activity + '\': {\n' + def + '\t\t} // routes'
 			);
 
 			this.writeFile(routesFile, contents);
