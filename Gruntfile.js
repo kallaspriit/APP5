@@ -192,6 +192,20 @@ module.exports = function (grunt) {
 						}
 					}]
 				}
+			},
+			model: {
+				options: {
+					questions: [{
+						message: 'Name',
+						config: '_model.main.name',
+						type: 'input'
+					}, {
+						message: 'Type',
+						config: 'model.main.type',
+						type: 'list',
+						choices: ['Array', 'Object']
+					}]
+				}
 			}
 		},
 		_activity: {
@@ -199,6 +213,12 @@ module.exports = function (grunt) {
 				module: '',
 				activity: '',
 				route: ''
+			}
+		},
+		_model: {
+			main: {
+				name: '',
+				type: null
 			}
 		}
 	});
@@ -332,6 +352,19 @@ module.exports = function (grunt) {
 		);
 	});
 
+	// Generates a new model.
+	grunt.registerMultiTask('_model', 'Generates a new model', function() {
+		if (this.data.name === '') {
+			grunt.log.writeln('Empty model name, quitting');
+
+			return;
+		}
+
+		util.createModel(appDirectory + '/models', this.data.name, this.data.type);
+
+		console.log('Created model called "' + this.data.name + '"');
+	});
+
     // Generates a new activity using a template
     grunt.registerTask('_update_version', 'Updates the application version number in application config', function() {
         var pkg = require('./package.json'),
@@ -420,6 +453,9 @@ module.exports = function (grunt) {
 
 	// Generate an activity
 	grunt.registerTask('activity', ['prompt:activity', '_activity']);
+
+	// Generate a model
+	grunt.registerTask('model', ['prompt:model', '_model']);
 
     // Test application
     grunt.registerTask('test', ['_prepare_karma', 'karma']);

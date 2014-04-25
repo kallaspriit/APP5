@@ -282,6 +282,17 @@
 				}
 			);
 		},
+		createModel: function(dir, name, type) {
+			var modelName = this.convertEntityName(name);
+
+			this.copyTemplate(
+				'tools/grunt/generator-templates/model-' + (type === 'Array' ? 'array' : 'object') + '.js',
+				dir + '/' + modelName + '.js', {
+					model: name,
+					Model: modelName
+				}
+			);
+		},
 		createRoute: function(routesFile, path, module, activity) {
 			var contents = this.readFile(routesFile),
 				tabs = '\t\t\t',
