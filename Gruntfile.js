@@ -196,12 +196,12 @@ module.exports = function (grunt) {
 			model: {
 				options: {
 					questions: [{
-						message: 'Name',
+						message: 'Name (use "model-name" format)',
 						config: '_model.main.name',
 						type: 'input'
 					}, {
 						message: 'Type',
-						config: 'model.main.type',
+						config: '_model.main.type',
 						type: 'list',
 						choices: ['Array', 'Object']
 					}]
