@@ -210,7 +210,7 @@ function($, config, EventEmitter, Deferred, util, translator) {
 	ResourceManager.prototype.loadActivity = function(moduleName, activityName, callback) {
 		var self = this,
 			deferred = new Deferred(),
-			activityClassName = util.convertEntityName(activityName) + 'Activity',
+			activityClassName = util.convertEntityName(moduleName) + util.convertEntityName(activityName) + 'Activity',
 			translationsName = moduleName + '-translations',
 			activityFilename = 'modules/' + moduleName + '/' + activityClassName,
 			translationsFilename = 'modules/' + moduleName + '/' + translationsName;

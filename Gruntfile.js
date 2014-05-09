@@ -45,9 +45,11 @@ module.exports = function (grunt) {
 			all: [
 				'Gruntfile.js',
 				'karma.conf.js',
+				'test/**/*.js',
 				appDirectory + '/app.js',
 				appDirectory + '/lib/app5/**/*.js',
 				appDirectory + '/modules/**/*.js',
+				appDirectory + '/models/**/*.js',
 				appDirectory + '/directives/**/*.js'
 			]
 		},
@@ -324,6 +326,11 @@ module.exports = function (grunt) {
 		util.augmentIndex(distDirectory + '/index.html');
 	});
 
+	// Replaces the user main.js with the default one
+	grunt.registerTask('replace-config', 'Augments the index.html file', function() {
+		util.copyTemplate(appDirectory + '/config/_main.js', distDirectory + '/config/main.js', {});
+	});
+
 	// Generates a new activity using a template
 	grunt.registerMultiTask('_activity', 'Generates a new activity', function() {
 		if (this.data.module === '' || this.data.activity === '') {
@@ -432,6 +439,7 @@ module.exports = function (grunt) {
 			'jsonlint',
             'clean',
 			'copy',
+			'replace-config',
 			'annotate',
 			'combine-views',
 			'requirejs',

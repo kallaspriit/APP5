@@ -3,18 +3,18 @@ function(Activity) {
 	'use strict';
 
 	/**
-	 * $(Activity) activity.
+	 * $(Module)$(Activity) activity.
 	 *
-	 * @class $(Activity)Activity
+	 * @class $(Module)$(Activity)Activity
 	 * @extends Activity
 	 * @constructor
 	 * @module $(Module)Module
 	 */
-	var $(Activity)Activity = function() {
+	var $(Module)$(Activity)Activity = function() {
 		Activity.call(this);
 	};
 
-	$(Activity)Activity.prototype = Object.create(Activity.prototype);
+	$(Module)$(Activity)Activity.prototype = Object.create(Activity.prototype);
 
 	/**
 	 * Main activity controller.
@@ -22,8 +22,8 @@ function(Activity) {
 	 * @method onCreate
 	 * @param {Scope} $scope Angular scope
 	 */
-	$(Activity)Activity.prototype.onCreate = function($scope) {
-		
+	$(Module)$(Activity)Activity.prototype.onCreate = function($scope) {
+		$scope.name = '$(Activity)';
 	};
 
 	/**
@@ -31,7 +31,7 @@ function(Activity) {
 	 *
 	 * @method onResume
 	 */
-	$(Activity)Activity.prototype.onResume = function() {};
+	$(Module)$(Activity)Activity.prototype.onResume = function() {};
 
 	/**
 	 * Called as part of the activity lifecycle when an activity is going into the background, but has not (yet) been
@@ -42,56 +42,56 @@ function(Activity) {
 	 *
 	 * @method onPause
 	 */
-	$(Activity)Activity.prototype.onPause = function() {};
+	$(Module)$(Activity)Activity.prototype.onPause = function() {};
 
 	/**
 	 * Perform any final cleanup before an activity is destroyed.
 	 *
 	 * @method onDestroy
 	 */
-	$(Activity)Activity.prototype.onDestroy = function() {};
+	$(Module)$(Activity)Activity.prototype.onDestroy = function() {};
 
 	/**
 	 * Called when the url parameters such as page number changes.
 	 *
 	 * @method onParametersChanged
 	 */
-	$(Activity)Activity.prototype.onParametersChanged = function() {};
+	$(Module)$(Activity)Activity.prototype.onParametersChanged = function() {};
 
 	/**
 	 * Called on keyboard key down.
 	 *
 	 * @method onKeyDown
 	 */
-	$(Activity)Activity.prototype.onKeyDown = function() {};
+	$(Module)$(Activity)Activity.prototype.onKeyDown = function() {};
 
 	/**
 	 * Called on keyboard key up.
 	 *
 	 * @method onKeyUp
 	 */
-	$(Activity)Activity.prototype.onKeyUp = function() {};
+	$(Module)$(Activity)Activity.prototype.onKeyUp = function() {};
 
 	/**
 	 * Called on mouse key down.
 	 *
 	 * @method onMouseDown
 	 */
-	$(Activity)Activity.prototype.onMouseDown = function() {};
+	$(Module)$(Activity)Activity.prototype.onMouseDown = function() {};
 
 	/**
 	 * Called on mouse cursor move.
 	 *
 	 * @method onMouseMove
 	 */
-	$(Activity)Activity.prototype.onMouseMove = function() {};
+	$(Module)$(Activity)Activity.prototype.onMouseMove = function() {};
 
 	/**
 	 * Called on mouse key up.
 	 *
 	 * @method onMouseUp
 	 */
-	$(Activity)Activity.prototype.onMouseUp = function() {};
+	$(Module)$(Activity)Activity.prototype.onMouseUp = function() {};
 
-	return $(Activity)Activity;
+	return $(Module)$(Activity)Activity;
 });

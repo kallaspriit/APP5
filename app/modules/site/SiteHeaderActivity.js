@@ -9,7 +9,7 @@ function(Activity, menus) {
 	/**
 	 * Site header activity.
 	 *
-	 * @class HeaderActivity
+	 * @class SiteHeaderActivity
 	 * @extends Activity
 	 * @constructor
 	 * @module SiteModule

@@ -260,7 +260,8 @@
 			);
 		},
 		createActivity: function(dir, moduleName, activityName) {
-			var activityClassName = this.convertEntityName(activityName) + 'Activity';
+			var activityClassName = this.convertEntityName(moduleName) +
+				this.convertEntityName(activityName) + 'Activity';
 
 			this.copyTemplate(
 				'tools/grunt/generator-templates/activity.js',
@@ -295,6 +296,7 @@
 		},
 		createRoute: function(routesFile, path, module, activity) {
 			var contents = this.readFile(routesFile),
+				original = contents,
 				tabs = '\t\t\t',
 				def = tabs + 'path: \'' + path + '\',\n' +
 					tabs + 'module: \'' + module + '\',\n' +

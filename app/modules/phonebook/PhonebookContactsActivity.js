@@ -9,7 +9,7 @@ function(Activity, phonebook) {
 	/**
 	 * Contacts list activity.
 	 *
-	 * @class ContactsActivity
+	 * @class PhonebookContactsActivity
 	 * @extends Activity
 	 * @constructor
 	 * @module ContactsModule
