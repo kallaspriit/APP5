@@ -102,7 +102,6 @@ function() {
 			preannotatedController.push(controller);
 		}
 
-
 		return preannotatedController;
 	};
 
