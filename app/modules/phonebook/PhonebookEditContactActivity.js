@@ -14,13 +14,13 @@ function(Activity, phonebook) {
 	 * @constructor
 	 * @module ContactsModule
 	 */
-	var EditContactActivity = function() {
+	var PhonebookEditContactActivity = function() {
 		Activity.call(this);
 	};
 
-	EditContactActivity.prototype = Object.create(Activity.prototype);
+	PhonebookEditContactActivity.prototype = Object.create(Activity.prototype);
 
-	EditContactActivity.prototype.onCreate = function($scope, $modalInstance, navi, util) {
+	PhonebookEditContactActivity.prototype.onCreate = function($scope, $modalInstance, navi, util) {
 		$scope.contact = util.clone(phonebook.get(this.parameters.id));
 
 		$scope.update = function(contact) {
@@ -30,6 +30,6 @@ function(Activity, phonebook) {
 		};
 	};
 
-	return EditContactActivity;
+	return PhonebookEditContactActivity;
 
 });

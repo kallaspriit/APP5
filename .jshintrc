@@ -26,5 +26,12 @@
 	"laxbreak": true,
 	"loopfunc": true,
 	"onecase": true,
-	"predef": ["require", "define", "module", "process", "__dirname", "Buffer"]
+	"predef": [
+		"require",
+		"define",
+		"module",
+		"process",
+		"__dirname",
+		"Buffer"
+	]
 }

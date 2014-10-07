@@ -14,13 +14,13 @@ function(Activity, phonebook) {
 	 * @constructor
 	 * @module ContactsModule
 	 */
-	var AddContactActivity = function() {
+	var PhonebookAddContactActivity = function() {
 		Activity.call(this);
 	};
 
-	AddContactActivity.prototype = Object.create(Activity.prototype);
+	PhonebookAddContactActivity.prototype = Object.create(Activity.prototype);
 
-	AddContactActivity.prototype.onCreate = function($scope, navi) {
+	PhonebookAddContactActivity.prototype.onCreate = function($scope, navi) {
 		$scope.setTitle('Add Contact');
 
 		//$scope.birthdate = '01.01.1990';
@@ -32,6 +32,6 @@ function(Activity, phonebook) {
 		};
 	};
 
-	return AddContactActivity;
+	return PhonebookAddContactActivity;
 
 });

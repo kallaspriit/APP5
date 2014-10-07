@@ -14,13 +14,13 @@ function(Activity, menus) {
 	 * @constructor
 	 * @module SiteModule
 	 */
-	var HeaderActivity = function() {
+	var SiteHeaderActivity = function() {
 		Activity.call(this);
 	};
 
-	HeaderActivity.prototype = Object.create(Activity.prototype);
+	SiteHeaderActivity.prototype = Object.create(Activity.prototype);
 
-	HeaderActivity.prototype.onCreate = function($scope, $location, dbg, navi) {
+	SiteHeaderActivity.prototype.onCreate = function($scope, $location, dbg, navi) {
 		$scope.menus = menus;
 		$scope.backPossible = false;
 
@@ -55,6 +55,6 @@ function(Activity, menus) {
 		$scope.updateActive();
 	};
 
-	return HeaderActivity;
+	return SiteHeaderActivity;
 
 });

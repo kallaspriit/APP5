@@ -14,13 +14,13 @@ function(Activity, phonebook) {
 	 * @constructor
 	 * @module ContactsModule
 	 */
-	var ContactsActivity = function() {
+	var PhonebookContactsActivity = function() {
 		Activity.call(this);
 	};
 
-	ContactsActivity.prototype = Object.create(Activity.prototype);
+	PhonebookContactsActivity.prototype = Object.create(Activity.prototype);
 
-	ContactsActivity.prototype.onCreate = function($scope, ui) {
+	PhonebookContactsActivity.prototype.onCreate = function($scope, ui) {
 		console.log('onCreate', arguments);
 
 		$scope.phonebook = phonebook;
@@ -54,7 +54,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onResume
 	 */
-	ContactsActivity.prototype.onResume = function() {
+	PhonebookContactsActivity.prototype.onResume = function() {
 		console.log('onResume', arguments);
 	};
 
@@ -67,7 +67,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onPause
 	 */
-	ContactsActivity.prototype.onPause = function() {
+	PhonebookContactsActivity.prototype.onPause = function() {
 		console.log('onPause', arguments);
 	};
 
@@ -76,7 +76,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onDestroy
 	 */
-	ContactsActivity.prototype.onDestroy = function() {
+	PhonebookContactsActivity.prototype.onDestroy = function() {
 		console.log('onDestroy', arguments);
 	};
 
@@ -85,7 +85,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onParametersChanged
 	 */
-	ContactsActivity.prototype.onParametersChanged = function() {
+	PhonebookContactsActivity.prototype.onParametersChanged = function() {
 		console.log('onParametersChanged', arguments);
 	};
 
@@ -94,7 +94,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onKeyDown
 	 */
-	ContactsActivity.prototype.onKeyDown = function() {
+	PhonebookContactsActivity.prototype.onKeyDown = function() {
 		console.log('onKeyDown', arguments);
 	};
 
@@ -103,7 +103,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onKeyUp
 	 */
-	ContactsActivity.prototype.onKeyUp = function() {
+	PhonebookContactsActivity.prototype.onKeyUp = function() {
 		console.log('onKeyUp', arguments);
 	};
 
@@ -112,7 +112,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onMouseDown
 	 */
-	ContactsActivity.prototype.onMouseDown = function() {
+	PhonebookContactsActivity.prototype.onMouseDown = function() {
 		console.log('onMouseDown', arguments);
 	};
 
@@ -121,7 +121,7 @@ function(Activity, phonebook) {
 	 *
 	 * @method onMouseMove
 	 */
-	ContactsActivity.prototype.onMouseMove = function() {
+	PhonebookContactsActivity.prototype.onMouseMove = function() {
 		//console.log('onMouseMove', arguments);
 	};
 
@@ -130,10 +130,10 @@ function(Activity, phonebook) {
 	 *
 	 * @method onMouseUp
 	 */
-	ContactsActivity.prototype.onMouseUp = function() {
+	PhonebookContactsActivity.prototype.onMouseUp = function() {
 		console.log('onMouseUp', arguments);
 	};
 
-	return ContactsActivity;
+	return PhonebookContactsActivity;
 
 });
